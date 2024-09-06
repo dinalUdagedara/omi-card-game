@@ -1,0 +1,57 @@
+import * as React from "react";
+import CardComponent from "../card";
+import { Card } from "@/utils/types";
+import { useStore } from "@/store/state";
+import OtherCardComponent from "./other-card";
+import { motion } from "framer-motion";
+
+interface UserDeckProps {
+  userHand: Card[];
+  onCardSelect: (cardIndex: number) => void;
+}
+
+export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
+  const trumpSuit = useStore((state) => state.trumpSuit);
+  const isTrumpSelected = useStore((state) => state.trumpSelected);
+  const selectedCardByUser = useStore((state) => state.selectedCardByUser);
+  const isCardsGenerated = useStore((state) => state.isCardsGenerated);
+
+  return (
+    <div className="w-full flex justify-center ">
+      <div>
+        {userHand.map((card, index) => (
+          <button
+            key={index}
+            style={{
+              marginLeft: index === 0 ? "0" : "-2rem",
+            }}
+            disabled={!!selectedCardByUser || !isCardsGenerated || !trumpSuit}
+            onClick={() => onCardSelect(index)}
+            className="mx-2 transform transition-transform duration-200 hover:scale-110 hover:z-10 hover:shadow-lg"
+          >
+            {trumpSuit ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20, rotateY: 180 }}
+                animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.3}}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <CardComponent card={card} />
+              </motion.div>
+            ) : (
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: -200 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                >
+                  <OtherCardComponent />
+                </motion.div>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}

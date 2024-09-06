@@ -209,10 +209,10 @@ export default function Board() {
     if (isGameOver) {
       console.log("Game over");
     } else {
-      if (roundWinners === 1) {
+      if (roundWinners === 4) {
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
-      } else if (roundWinners === 2) {
+      } else if (roundWinners === 4) {
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }

@@ -347,13 +347,13 @@ export default function Board() {
 
   function checkWinner() {
     if (roundsWonbyTeam1) {
-      if (roundsWonbyTeam1 >= 1) {
+      if (roundsWonbyTeam1 >= 4) {
         toast("Congratulations Your Team wons the Game");
         setIsGameOver(true);
       }
     }
     if (roundsWonbyTeam2) {
-      if (roundsWonbyTeam2 >= 1) {
+      if (roundsWonbyTeam2 >= 4) {
         toast("Your Team lost");
         setIsGameOver(true);
       }
@@ -425,10 +425,10 @@ export default function Board() {
     }
   }, [isSubmitted]);
 
-  useEffect(() => {
-    setFinalWinner();
-    checkWinner();
-  }, [isSubmitted]);
+  // useEffect(() => {
+  //   setFinalWinner();
+  //   checkWinner();
+  // }, [isSubmitted]);
 
   return (
     <div className="w-full h-screen flex flex-col ">

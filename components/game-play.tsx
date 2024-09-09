@@ -1,6 +1,4 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   checkWinnerForTurn,
   createDeck,
@@ -16,7 +14,7 @@ import {
 } from "@/utils/game-logic";
 import { Player, Card, Suit, suits } from "@/utils/types";
 import { useState, useEffect } from "react";
-import { chooseCard } from "@/utils/game-play";
+import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
 import { toast } from "sonner";
 import { SuitDrawer } from "./drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
@@ -29,11 +27,11 @@ import { UserDeckStraight } from "./decks/user-deck-straight";
 import Scoreboard from "./game-board.tsx/score-board";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "./ui/button";
 
 export default function Board() {
   const [cardSet, setCardSet] = useState<Card[]>([]);
   const [turnSuit, setturnSuit] = useState<Suit | null>(null);
-  const [cardInput, setCardInput] = useState<number>();
   const [maxCards, setMaxCards] = useState<number>();
   const [generatedCards, setGeneratedCards] = useState<Card[] | null>(null);
   const [lastWinner, SetLastWinner] = useState<number | null>(0);
@@ -57,16 +55,9 @@ export default function Board() {
   const isTrumpSelected = useStore((state) => state.trumpSelected);
   const setTrumpSelected = useStore((state) => state.setTrumpSelected);
 
-  const player_1_card = CardStore((state) => state.player_1_card);
   const setPlayer_1_card = CardStore((state) => state.setPlayer_1_card);
-
-  const player_2_card = CardStore((state) => state.player_2_card);
   const setPlayer_2_card = CardStore((state) => state.setPlayer_2_card);
-
-  const player_3_card = CardStore((state) => state.player_3_card);
   const setPlayer_3_card = CardStore((state) => state.setPlayer_3_card);
-
-  const player_4_card = CardStore((state) => state.player_4_card);
   const setPlayer_4_card = CardStore((state) => state.setPlayer_4_card);
 
   const team1Points = useStore((state) => state.team1Points);
@@ -110,16 +101,26 @@ export default function Board() {
   function handleCardSelectDeck(cardIndex: number) {
     const player1Hand = dealtHands[0].hand;
     const selectedCard = player1Hand[cardIndex];
-    setCardSet([...cardSet, selectedCard]);
+
+    setCardSet((prevCardSet) => [...prevCardSet, selectedCard]);
+
     // Remove the selected card from the hand
     dealtHands[0].hand = dealtHands[0].hand.filter(
       (card) => card !== selectedCard
     );
     setSelectedCardByUser(selectedCard);
 
-    console.log("selected Card", selectedCard);
-    console.log("card set", cardSet);
+    if (selectedCard) {
+      setTurnSuit(selectedCard.suit);
+      setturnSuit(selectedCard.suit);
+    }
   }
+
+  useEffect(() => {
+    if (turnSuit && cardSet.length < 2) {
+      handleSelectOtherHands();
+    }
+  }, [turnSuit]);
 
   function handleSubmit() {
     setIsSubmitted(true);
@@ -127,13 +128,40 @@ export default function Board() {
   }
 
   function handleSelectOtherHands() {
+    if (turnSuit) {
+      //if there is a turnsuit selected this will choose other cards with the seletced suit
+      selectOtherhandsWithTurnSuit(turnSuit);
+    } else {
+      //if there is no turnsuit this function will select a turn suit from lastwinner and do the rest
+      setTrumpSelected(false);
+      setIsCardsGenerated(true);
+      if (lastWinner === 1) {
+        const chosenCard: Card = chooseCardWithoutTurnSuit(dealtHands[1].hand);
+        selectOtherHandsWithoutTurnSuit(chosenCard, 1);
+        console.log("chosen card without the turnsuit", chosenCard);
+      } else if (lastWinner === 2) {
+        const chosenCard: Card = chooseCardWithoutTurnSuit(dealtHands[2].hand);
+        selectOtherHandsWithoutTurnSuit(chosenCard, 2);
+        console.log("chosen card without the turnsuit", chosenCard);
+      } else if (lastWinner === 3) {
+        const chosenCard: Card = chooseCardWithoutTurnSuit(dealtHands[3].hand);
+        selectOtherHandsWithoutTurnSuit(chosenCard, 3);
+        console.log("chosen card without the turnsuit", chosenCard);
+      }
+    }
+
+    console.log("turnSuit", turnSuit);
+  }
+
+  function selectOtherhandsWithTurnSuit(turnSuit: Suit) {
     let selectedCardsByEachPlayer: Card[] = [];
+
     // Iterate through dealtHands starting from the second hand (index 1)
     const selectedCards = dealtHands.slice(1).map((hand, index) => {
-      const chosenCard: Card = chooseCard(hand.hand);
+      const chosenCard: Card = chooseCard(hand.hand, turnSuit);
 
       selectedCardsByEachPlayer[index] = chosenCard;
-      console.log("Selected Cards:", selectedCardsByEachPlayer);
+      console.log("Selected Cards by player", selectedCardsByEachPlayer);
       setGeneratedCards(selectedCardsByEachPlayer);
 
       // Remove the chosen card from the hand
@@ -142,13 +170,50 @@ export default function Board() {
       return chosenCard;
     });
 
-    setIsCardsGenerated(true);
+    setCardSet((prevCardSet) => [...prevCardSet, ...selectedCards]);
+    console.log("Selected Cards for turn:", selectedCards);
 
-    // Update the cardSet state by adding the selected cards
-    setCardSet([...cardSet, ...selectedCards]);
     setTrumpSelected(false);
+    setIsCardsGenerated(true);
   }
 
+  useEffect(() => {
+    if (cardSet.length > 2) {
+      console.log("cardSet updated:", cardSet);
+    }
+  }, [cardSet]);
+
+  function selectOtherHandsWithoutTurnSuit(
+    selectedCard: Card,
+    turnOwnerindex: number
+  ) {
+    console.log("selectedCard", selectedCard);
+    console.log("turnOwnerindex", turnOwnerindex);
+
+    let selectedCardsByEachPlayer: Card[] = [];
+    // Iterate through dealtHands starting from the second hand (index 1)
+    const selectedCards = dealtHands.slice(1).map((hand, index) => {
+      const chosenCard: Card = chooseCard(hand.hand, selectedCard.suit);
+      selectedCardsByEachPlayer[turnOwnerindex - 1] = selectedCard;
+      console.log("selectedCardsByEachPlayer", selectedCardsByEachPlayer);
+      selectedCardsByEachPlayer[index] = chosenCard;
+      console.log("selectedCardsByEachPlayer", selectedCardsByEachPlayer);
+      setGeneratedCards(selectedCardsByEachPlayer);
+
+      console.log("hand.hand", hand.hand);
+      // Remove the chosen card from the hand
+      hand.hand = hand.hand.filter((card) => card !== chosenCard);
+
+      console.log("hand.hand", hand.hand);
+
+      return chosenCard;
+    });
+    setTrumpSelected(false);
+    setIsCardsGenerated(true);
+    console.log("cardset", cardSet);
+    // Update the cardSet state by adding the selected cards
+    setCardSet([...cardSet, ...selectedCards]);
+  }
   function handleNextRound() {
     // finish this round and move to next round if all hands are over
 
@@ -385,6 +450,7 @@ export default function Board() {
   }, []);
 
   useEffect(() => {
+    console.log("generated cards", generatedCards);
     if (generatedCards)
       if (lastWinner === 1) {
         setTurnSuit(generatedCards[0].suit);
@@ -414,10 +480,10 @@ export default function Board() {
   }, [generatedCards, selectedCardByUser]);
 
   useEffect(() => {
-    if (isCardsGenerated && !isSubmitted && selectedCardByUser) {
+    if (cardSet.length > 2) {
       handleAutomaticSubmit();
     }
-  }, [isCardsGenerated, isSubmitted, selectedCardByUser]);
+  }, [isCardsGenerated, isSubmitted, selectedCardByUser, cardSet]);
 
   useEffect(() => {
     if (isSubmitted) {
@@ -501,6 +567,7 @@ export default function Board() {
             }}
           >
             <div className="w-full justify-center items-center">
+              {/* <Button onClick={handleInitialStart}>Start</Button> */}
               <GameBoard
                 onStart={handleSelectOtherHands}
                 onNextStart={handleNextRound}

@@ -140,7 +140,7 @@ export default function Board() {
     let selectedCardsByEachPlayer: Card[] = [];
     // Iterate through dealtHands starting from the second hand (index 1)
     const selectedCards = dealtHands.slice(1).map((hand, index) => {
-      const chosenCard: Card = chooseCard(hand.hand);
+      const chosenCard: Card = chooseCard(hand.hand,"clubs");
 
       selectedCardsByEachPlayer[index] = chosenCard;
       console.log("Selected Cards:", selectedCardsByEachPlayer);

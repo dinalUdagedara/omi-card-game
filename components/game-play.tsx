@@ -103,7 +103,7 @@ export default function Board() {
     const player1Hand = dealtHands[0].hand;
     const selectedCard = player1Hand[cardIndex];
 
-    setCardSet((prevCardSet) => [...prevCardSet, selectedCard]);
+    setCardSet((prevCardSet) => [selectedCard, ...prevCardSet]);
 
     // Remove the selected card from the hand
     dealtHands[0].hand = dealtHands[0].hand.filter(

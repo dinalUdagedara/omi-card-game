@@ -1,7 +1,7 @@
 import { useStore } from "@/store/state";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import Image from "next/image";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 const Scoreboard = () => {
   const team1Points = useStore((state) => state.team1Points);

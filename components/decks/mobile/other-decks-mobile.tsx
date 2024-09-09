@@ -1,22 +1,23 @@
 import * as React from "react";
 import { Card } from "@/utils/types";
-import OtherCardComponent from "../cards/other-card";
+import OtherCardComponent from "../../cards/other-card";
 import { motion } from "framer-motion";
+import OtherCardComponentMobile from "@/components/cards/other-card-mobile";
 
 interface UserDeckProps {
   userHand: Card[];
 }
 
-export function OtherDecks({ userHand }: UserDeckProps) {
+export function OtherDecksMobile({ userHand }: UserDeckProps) {
   return (
     <div className="h-full w-full flex justify-center items-center  p-4 rounded-lg ">
       <div className="relative flex justify-center items-center">
         {userHand.map((card, index) => (
           <div
             key={index}
-            className={`relative transform transition-transform duration-200   hover:shadow-lg`}
+            className={`relative transform transition-transform duration-200  hover:shadow-lg `}
             style={{
-              marginLeft: index === 0 ? "0" : "-5rem",
+              marginLeft: index === 0 ? "0" : "-3rem",
             }}
           >
             <motion.div
@@ -24,9 +25,9 @@ export function OtherDecks({ userHand }: UserDeckProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
             >
-              <button className="">
-                <OtherCardComponent />
-              </button>
+              <div className="">
+                <OtherCardComponentMobile />
+              </div>
             </motion.div>
           </div>
         ))}

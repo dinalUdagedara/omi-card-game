@@ -1,18 +1,18 @@
 "use client";
 import { CardStore } from "@/store/player-card-state";
-import CardComponent from "../card";
+import CardComponent from "../../cards/card";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/state";
 
-import Winner4 from "./collecting-cards/winner-4";
-import Winner2 from "./collecting-cards/winner-2";
-import Winner3 from "./collecting-cards/winner-3";
-import Winner1 from "./collecting-cards/winner-1";
-import ControllerStart from "./controller-start";
-import ControllerNextRound from "./controller-next-round";
+import Winner4 from "../collecting-cards/winner-4";
+import Winner2 from "../collecting-cards/winner-2";
+import Winner3 from "../collecting-cards/winner-3";
+import Winner1 from "../collecting-cards/winner-1";
+import ControllerStart from "../controller-start";
+import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { GameOverDialog } from "./game-over";
+import { Button } from "../../ui/button";
+import { GameOverDialog } from "../game-over";
 
 interface GameBoardProps {
   onRestart:()=> void;
@@ -21,7 +21,7 @@ interface GameBoardProps {
   onShuffleAgain: () => void;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({
+const GameBoardMobile: React.FC<GameBoardProps> = ({
   onRestart,
   onStart,
   onNextStart,
@@ -93,7 +93,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 )}
               </div>
             ) : (
-              <div className="flex flex-row w-full h-full justify-between items-center px-20 ">
+              <div className="flex flex-row w-full h-full justify-between items-center  ">
                 <div className="w-1/3">
                   {player_4_card && !winningCard && (
                     <motion.div
@@ -152,4 +152,4 @@ const GameBoard: React.FC<GameBoardProps> = ({
   );
 };
 
-export default GameBoard;
+export default GameBoardMobile;

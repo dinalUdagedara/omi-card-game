@@ -1,5 +1,5 @@
 import * as React from "react";
-import CardComponent from "../card";
+import CardComponent from "../cards/card";
 import { Card } from "@/utils/types";
 import { useStore } from "@/store/state";
 

@@ -17,13 +17,13 @@ import {
 import { Player, Card, Suit, suits } from "@/utils/types";
 import { useState, useEffect } from "react";
 import { chooseCard } from "@/utils/game-play";
-import CardComponent from "./card";
+import CardComponent from "./cards/card";
 import { toast } from "sonner";
 import { SuitDrawer } from "./drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
 import { UserDeck } from "./decks/user-deck";
 import { OtherDecks } from "./decks/other-decks";
-import GameBoard from "./game-board.tsx/game-board";
+import GameBoard from "./game-board.tsx/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
 
 export default function Board() {
@@ -41,14 +41,14 @@ export default function Board() {
   // const [isCardsGenerated, setIsCardsGenerated] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const [dealtHands, setDealtHands] = useState<Player[]>([]);
+  // const [dealtHands, setDealtHands] = useState<Player[]>([]);
 
   // const [player_1_card, setPlayer_1_card] = useState<Card | null>(null);
   // const [player_2_card, setPlayer_2_card] = useState<Card | null>(null);
   // const [player_3_card, setPlayer_3_card] = useState<Card | null>(null);
   // const [player_4_card, setPlayer_4_card] = useState<Card | null>(null);
 
- // const [team1Points, setTeam1Points] = useState<number>(0); // Team 1: Player 1 and Player 3
+  // const [team1Points, setTeam1Points] = useState<number>(0); // Team 1: Player 1 and Player 3
   const [team2Points, setTeam2Points] = useState<number>(0); // Team 2: Player 2 and Player 4
 
   const [roundsWonbyTeam1, setRoundsWonbyTeam1] = useState<number | null>(null);
@@ -87,6 +87,8 @@ export default function Board() {
   const team1Points = useStore((state) => state.team1Points);
   const setTeam1Points = useStore((state) => state.setTeam1Points);
 
+  const dealtHands = useStore((state) => state.dealtHands);
+  const setDealtHands = useStore((state) => state.setDealtHands);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -140,7 +142,7 @@ export default function Board() {
     let selectedCardsByEachPlayer: Card[] = [];
     // Iterate through dealtHands starting from the second hand (index 1)
     const selectedCards = dealtHands.slice(1).map((hand, index) => {
-      const chosenCard: Card = chooseCard(hand.hand,"clubs");
+      const chosenCard: Card = chooseCard(hand.hand, "clubs");
 
       selectedCardsByEachPlayer[index] = chosenCard;
       console.log("Selected Cards:", selectedCardsByEachPlayer);
@@ -326,7 +328,7 @@ export default function Board() {
 
   function updateTeamPoints(winner: number) {
     if (winner === 0 || winner === 2) {
-      const newPoints = team1Points + 1
+      const newPoints = team1Points + 1;
       setTeam1Points(newPoints);
     } else if (winner === 1 || winner === 3) {
       setTeam2Points((prevPoints) => prevPoints + 1);
@@ -403,15 +405,10 @@ export default function Board() {
             ) : (
               <p>Loading...</p>
             )}
-              <div>
-                <div className="relative mt-96 mr-20">
-                    {/* <GameBoard/> */}
-                </div>
-          
+            <div>
+              <div className="relative mt-96 mr-20">{/* <GameBoard/> */}</div>
+            </div>
           </div>
-            
-          </div>
-          
 
           <div className="row-span-1 col-span-1 bg-yellow-100 flex items-center justify-center gap-2">
             {player_4_card && <CardComponent card={player_4_card} />}

@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import CardComponent from "../card";
+import CardComponent from "../cards/card";
 import { Card } from "@/utils/types";
 import { SuitSelector } from "./suit-selector";
 import { useStore } from "@/store/state";

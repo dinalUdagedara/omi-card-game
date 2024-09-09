@@ -23,7 +23,7 @@ export function SuitSelector() {
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
         {suitsWithLogos.map((suit, index) => (
-          <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={index} className="pl-1 basis-30 md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card className="hover:scale-110 bg-slate-300 rounded-3xl ">
                 <CardContent

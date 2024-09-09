@@ -1,6 +1,6 @@
 "use client";
 import { CardStore } from "@/store/player-card-state";
-import CardComponent from "../../card";
+import CardComponent from "../../cards/card";
 import { motion } from "framer-motion";
 const Winner4 = () => {
   const player_1_card = CardStore((state) => state.player_1_card);

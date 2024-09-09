@@ -1,4 +1,4 @@
-import { Suit, Card } from "@/utils/types";
+import { Suit, Card, Player } from "@/utils/types";
 import { create } from "zustand";
 
 interface UseState {
@@ -13,9 +13,17 @@ interface UseState {
   winningCard: Card | null;
   thisRoundWinner: number | null;
   isSubmitted: boolean;
-  roundWinners: number | null,
-  selectedSuit : Suit | null,
-  isGameOver: boolean,
+  roundWinners: number | null;
+  selectedSuit: Suit | null;
+  isGameOver: boolean;
+  dealtHands: Player[];
+  roundNumber: number;
+  turnNumber: number;
+
+  cardSet: Card[];
+  turnSuit: Suit | null;
+  generatedCards: Card[] | null;
+  lastWinner: number | null;
 
   setTrumpSuit: (newSuit: Suit | null) => void;
   setTrumpSelected: (selected: boolean) => void;
@@ -27,10 +35,17 @@ interface UseState {
   setTeam2Points: (newValue: number) => void;
   setWinningCard: (newCard: Card | null) => void;
   setThisRoundWinner: (newWinner: number | null) => void;
-  setIsSubmitted: (newValuw: boolean) => void;
-  setRoundWinners: (newvalue: number | null) => void;
+  setIsSubmitted: (newValue: boolean) => void;
+  setRoundWinners: (newValue: number | null) => void;
   setSelectedSuit: (newSuit: Suit | null) => void;
-  setIsGameOver: (newValuw: boolean) => void;
+  setIsGameOver: (newValue: boolean) => void;
+  setDealtHands: (newValue: Player[]) => void;
+  setRoundNumber: (newValue: number) => void;
+  setTurnNumber: (newValue: number) => void;
+  setCardSet: (newSet: Card[]) => void;
+  setTurnSuit: (newSuit: Suit | null) => void;
+  setGeneratedCards: (newCards: Card[] | null) => void;
+  setLastWinner: (newWinner: number | null) => void;
 }
 
 export const useStore = create<UseState>((set) => ({
@@ -46,10 +61,15 @@ export const useStore = create<UseState>((set) => ({
   thisRoundWinner: null,
   isSubmitted: false,
   roundWinners: null,
-  selectedSuit : null,
-  isGameOver:false,
-
-
+  selectedSuit: null,
+  isGameOver: false,
+  dealtHands: [],
+  roundNumber: 1,
+  turnNumber: 1,
+  cardSet: [],
+  turnSuit: null,
+  generatedCards: null,
+  lastWinner: 0,
 
   setTrumpSuit: (newSuit: Suit | null) => set({ trumpSuit: newSuit }),
   setTrumpSelected: (selected: boolean) => set({ trumpSelected: selected }),
@@ -61,15 +81,21 @@ export const useStore = create<UseState>((set) => ({
     set({ roundsWonbyTeam1: newValue }),
   setRoundsWonbyTeam2: (newValue: number) =>
     set({ roundsWonbyTeam2: newValue }),
-
   setTeam1Points: (newValue: number) => set({ team1Points: newValue }),
   setTeam2Points: (newValue: number) => set({ team2Points: newValue }),
-
   setWinningCard: (newCard: Card | null) => set({ winningCard: newCard }),
   setThisRoundWinner: (newWinner: number | null) =>
     set({ thisRoundWinner: newWinner }),
-  setIsSubmitted: (newvalue: boolean) => set({ isSubmitted: newvalue }),
+  setIsSubmitted: (newValue: boolean) => set({ isSubmitted: newValue }),
   setRoundWinners: (newValue: number | null) => set({ roundWinners: newValue }),
   setSelectedSuit: (newSuit: Suit | null) => set({ selectedSuit: newSuit }),
-  setIsGameOver: (newvalue: boolean) => set({ isGameOver: newvalue })
+  setIsGameOver: (newValue: boolean) => set({ isGameOver: newValue }),
+  setDealtHands: (newValue: Player[]) => set({ dealtHands: newValue }),
+  setRoundNumber: (newValue: number) => set({ roundNumber: newValue }),
+  setTurnNumber: (newValue: number) => set({ turnNumber: newValue }),
+  setCardSet: (newSet: Card[]) => set({ cardSet: newSet }),
+  setTurnSuit: (newSuit: Suit | null) => set({ turnSuit: newSuit }),
+  setGeneratedCards: (newCards: Card[] | null) =>
+    set({ generatedCards: newCards }),
+  setLastWinner: (newWinner: number | null) => set({ lastWinner: newWinner }),
 }));

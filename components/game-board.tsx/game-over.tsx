@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
-export function GameOverDialog() {
+interface GameOverProps {
+  onRestart: () => void;
+}
+
+export const GameOverDialog: React.FC<GameOverProps> = ({ onRestart }) => {
   const [isOpen, setIsOpen] = useState(true); // Set to true to automatically open the dialog
 
   return (
@@ -16,10 +25,13 @@ export function GameOverDialog() {
         </div>
         <DialogFooter>
           <div className="flex justify-center items-center w-full">
-          <DialogClose asChild>
-            <Button className="bg-gray-800 text-white hover:bg-gray-700 px-6 py-2 rounded-full transition duration-300">
-              Restart
-            </Button>
+            <DialogClose asChild>
+              <Button
+                onClick={onRestart}
+                className="bg-gray-800 text-white hover:bg-gray-700 px-6 py-2 rounded-full transition duration-300"
+              >
+                Restart
+              </Button>
             </DialogClose>
           </div>
           {/* <DialogClose asChild>
@@ -31,4 +43,4 @@ export function GameOverDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+};

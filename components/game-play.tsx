@@ -496,8 +496,8 @@ export default function Board() {
   }, [roundsWonbyTeam1, roundsWonbyTeam2]);
 
   return (
-    <div className="w-full h-screen flex flex-col ">
-      <div className="flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
+    <div className=" w-full h-screen flex flex-col ">
+      <div className=" flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
         {/* All the other things */}
         <div className="flex justify-end gap-4">
           {/* Player 3 and scoreboard */}

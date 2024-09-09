@@ -15,12 +15,14 @@ import { Button } from "../ui/button";
 import { GameOverDialog } from "./game-over";
 
 interface GameBoardProps {
+  onRestart:()=> void;
   onStart: () => void;
   onNextStart: () => void;
   onShuffleAgain: () => void;
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
+  onRestart,
   onStart,
   onNextStart,
   onShuffleAgain,
@@ -53,7 +55,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <>
           <div className="flex justify-center gap-10">
             <div>
-              <GameOverDialog />
+              <GameOverDialog onRestart = {onRestart} />
             </div>
           </div>
         </>

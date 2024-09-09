@@ -216,8 +216,8 @@ export default function Board() {
     // Update the cardSet state by adding the selected cards
     setCardSet([...cardSet, ...selectedCards]);
   }
-  function handleNextRound() {
-    // finish this round and move to next round if all hands are over
+  function handleNextTurn() {
+    // finish this turn and move to next turn if all hands are over
 
     if (dealtHands[0].hand.length < 1) {
       console.log("hands are over");
@@ -233,27 +233,11 @@ export default function Board() {
     } else {
       const TurnNumber = turnNumber + 1;
       setTurnNumber(TurnNumber);
-      // Collect all remaining cards from players' hands
-      let remainingCards: Card[] = [];
-      // dealtHands.forEach((player) => {
-      //   remainingCards = [...remainingCards, ...player.hand];
-      // });
-      // console.log("remaining cards: ", remainingCards);
-
-      // // Shuffle the remaining cards
-      // const shuffledDeck = shuffleDeck(remainingCards);
-
-      // // Deal the shuffled cards among the players
-      // const hands = dealCards(shuffledDeck, 4);
-
-      // // Update the state with the new hands
-      // setDealtHands(hands);
-      // setMaxCards(hands[0].hand.length);
       resetStates();
     }
   }
 
-  function handleNextRoundofShuffling() {
+  function handleNextTurnofShuffling() {
     checkWinner();
     if (isGameOver) {
       console.log("Game over");
@@ -270,23 +254,6 @@ export default function Board() {
       resetTeamPoints();
       setStarterForRound();
       initailSetup();
-    }
-  }
-
-  function setFinalWinner() {
-    checkWinner();
-    console.log("final Winner Running ");
-    if (isGameOver) {
-      console.log("Game over");
-    } else {
-      //Changed value here
-      if (roundWinners === 4) {
-        const roundNumber = roundsWonbyTeam1 + 1;
-        setRoundsWonbyTeam1(roundNumber);
-      } else if (roundWinners === 4) {
-        const roundNumber = roundsWonbyTeam2 + 1;
-        setRoundsWonbyTeam2(roundNumber);
-      }
     }
   }
 
@@ -445,9 +412,36 @@ export default function Board() {
   function handleAutomaticNextRound() {
     if (isSubmitted) {
       setTimeout(() => {
-        handleNextRound();
+        handleNextTurn();
       }, 3000);
     }
+  }
+
+  function restartGame() {
+    // Reset the points for both teams
+    resetTeamPoints();
+    setRoundsWonbyTeam1(0);
+    setRoundsWonbyTeam2(0);
+
+    // Set round and turn numbers back to the first round and turn
+    setRoundNumber(1);
+    setTurnNumber(1);
+
+    // Reinitialize game states
+    resetCards(); 
+    resetStates(); 
+
+    // Shuffle and deal cards again
+    initailSetup();
+
+    // Reset game over state
+    setIsGameOver(false);
+
+    // Ensure last winner starts from the beginning
+    SetLastWinner(0);
+    handleLastWinner(0); 
+
+    toast("Game has been restarted! Let's play again.");
   }
 
   useEffect(() => {
@@ -496,10 +490,10 @@ export default function Board() {
     }
   }, [isSubmitted]);
 
-  // useEffect(() => {
-  //   setFinalWinner();
-  //   checkWinner();
-  // }, [isSubmitted]);
+
+  useEffect(() => {
+    checkWinner();
+  }, [roundsWonbyTeam1, roundsWonbyTeam2]);
 
   return (
     <div className="w-full h-screen flex flex-col ">
@@ -574,9 +568,10 @@ export default function Board() {
             <div className="w-full justify-center items-center">
               {/* <Button onClick={handleInitialStart}>Start</Button> */}
               <GameBoard
+                onRestart={restartGame}
                 onStart={handleSelectOtherHands}
-                onNextStart={handleNextRound}
-                onShuffleAgain={handleNextRoundofShuffling}
+                onNextStart={handleNextTurn}
+                onShuffleAgain={handleNextTurnofShuffling}
               />
             </div>
           </div>
@@ -740,7 +735,7 @@ export default function Board() {
                   </Button>
                   <Button
                     disabled={!isSubmitted}
-                    onClick={handleNextRound}
+                    onClick={handleNextTurn}
                     type="submit"
                     className="bg-gray-700 text-white hover:bg-gray-600"
                   >

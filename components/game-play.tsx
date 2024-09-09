@@ -37,6 +37,7 @@ export default function Board() {
   const [lastWinner, SetLastWinner] = useState<number | null>(0);
   const [dealtHands, setDealtHands] = useState<Player[]>([]);
   const [roundNumber, setRoundNumber] = useState<number>(1);
+  const [turnNumber, setTurnNumber] = useState<number>(1);
 
   const trumpSuit = useStore((state) => state.trumpSuit);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
@@ -120,7 +121,7 @@ export default function Board() {
     if (turnSuit && cardSet.length < 2) {
       handleSelectOtherHands();
     }
-  }, [turnSuit]);
+  }, [turnSuit, isCardsGenerated]);
 
   function handleSubmit() {
     setIsSubmitted(true);
@@ -153,6 +154,13 @@ export default function Board() {
     console.log("turnSuit", turnSuit);
   }
 
+  // Automatically run handleSelectOtherHands (play button) when  or lastWinner changes
+  useEffect(() => {
+    if (turnSuit || lastWinner !== null) {
+      handleSelectOtherHands();
+    }
+  }, [turnNumber]);
+
   function selectOtherhandsWithTurnSuit(turnSuit: Suit) {
     let selectedCardsByEachPlayer: Card[] = [];
 
@@ -176,12 +184,6 @@ export default function Board() {
     setTrumpSelected(false);
     setIsCardsGenerated(true);
   }
-
-  useEffect(() => {
-    if (cardSet.length > 2) {
-      console.log("cardSet updated:", cardSet);
-    }
-  }, [cardSet]);
 
   function selectOtherHandsWithoutTurnSuit(
     selectedCard: Card,
@@ -229,6 +231,8 @@ export default function Board() {
       }
       resetStates();
     } else {
+      const TurnNumber = turnNumber + 1;
+      setTurnNumber(TurnNumber);
       // Collect all remaining cards from players' hands
       let remainingCards: Card[] = [];
       // dealtHands.forEach((player) => {
@@ -261,6 +265,7 @@ export default function Board() {
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
+      setTurnNumber(1);
       setRoundNumber((prevRound) => (prevRound !== null ? prevRound + 1 : 1));
       resetTeamPoints();
       setStarterForRound();

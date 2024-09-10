@@ -17,35 +17,16 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
 
   return (
     <div className="h-24 w-60">
-      <div className="relative bg-black">
+      <div className="relative ">
         {userHand.map((card, index) => {
           const angle = (index - (userHand.length - 1) / 2) * 10;
 
           return (
-            // <div key={index}>
-            //   <div
-            //     className="absolute"
-            //     style={{
-            //       transform: `rotate(${angle}deg) translateY(-40px)`,
-            //       transformOrigin: "bottom center",
-            //     }}
-            //   >
-            //     <button
-            //       disabled={
-            //         !!selectedCardByUser || !isCardsGenerated || !trumpSuit
-            //       }
-            //       onClick={() => onCardSelect(index)}
-            //       className="transform transition-transform duration-200 hover:scale-110 hover:z-10 hover:shadow-lg"
-            //     >
-            //       <CardComponent card={card} />
-            //     </button>
-            //   </div>
-            // </div>
             <div
               key={index}
               className="absolute"
               style={{
-                transform: `rotate(${angle}deg) translateY(-50px)`,
+                transform: `rotate(${angle}deg) translateY(-40px)`,
                 transformOrigin: "bottom center",
               }}
             >

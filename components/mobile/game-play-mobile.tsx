@@ -530,7 +530,7 @@ const GamePlayMobile = () => {
   }, [turnSuit, isCardsGenerated]);
 
   return (
-    <div className="w-full h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
+    <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
       <div>
         <div>
           <ScoreBoardMobile />
@@ -547,7 +547,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
 
-      <div className="w-full flex justify-center  mt-10">
+      <div className="w-full flex justify-center  mt-5">
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
@@ -624,21 +624,35 @@ const GamePlayMobile = () => {
           </div>
         </div>
       </div>
+      <div className="mt-auto relative">
+        <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative">
+          <div className="flex w-full justify-center items-center">
+            <div className="">
+              {dealtHands.length > 0 && dealtHands[0]?.hand ? (
+                <div className="relative w-full pl-32">
+                  <div className="absolute -bottom-8 left-0 right-0">
+                    <UserDeckMobile
+                      userHand={dealtHands[0].hand}
+                      onCardSelect={handleCardSelectDeck}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-row justify-center w-full items-center my-5">
+                  <Skeleton className="h-[125px] w-[300px] rounded-xl bg-slate-600" />
+                </div>
+              )}
+            </div>
+          </div>
 
-      <div className="h-60 w-full justify-center items-center">
-        <div>
-          {dealtHands.length > 0 && dealtHands[0]?.hand ? (
-            <div className="flex h-60 w-screen justify-center items-center pl-32">
-              <UserDeckMobile
-                userHand={dealtHands[0].hand}
-                onCardSelect={handleCardSelectDeck}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-row justify-center w-full items-center my-5">
-              <Skeleton className="h-[125px] w-[300px] rounded-xl bg-slate-600" />
-            </div>
-          )}
+          <div className="flex w-full justify-center mt-16 pr-6">
+            <Avatar className="w-16 h-16 shadow-md">
+              <AvatarImage src={`/assets/user.jpg`} />
+              <AvatarFallback>
+                <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
+              </AvatarFallback>
+            </Avatar>
+          </div>
         </div>
       </div>
     </div>

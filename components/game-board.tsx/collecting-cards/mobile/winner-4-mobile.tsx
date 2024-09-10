@@ -2,6 +2,7 @@
 import { CardStore } from "@/store/player-card-state";
 import CardComponent from "../../../cards/card";
 import { motion } from "framer-motion";
+import CardComponentMobile from "@/components/cards/card-mobile";
 const Winner4Mobile = () => {
   const player_1_card = CardStore((state) => state.player_1_card);
   const player_2_card = CardStore((state) => state.player_2_card);
@@ -31,7 +32,7 @@ const Winner4Mobile = () => {
               animate={{ opacity: 0, x: -200 }}
               transition={{ duration: 0.8, delay: 2.0 }} 
             >
-              <CardComponent card={player_4_card} />
+              <CardComponentMobile card={player_4_card} />
             </motion.div>
           </motion.div>
 
@@ -42,7 +43,7 @@ const Winner4Mobile = () => {
                 animate={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.8, delay: 2.0 }} // Adding delay for sequential animation
               >
-                <CardComponent card={player_3_card} />
+                <CardComponentMobile card={player_3_card} />
               </motion.div>
             )}
 
@@ -52,7 +53,7 @@ const Winner4Mobile = () => {
                 animate={{ opacity: 0, x: -200 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
-                <CardComponent card={player_1_card} />
+                <CardComponentMobile card={player_1_card} />
               </motion.div>
             )}
           </div>
@@ -62,7 +63,7 @@ const Winner4Mobile = () => {
               animate={{ opacity: 0, x: -200 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
-              <CardComponent card={player_2_card} />
+              <CardComponentMobile card={player_2_card} />
             </motion.div>
           )}
         </div>

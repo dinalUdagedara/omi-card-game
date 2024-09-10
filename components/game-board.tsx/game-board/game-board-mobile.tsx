@@ -1,25 +1,19 @@
 "use client";
 import { CardStore } from "@/store/player-card-state";
-import CardComponent from "../../cards/card";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/state";
-
-import Winner4 from "../collecting-cards/winner-4";
-import Winner2 from "../collecting-cards/winner-2";
-import Winner3 from "../collecting-cards/winner-3";
-import Winner1 from "../collecting-cards/winner-1";
 import ControllerStart from "../controller-start";
 import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
-import { Button } from "../../ui/button";
 import { GameOverDialog } from "../game-over";
 import Winner1Mobile from "../collecting-cards/mobile/winner-1-mobile";
 import Winner2Mobile from "../collecting-cards/mobile/winner-2-mobile";
 import Winner3Mobile from "../collecting-cards/mobile/winner-3-mobile";
 import Winner4Mobile from "../collecting-cards/mobile/winner-4-mobile";
+import CardComponentMobile from "@/components/cards/card-mobile";
 
 interface GameBoardProps {
-  onRestart:()=> void;
+  onRestart: () => void;
   onStart: () => void;
   onNextStart: () => void;
   onShuffleAgain: () => void;
@@ -59,7 +53,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
         <>
           <div className="flex justify-center gap-10">
             <div>
-              <GameOverDialog onRestart = {onRestart} />
+              <GameOverDialog onRestart={onRestart} />
             </div>
           </div>
         </>
@@ -77,7 +71,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
           </div>
 
           <div>
-            {winningCard && !isGameOver? (
+            {winningCard && !isGameOver ? (
               <div>
                 {isCardsGone ? (
                   <div className="flex justify-center">
@@ -97,8 +91,8 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                 )}
               </div>
             ) : (
-              <div className="flex flex-row w-full h-full justify-between items-center  ">
-                <div className="w-1/3">
+              <div className="flex flex-row w-full  justify-between items-center  min-h-72 gap-5 mt-10 ">
+                <div className="w-1/3 min-w-16">
                   {player_4_card && !winningCard && (
                     <motion.div
                       className="flex justify-center items-center"
@@ -106,7 +100,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                       animate={{ opacity: 1, x: 0 }} // end to these values
                       transition={{ duration: 0.8, delay: 1.6 }} // Animation duration
                     >
-                      <CardComponent card={player_4_card} />
+                      <CardComponentMobile card={player_4_card} />
                     </motion.div>
                   )}
                 </div>
@@ -119,7 +113,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 1.2 }} // Adding delay for animation
                       >
-                        <CardComponent card={player_3_card} />
+                        <CardComponentMobile card={player_3_card} />
                       </motion.div>
                     )}
                   </div>
@@ -130,7 +124,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <CardComponent card={player_1_card} />
+                        <CardComponentMobile card={player_1_card} />
                       </motion.div>
                     )}
                   </div>
@@ -143,7 +137,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: 0.8 }}
                     >
-                      <CardComponent card={player_2_card} />
+                      <CardComponentMobile card={player_2_card} />
                     </motion.div>
                   )}
                 </div>

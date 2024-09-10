@@ -18,7 +18,6 @@ import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
 import { toast } from "sonner";
 import { SuitDrawer } from "./drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
-import { UserDeck } from "./decks/user-deck";
 import { OtherDecks } from "./decks/other-decks";
 import GameBoard from "./game-board.tsx/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";

@@ -10,22 +10,18 @@ import {
   shuffleDeck,
   setLastWinner,
 } from "@/utils/game-logic";
-import { Player, Card, Suit, suits } from "@/utils/types";
+import {Card, Suit, suits } from "@/utils/types";
 import { useState, useEffect } from "react";
 import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
 import { toast } from "sonner";
 import { useStore } from "@/store/state";
-import { OtherDecks } from "../decks/other-decks";
-import GameBoard from "../game-board.tsx/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserDeckStraight } from "../decks/user-deck-straight";
-import Scoreboard from "../game-board.tsx/score-board/score-board";
-import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import ScoreBoardMobile from "../game-board.tsx/score-board/score-board-mobile";
 import { OtherDecksMobile } from "../decks/mobile/other-decks-mobile";
 import GameBoardMobile from "../game-board.tsx/game-board/game-board-mobile";
+import { UserDeckMobile } from "../decks/user-deck-mobile";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -467,7 +463,6 @@ const GamePlayMobile = () => {
     toast("Game has been restarted! Let's play again.");
   }
 
-  // Automatically run handleSelectOtherHands (play button) when  or lastWinner changes
   useEffect(() => {
     if (isMobile)
       if (turnSuit || lastWinner !== null) {
@@ -535,7 +530,9 @@ const GamePlayMobile = () => {
   }, [turnSuit, isCardsGenerated]);
 
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div 
+    style={{ backgroundColor: '#023047' }}
+    className="w-full h-screen flex flex-col">
       <div>
         <div>
           <ScoreBoardMobile />
@@ -569,8 +566,8 @@ const GamePlayMobile = () => {
         )}
       </div>
 
-      <div className="w-full h-full bg-slate-500 flex justify-between mt-5">
-        <div className="bg-white ">
+      <div className="w-full h-full  flex justify-between mt-5">
+        <div className="flex justify-center items-center">
           {dealtHands.length > 0 && dealtHands[3]?.hand ? (
             <div className="flex flex-col justify-center items-center">
               <Avatar className="w-14 h-14 shadow-md">
@@ -589,7 +586,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full flex w-full justify-center items-center rounded-3xl  p-6 shadow-lg bg-opacity-75"
+            className="h-full flex w-full min-w-64 justify-center items-center rounded-3xl  p-6 shadow-lg bg-opacity-75"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -608,8 +605,8 @@ const GamePlayMobile = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white">
-          <div className="bg-white ">
+        <div className=" flex justify-center items-center">
+          <div className="">
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center">
                 {" "}
@@ -629,13 +626,15 @@ const GamePlayMobile = () => {
         </div>
       </div>
 
-      <div className=" h-full">
+      <div className="h-60 w-full justify-center items-center">
         <div>
           {dealtHands.length > 0 && dealtHands[0]?.hand ? (
-            <UserDeckStraight
-              userHand={dealtHands[0].hand}
-              onCardSelect={handleCardSelectDeck}
-            />
+            <div className="flex h-60 w-screen justify-center items-center pl-32">
+              <UserDeckMobile
+                userHand={dealtHands[0].hand}
+                onCardSelect={handleCardSelectDeck}
+              />
+            </div>
           ) : (
             <div className="flex flex-row justify-between w-full ml-10 mr-5 items-center">
               <Skeleton className="h-[125px] w-[550px] rounded-xl bg-slate-600" />

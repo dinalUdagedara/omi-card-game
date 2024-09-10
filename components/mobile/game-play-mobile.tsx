@@ -10,7 +10,7 @@ import {
   shuffleDeck,
   setLastWinner,
 } from "@/utils/game-logic";
-import {Card, Suit, suits } from "@/utils/types";
+import { Card, Suit, suits } from "@/utils/types";
 import { useState, useEffect } from "react";
 import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
 import { toast } from "sonner";
@@ -530,9 +530,7 @@ const GamePlayMobile = () => {
   }, [turnSuit, isCardsGenerated]);
 
   return (
-    <div 
-    style={{ backgroundColor: '#023047' }}
-    className="w-full h-screen flex flex-col">
+    <div className="w-full h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
       <div>
         <div>
           <ScoreBoardMobile />
@@ -559,9 +557,9 @@ const GamePlayMobile = () => {
             </Avatar>
           </div>
         ) : (
-          <div className="flex flex-row justify-between w-full ml-10 mr-5 items-center">
-            <Skeleton className="h-[125px] w-[250px] rounded-xl bg-slate-600 my-8" />
-            <Skeleton className="h-14 w-14 rounded-full bg-slate-600 mr-10" />
+          <div className="flex flex-row justify-center w-full items-center gap-5">
+            <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
+            <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
           </div>
         )}
       </div>
@@ -577,9 +575,10 @@ const GamePlayMobile = () => {
               <OtherDecksMobile userHand={dealtHands[3].hand} />
             </div>
           ) : (
-            <div className="flex flex-col justify-center gap-6 items-center ">
-              <Skeleton className="h-[125px] w-[80px] rounded-xl bg-slate-600" />
-              <Skeleton className="h-14 w-14 rounded-full bg-slate-600" />
+            <div className="flex flex-col justify-center gap-6 items-center mx-2 ">
+              {" "}
+              <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
+              <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
             </div>
           )}
         </div>
@@ -617,9 +616,9 @@ const GamePlayMobile = () => {
                 </Avatar>
               </div>
             ) : (
-              <div className="flex flex-col justify-center gap-6 items-center ">
-                <Skeleton className="h-[125px] w-[80px] rounded-xl bg-slate-600" />
-                <Skeleton className="h-14 w-14 rounded-full bg-slate-600" />
+              <div className="flex flex-col justify-center gap-6 items-center mx-2 ">
+                <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
+                <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
               </div>
             )}
           </div>
@@ -636,8 +635,8 @@ const GamePlayMobile = () => {
               />
             </div>
           ) : (
-            <div className="flex flex-row justify-between w-full ml-10 mr-5 items-center">
-              <Skeleton className="h-[125px] w-[550px] rounded-xl bg-slate-600" />
+            <div className="flex flex-row justify-center w-full items-center my-5">
+              <Skeleton className="h-[125px] w-[300px] rounded-xl bg-slate-600" />
             </div>
           )}
         </div>

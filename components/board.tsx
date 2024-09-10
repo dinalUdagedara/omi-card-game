@@ -21,7 +21,7 @@ import CardComponent from "./cards/card";
 import { toast } from "sonner";
 import { SuitDrawer } from "./drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
-import { UserDeck } from "./decks/user-deck-mobile";
+import { UserDeckMobile } from "./decks/user-deck-mobile";
 import { OtherDecks } from "./decks/other-decks";
 import GameBoard from "./game-board.tsx/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
@@ -526,7 +526,7 @@ export default function Board() {
               <div>
                 {dealtHands.length > 0 && dealtHands[0]?.hand ? (
                   <div className="rela">
-                    <UserDeck
+                    <UserDeckMobile
                       userHand={dealtHands[0].hand}
                       onCardSelect={handleCardSelectDeck}
                     />

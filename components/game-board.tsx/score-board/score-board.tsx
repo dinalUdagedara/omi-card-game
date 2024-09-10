@@ -48,7 +48,7 @@ const Scoreboard = () => {
         <div className="text-4xl font-bold">{team2Points}</div>
         <div className="text-sm uppercase tracking-wide">Theirs</div>
         <div className="w-full ">
-          <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
+          <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
         </div>
         {/* <div className="text-sm">
           Rounds Won: <span className="font-semibold">{roundsWonbyTeam2}</span>

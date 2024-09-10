@@ -259,9 +259,24 @@ export default function Board() {
       console.log("Game over");
     } else {
       if (roundWinners === 1) {
+        if (trumpSetter === 1) {
+          const remainingPenaltyCards = team2PenaltyCards - 1;
+          setTeam_2_penaltyCards(remainingPenaltyCards);
+        } else {
+          const remainingPenaltyCards = team2PenaltyCards - 2;
+          setTeam_2_penaltyCards(remainingPenaltyCards);
+        }
+
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
       } else if (roundWinners === 2) {
+        if (trumpSetter === 2) {
+          const remainingPenaltyCards = team1PenaltyCards - 1;
+          setTeam_1_penaltyCards(remainingPenaltyCards);
+        } else {
+          const remainingPenaltyCards = team1PenaltyCards - 2;
+          setTeam_1_penaltyCards(remainingPenaltyCards);
+        }
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
@@ -295,46 +310,12 @@ export default function Board() {
     resetCards();
   }
 
-  function setStarterForRound() {
-    switch (roundNumber) {
-      case 1:
-        handleLastWinner(1);
-        setRandomSuit();
-        break;
-      case 2:
-        handleLastWinner(2);
-        setRandomSuit();
-        break;
-      case 3:
-        handleLastWinner(3);
-        setRandomSuit();
-        break;
-      case 4:
-        handleLastWinner(0);
-        setRandomSuit();
-        break;
-      case 5:
-        handleLastWinner(1);
-        setRandomSuit();
-        break;
-      case 6:
-        handleLastWinner(2);
-        setRandomSuit();
-        break;
-      case 7:
-        handleLastWinner(3);
-        setRandomSuit();
-        break;
-      case 8:
-        handleLastWinner(0);
-        setRandomSuit();
-        break;
-      case 9:
-        handleLastWinner(1);
-        setRandomSuit();
-        break;
-    }
-  }
+function setStarterForRound() {
+  const winnerIndex = (roundNumber - 1) % 4; // Cycles through 0, 1, 2, 3
+  handleLastWinner(winnerIndex);
+  setRandomSuit();
+}
+
 
   function resetTeamPoints() {
     setTeam1Points(0);
@@ -409,18 +390,18 @@ export default function Board() {
       setIsGameOver(true);
     }
 
-    if (roundsWonbyTeam1) {
-      if (roundsWonbyTeam1 >= 4) {
-        toast("Congratulations Your Team wons the Game");
-        setIsGameOver(true);
-      }
-    }
-    if (roundsWonbyTeam2) {
-      if (roundsWonbyTeam2 >= 4) {
-        toast("Your Team lost");
-        setIsGameOver(true);
-      }
-    }
+    // if (roundsWonbyTeam1) {
+    //   if (roundsWonbyTeam1 >= 4) {
+    //     toast("Congratulations Your Team wons the Game");
+    //     setIsGameOver(true);
+    //   }
+    // }
+    // if (roundsWonbyTeam2) {
+    //   if (roundsWonbyTeam2 >= 4) {
+    //     toast("Your Team lost");
+    //     setIsGameOver(true);
+    //   }
+    // }
   }
 
   function handleCloseDrawer() {

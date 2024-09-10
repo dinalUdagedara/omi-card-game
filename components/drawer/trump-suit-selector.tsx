@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import CardComponent from "../card";
+import CardComponent from "../cards/card";
 import { Card } from "@/utils/types";
 import { SuitSelector } from "./suit-selector";
 import { useStore } from "@/store/state";
@@ -68,7 +68,7 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
               })}
             </div>
 
-            <div className="h-[140px]">
+            <div className="">
               <SuitSelector />
             </div>
           </div>

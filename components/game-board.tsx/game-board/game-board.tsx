@@ -1,18 +1,18 @@
 "use client";
 import { CardStore } from "@/store/player-card-state";
-import CardComponent from "../card";
+import CardComponent from "../../cards/card";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/state";
 
-import Winner4 from "./collecting-cards/winner-4";
-import Winner2 from "./collecting-cards/winner-2";
-import Winner3 from "./collecting-cards/winner-3";
-import Winner1 from "./collecting-cards/winner-1";
-import ControllerStart from "./controller-start";
-import ControllerNextRound from "./controller-next-round";
+import Winner4 from "../collecting-cards/winner-4";
+import Winner2 from "../collecting-cards/winner-2";
+import Winner3 from "../collecting-cards/winner-3";
+import Winner1 from "../collecting-cards/winner-1";
+import ControllerStart from "../controller-start";
+import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { GameOverDialog } from "./game-over";
+import { Button } from "../../ui/button";
+import { GameOverDialog } from "../game-over";
 
 interface GameBoardProps {
   onRestart:()=> void;

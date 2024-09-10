@@ -1,8 +1,9 @@
 "use client";
 import { CardStore } from "@/store/player-card-state";
-import CardComponent from "../../cards/card";
+import CardComponent from "../../../cards/card";
 import { motion } from "framer-motion";
-const Winner3 = () => {
+import CardComponentMobile from "@/components/cards/card-mobile";
+const Winner3Mobile = () => {
   const player_1_card = CardStore((state) => state.player_1_card);
   const player_2_card = CardStore((state) => state.player_2_card);
   const player_3_card = CardStore((state) => state.player_3_card);
@@ -11,14 +12,14 @@ const Winner3 = () => {
   return (
     <div>
       {player_4_card && (
-        <div className="flex flex-row w-full h-full justify-center items-center px-20">
+        <div className="flex flex-row w-full h-full justify-center items-center">
           {player_4_card && (
             <motion.div
               initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 0, y: -200 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
-              <CardComponent card={player_4_card} />
+              <CardComponentMobile card={player_4_card} />
             </motion.div>
           )}
 
@@ -43,7 +44,7 @@ const Winner3 = () => {
                   animate={{ opacity: 0, y: -100 }}
                   transition={{ duration: 0.8, delay: 2.0 }}
                 >
-                  <CardComponent card={player_3_card} />
+                  <CardComponentMobile card={player_3_card} />
                 </motion.div>
               </motion.div>
             )}
@@ -54,7 +55,7 @@ const Winner3 = () => {
                 animate={{ opacity: 0, y: -200 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
-                <CardComponent card={player_1_card} />
+                <CardComponentMobile card={player_1_card} />
               </motion.div>
             )}
           </div>
@@ -64,7 +65,7 @@ const Winner3 = () => {
               animate={{ opacity: 0, y: -200 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
-              <CardComponent card={player_2_card} />
+              <CardComponentMobile card={player_2_card} />
             </motion.div>
           )}
         </div>
@@ -73,4 +74,4 @@ const Winner3 = () => {
   );
 };
 
-export default Winner3;
+export default Winner3Mobile;

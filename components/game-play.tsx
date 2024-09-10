@@ -18,26 +18,35 @@ import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
 import { toast } from "sonner";
 import { SuitDrawer } from "./drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
-import { UserDeck } from "./decks/user-deck";
 import { OtherDecks } from "./decks/other-decks";
-import GameBoard from "./game-board.tsx/game-board";
+import GameBoard from "./game-board.tsx/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserDeckStraight } from "./decks/user-deck-straight";
-import Scoreboard from "./game-board.tsx/score-board";
+import Scoreboard from "./game-board.tsx/score-board/score-board";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
+import { useIsMobile } from "./mobile/game-play-mobile";
+import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
 
 export default function Board() {
-  const [cardSet, setCardSet] = useState<Card[]>([]);
+  const isMobile = useIsMobile();
   const [turnSuit, setturnSuit] = useState<Suit | null>(null);
-  const [maxCards, setMaxCards] = useState<number>();
-  const [generatedCards, setGeneratedCards] = useState<Card[] | null>(null);
-  const [lastWinner, SetLastWinner] = useState<number | null>(0);
-  const [dealtHands, setDealtHands] = useState<Player[]>([]);
-  const [roundNumber, setRoundNumber] = useState<number>(1);
-  const [turnNumber, setTurnNumber] = useState<number>(1);
+  const cardSet = useStore((state) => state.cardSet);
+  const setCardSet = useStore((state) => state.setCardSet);
+
+  const generatedCards = useStore((state) => state.generatedCards);
+  const setGeneratedCards = useStore((state) => state.setGeneratedCards);
+
+  const lastWinner = useStore((state) => state.lastWinner);
+  const SetLastWinner = useStore((state) => state.setLastWinner);
+
+  const dealtHands = useStore((state) => state.dealtHands);
+  const setDealtHands = useStore((state) => state.setDealtHands);
+
+  const turnNumber = useStore((state) => state.turnNumber);
+  const setTurnNumber = useStore((state) => state.setTurnNumber);
 
   const trumpSuit = useStore((state) => state.trumpSuit);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
@@ -85,6 +94,21 @@ export default function Board() {
   const isGameOver = useStore((state) => state.isGameOver);
   const setIsGameOver = useStore((state) => state.setIsGameOver);
 
+  const roundNumber = useStore((state) => state.roundNumber);
+  const setRoundNumber = useStore((state) => state.setRoundNumber);
+
+  const team1PenaltyCards = useStore((state) => state.team_1_penaltyCards);
+  const setTeam_1_penaltyCards = useStore(
+    (state) => state.setTeam_1_penaltyCards
+  );
+
+  const team2PenaltyCards = useStore((state) => state.team_2_penaltyCards);
+  const setTeam_2_penaltyCards = useStore(
+    (state) => state.setTeam_2_penaltyCards
+  );
+  const trumpSetter = useStore((state) => state.trumpSetter);
+  const setTrumpSetter = useStore((state) => state.setTrumpSetter);
+
   function initailSetup() {
     //Creating and Shuffling the Deck
     const deck = createDeck();
@@ -95,15 +119,15 @@ export default function Board() {
 
     //saving the cards of players in a state
     setDealtHands(hands);
-
-    setMaxCards(hands[0].hand.length);
   }
 
   function handleCardSelectDeck(cardIndex: number) {
     const player1Hand = dealtHands[0].hand;
     const selectedCard = player1Hand[cardIndex];
 
-    setCardSet((prevCardSet) => [selectedCard, ...prevCardSet]);
+    const updatedCardSet = [selectedCard, ...useStore.getState().cardSet];
+
+    setCardSet(updatedCardSet);
 
     // Remove the selected card from the hand
     dealtHands[0].hand = dealtHands[0].hand.filter(
@@ -116,12 +140,6 @@ export default function Board() {
       setturnSuit(selectedCard.suit);
     }
   }
-
-  useEffect(() => {
-    if (turnSuit && cardSet.length < 2) {
-      handleSelectOtherHands();
-    }
-  }, [turnSuit, isCardsGenerated]);
 
   function handleSubmit() {
     setIsSubmitted(true);
@@ -154,13 +172,6 @@ export default function Board() {
     console.log("turnSuit", turnSuit);
   }
 
-  // Automatically run handleSelectOtherHands (play button) when  or lastWinner changes
-  useEffect(() => {
-    if (turnSuit || lastWinner !== null) {
-      handleSelectOtherHands();
-    }
-  }, [turnNumber]);
-
   function selectOtherhandsWithTurnSuit(turnSuit: Suit) {
     let selectedCardsByEachPlayer: Card[] = [];
 
@@ -178,7 +189,12 @@ export default function Board() {
       return chosenCard;
     });
 
-    setCardSet((prevCardSet) => [...prevCardSet, ...selectedCards]);
+    // setCardSet((prevCardSet) => [...prevCardSet, ...selectedCards]);
+
+    const updatedCardSet = [...cardSet, ...selectedCards];
+
+    setCardSet(updatedCardSet);
+
     console.log("Selected Cards for turn:", selectedCards);
 
     setTrumpSelected(false);
@@ -243,14 +259,30 @@ export default function Board() {
       console.log("Game over");
     } else {
       if (roundWinners === 1) {
+        if (trumpSetter === 1) {
+          const remainingPenaltyCards = team2PenaltyCards - 1;
+          setTeam_2_penaltyCards(remainingPenaltyCards);
+        } else {
+          const remainingPenaltyCards = team2PenaltyCards - 2;
+          setTeam_2_penaltyCards(remainingPenaltyCards);
+        }
+
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
       } else if (roundWinners === 2) {
+        if (trumpSetter === 2) {
+          const remainingPenaltyCards = team1PenaltyCards - 1;
+          setTeam_1_penaltyCards(remainingPenaltyCards);
+        } else {
+          const remainingPenaltyCards = team1PenaltyCards - 2;
+          setTeam_1_penaltyCards(remainingPenaltyCards);
+        }
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
       setTurnNumber(1);
-      setRoundNumber((prevRound) => (prevRound !== null ? prevRound + 1 : 1));
+      const nextRoundNumber = roundNumber !== null ? roundNumber + 1 : 1;
+      setRoundNumber(nextRoundNumber);
       resetTeamPoints();
       setStarterForRound();
       initailSetup();
@@ -278,46 +310,12 @@ export default function Board() {
     resetCards();
   }
 
-  function setStarterForRound() {
-    switch (roundNumber) {
-      case 1:
-        handleLastWinner(1);
-        setRandomSuit();
-        break;
-      case 2:
-        handleLastWinner(2);
-        setRandomSuit();
-        break;
-      case 3:
-        handleLastWinner(3);
-        setRandomSuit();
-        break;
-      case 4:
-        handleLastWinner(0);
-        setRandomSuit();
-        break;
-      case 5:
-        handleLastWinner(1);
-        setRandomSuit();
-        break;
-      case 6:
-        handleLastWinner(2);
-        setRandomSuit();
-        break;
-      case 7:
-        handleLastWinner(3);
-        setRandomSuit();
-        break;
-      case 8:
-        handleLastWinner(0);
-        setRandomSuit();
-        break;
-      case 9:
-        handleLastWinner(1);
-        setRandomSuit();
-        break;
-    }
-  }
+function setStarterForRound() {
+  const winnerIndex = (roundNumber - 1) % 4; // Cycles through 0, 1, 2, 3
+  handleLastWinner(winnerIndex);
+  setRandomSuit();
+}
+
 
   function resetTeamPoints() {
     setTeam1Points(0);
@@ -383,19 +381,29 @@ export default function Board() {
   }
 
   function checkWinner() {
-    if (roundsWonbyTeam1) {
-      if (roundsWonbyTeam1 >= 4) {
-        toast("Congratulations Your Team wons the Game");
-        setIsGameOver(true);
-      }
+    if (team1PenaltyCards === 0) {
+      toast("Your Team lost");
+      setIsGameOver(true);
     }
-    if (roundsWonbyTeam2) {
-      if (roundsWonbyTeam2 >= 4) {
-        toast("Your Team lost");
-        setIsGameOver(true);
-      }
+    if (team2PenaltyCards === 0) {
+      toast("Congratulations Your Team wons the Game");
+      setIsGameOver(true);
     }
+
+    // if (roundsWonbyTeam1) {
+    //   if (roundsWonbyTeam1 >= 4) {
+    //     toast("Congratulations Your Team wons the Game");
+    //     setIsGameOver(true);
+    //   }
+    // }
+    // if (roundsWonbyTeam2) {
+    //   if (roundsWonbyTeam2 >= 4) {
+    //     toast("Your Team lost");
+    //     setIsGameOver(true);
+    //   }
+    // }
   }
+
   function handleCloseDrawer() {
     handleSuitChange(trumpSuit);
     setTrumpSelected(true);
@@ -428,8 +436,8 @@ export default function Board() {
     setTurnNumber(1);
 
     // Reinitialize game states
-    resetCards(); 
-    resetStates(); 
+    resetCards();
+    resetStates();
 
     // Shuffle and deal cards again
     initailSetup();
@@ -439,17 +447,26 @@ export default function Board() {
 
     // Ensure last winner starts from the beginning
     SetLastWinner(0);
-    handleLastWinner(0); 
+    handleLastWinner(0);
 
     toast("Game has been restarted! Let's play again.");
   }
 
+  // uncomment these use effect to work
+  // // Automatically run handleSelectOtherHands (play button) when  or lastWinner changes
   useEffect(() => {
-    initailSetup();
+    if (!isMobile)
+      if (turnSuit || lastWinner !== null) {
+        handleSelectOtherHands();
+      }
+  }, [turnNumber]);
+
+  useEffect(() => {
+    if (!isMobile) initailSetup();
   }, []);
 
   useEffect(() => {
-    console.log("generated cards", generatedCards);
+    if (!isMobile) console.log("generated cards", generatedCards);
     if (generatedCards)
       if (lastWinner === 1) {
         setTurnSuit(generatedCards[0].suit);
@@ -479,25 +496,33 @@ export default function Board() {
   }, [generatedCards, selectedCardByUser]);
 
   useEffect(() => {
-    if (cardSet.length > 2) {
-      handleAutomaticSubmit();
-    }
+    if (!isMobile)
+      if (cardSet.length > 2) {
+        handleAutomaticSubmit();
+      }
   }, [isCardsGenerated, isSubmitted, selectedCardByUser, cardSet]);
 
   useEffect(() => {
-    if (isSubmitted) {
-      handleAutomaticNextRound();
-    }
+    if (!isMobile)
+      if (isSubmitted) {
+        handleAutomaticNextRound();
+      }
   }, [isSubmitted]);
 
-
   useEffect(() => {
-    checkWinner();
+    if (!isMobile) checkWinner();
   }, [roundsWonbyTeam1, roundsWonbyTeam2]);
 
+  useEffect(() => {
+    if (!isMobile)
+      if (turnSuit && cardSet.length < 2) {
+        handleSelectOtherHands();
+      }
+  }, [turnSuit, isCardsGenerated]);
+
   return (
-    <div className=" w-full h-screen flex flex-col ">
-      <div className=" flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
+    <div className="hidden  w-full h-screen sm:flex flex-col ">
+      <div className="flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
         {/* All the other things */}
         <div className="flex justify-end gap-4">
           {/* Player 3 and scoreboard */}
@@ -523,10 +548,18 @@ export default function Board() {
             )}
           </div>
           {/* Scoreboard */}
-          <div className="w-1/3">
+          <div className="flex flex-col w-1/3 ">
             <div className="flex justify-center items-center w-full h-full">
               <Scoreboard />
             </div>
+            {/* <div className="flex flex-row justify-between w-full gap">
+              <div className="w-full">
+                <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
+              </div>
+              <div className="w-full">
+                <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
+              </div>
+            </div> */}
           </div>
         </div>
 

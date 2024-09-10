@@ -62,6 +62,52 @@ export const exampleCard = {
   value: "7",
 };
 
+export const exampleCardSet: Card[] = [
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+  {
+    suit: "hearts",
+    value: "7",
+  },
+];
+
+
+
+
 export interface Card {
   suit: Suit;
   value: Value;

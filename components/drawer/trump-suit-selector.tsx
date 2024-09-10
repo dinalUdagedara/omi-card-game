@@ -68,7 +68,7 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
               })}
             </div>
 
-            <div className="h-[140px]">
+            <div className="">
               <SuitSelector />
             </div>
           </div>

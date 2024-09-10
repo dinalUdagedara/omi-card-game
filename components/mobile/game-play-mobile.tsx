@@ -22,22 +22,19 @@ import ScoreBoardMobile from "../game-board.tsx/score-board/score-board-mobile";
 import { OtherDecksMobile } from "../decks/mobile/other-decks-mobile";
 import GameBoardMobile from "../game-board.tsx/game-board/game-board-mobile";
 import { UserDeckMobile } from "../decks/user-deck-mobile";
+import Penaltycards from "../game-board.tsx/penalty-cards/penalty-cards-mobile";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Define the breakpoint for mobile devices
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768); // Mobile breakpoint (768px is typical)
     };
-
-    handleResize(); // Check on initial load
-
-    window.addEventListener("resize", handleResize); // Listen for resize events
-
+    handleResize();
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", handleResize); // Cleanup
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -110,6 +107,18 @@ const GamePlayMobile = () => {
 
   const roundNumber = useStore((state) => state.roundNumber);
   const setRoundNumber = useStore((state) => state.setRoundNumber);
+
+  const team1PenaltyCards = useStore((state) => state.team_1_penaltyCards);
+  const setTeam_1_penaltyCards = useStore(
+    (state) => state.setTeam_1_penaltyCards
+  );
+
+  const team2PenaltyCards = useStore((state) => state.team_2_penaltyCards);
+  const setTeam_2_penaltyCards = useStore(
+    (state) => state.setTeam_2_penaltyCards
+  );
+  const trumpSetter = useStore((state) => state.trumpSetter);
+  const setTrumpSetter = useStore((state) => state.setTrumpSetter);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -261,9 +270,25 @@ const GamePlayMobile = () => {
       console.log("Game over");
     } else {
       if (roundWinners === 1) {
+        if (trumpSetter === 1) {
+          const remainingPenaltyCards = team2PenaltyCards - 1;
+          setTeam_2_penaltyCards(remainingPenaltyCards);
+        } else {
+          const remainingPenaltyCards = team2PenaltyCards - 2;
+          setTeam_2_penaltyCards(remainingPenaltyCards);
+        }
+
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
       } else if (roundWinners === 2) {
+        if (trumpSetter === 2) {
+          const remainingPenaltyCards = team1PenaltyCards - 1;
+          setTeam_1_penaltyCards(remainingPenaltyCards);
+        } else {
+          const remainingPenaltyCards = team1PenaltyCards - 2;
+          setTeam_1_penaltyCards(remainingPenaltyCards);
+        }
+
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
@@ -302,38 +327,47 @@ const GamePlayMobile = () => {
       case 1:
         handleLastWinner(1);
         setRandomSuit();
+        setTrumpSetter(2);
         break;
       case 2:
         handleLastWinner(2);
         setRandomSuit();
+        setTrumpSetter(1);
         break;
       case 3:
         handleLastWinner(3);
         setRandomSuit();
+        setTrumpSetter(2);
         break;
       case 4:
         handleLastWinner(0);
         setRandomSuit();
+        setTrumpSetter(1);
         break;
       case 5:
         handleLastWinner(1);
         setRandomSuit();
+        setTrumpSetter(2);
         break;
       case 6:
         handleLastWinner(2);
         setRandomSuit();
+        setTrumpSetter(1);
         break;
       case 7:
         handleLastWinner(3);
         setRandomSuit();
+        setTrumpSetter(2);
         break;
       case 8:
         handleLastWinner(0);
         setRandomSuit();
+        setTrumpSetter(1);
         break;
       case 9:
         handleLastWinner(1);
         setRandomSuit();
+        setTrumpSetter(2);
         break;
     }
   }
@@ -402,18 +436,27 @@ const GamePlayMobile = () => {
   }
 
   function checkWinner() {
-    if (roundsWonbyTeam1) {
-      if (roundsWonbyTeam1 >= 4) {
-        toast("Congratulations Your Team wons the Game");
-        setIsGameOver(true);
-      }
+    if (team1PenaltyCards === 0) {
+      toast("Your Team lost");
+      setIsGameOver(true);
     }
-    if (roundsWonbyTeam2) {
-      if (roundsWonbyTeam2 >= 4) {
-        toast("Your Team lost");
-        setIsGameOver(true);
-      }
+    if (team2PenaltyCards === 0) {
+      toast("Congratulations Your Team wons the Game");
+      setIsGameOver(true);
     }
+
+    // if (roundsWonbyTeam1) {
+    //   if (roundsWonbyTeam1 >= 4) {
+    //     toast("Congratulations Your Team wons the Game");
+    //     setIsGameOver(true);
+    //   }
+    // }
+    // if (roundsWonbyTeam2) {
+    //   if (roundsWonbyTeam2 >= 4) {
+    //     toast("Your Team lost");
+    //     setIsGameOver(true);
+    //   }
+    // }
   }
   function handleCloseDrawer() {
     handleSuitChange(trumpSuit);
@@ -535,19 +578,12 @@ const GamePlayMobile = () => {
         <div>
           <ScoreBoardMobile />
         </div>
-        <div className="flex justify-between px-20">
-          <div className="text-sm">
-            Rounds Won:{" "}
-            <span className="font-semibold">{roundsWonbyTeam1}</span>
-          </div>
-          <div className="text-sm">
-            Rounds Won:{" "}
-            <span className="font-semibold">{roundsWonbyTeam2}</span>
-          </div>
+        <div>
+          <Penaltycards />
         </div>
       </div>
 
-      <div className="w-full flex justify-center  mt-5">
+      <div className="w-full flex justify-center">
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
@@ -585,7 +621,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full flex w-full min-w-64 justify-center items-center rounded-3xl  p-6 shadow-lg bg-opacity-75"
+            className="h-full flex w-full min-w-64 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -594,7 +630,6 @@ const GamePlayMobile = () => {
             }}
           >
             <div className="w-full h-full justify-center items-center">
-              {/* <Button onClick={handleInitialStart}>Start</Button> */}
               <GameBoardMobile
                 onRestart={restartGame}
                 onStart={handleSelectOtherHands}
@@ -639,7 +674,7 @@ const GamePlayMobile = () => {
                 </div>
               ) : (
                 <div className="flex flex-row justify-center w-full items-center my-5">
-                  <Skeleton className="h-[125px] w-[300px] rounded-xl bg-slate-600" />
+                  <Skeleton className="h-[125px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
                 </div>
               )}
             </div>

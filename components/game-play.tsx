@@ -28,6 +28,7 @@ import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 import { useIsMobile } from "./mobile/game-play-mobile";
+import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -96,6 +97,18 @@ export default function Board() {
   const roundNumber = useStore((state) => state.roundNumber);
   const setRoundNumber = useStore((state) => state.setRoundNumber);
 
+  const team1PenaltyCards = useStore((state) => state.team_1_penaltyCards);
+  const setTeam_1_penaltyCards = useStore(
+    (state) => state.setTeam_1_penaltyCards
+  );
+
+  const team2PenaltyCards = useStore((state) => state.team_2_penaltyCards);
+  const setTeam_2_penaltyCards = useStore(
+    (state) => state.setTeam_2_penaltyCards
+  );
+  const trumpSetter = useStore((state) => state.trumpSetter);
+  const setTrumpSetter = useStore((state) => state.setTrumpSetter);
+
   function initailSetup() {
     //Creating and Shuffling the Deck
     const deck = createDeck();
@@ -127,7 +140,6 @@ export default function Board() {
       setturnSuit(selectedCard.suit);
     }
   }
-
 
   function handleSubmit() {
     setIsSubmitted(true);
@@ -388,6 +400,15 @@ export default function Board() {
   }
 
   function checkWinner() {
+    if (team1PenaltyCards === 0) {
+      toast("Your Team lost");
+      setIsGameOver(true);
+    }
+    if (team2PenaltyCards === 0) {
+      toast("Congratulations Your Team wons the Game");
+      setIsGameOver(true);
+    }
+
     if (roundsWonbyTeam1) {
       if (roundsWonbyTeam1 >= 4) {
         toast("Congratulations Your Team wons the Game");
@@ -401,6 +422,7 @@ export default function Board() {
       }
     }
   }
+
   function handleCloseDrawer() {
     handleSuitChange(trumpSuit);
     setTrumpSelected(true);
@@ -452,21 +474,18 @@ export default function Board() {
   // uncomment these use effect to work
   // // Automatically run handleSelectOtherHands (play button) when  or lastWinner changes
   useEffect(() => {
-    if(!isMobile)
-    if (turnSuit || lastWinner !== null) {
-      handleSelectOtherHands();
-    }
+    if (!isMobile)
+      if (turnSuit || lastWinner !== null) {
+        handleSelectOtherHands();
+      }
   }, [turnNumber]);
 
-
   useEffect(() => {
-    if(!isMobile)
-    initailSetup();
+    if (!isMobile) initailSetup();
   }, []);
 
   useEffect(() => {
-    if(!isMobile)
-    console.log("generated cards", generatedCards);
+    if (!isMobile) console.log("generated cards", generatedCards);
     if (generatedCards)
       if (lastWinner === 1) {
         setTurnSuit(generatedCards[0].suit);
@@ -496,31 +515,29 @@ export default function Board() {
   }, [generatedCards, selectedCardByUser]);
 
   useEffect(() => {
-    if(!isMobile)
-    if (cardSet.length > 2) {
-      handleAutomaticSubmit();
-    }
+    if (!isMobile)
+      if (cardSet.length > 2) {
+        handleAutomaticSubmit();
+      }
   }, [isCardsGenerated, isSubmitted, selectedCardByUser, cardSet]);
 
   useEffect(() => {
-    if(!isMobile)
-    if (isSubmitted) {
-      handleAutomaticNextRound();
-    }
+    if (!isMobile)
+      if (isSubmitted) {
+        handleAutomaticNextRound();
+      }
   }, [isSubmitted]);
 
   useEffect(() => {
-    if(!isMobile)
-    checkWinner();
+    if (!isMobile) checkWinner();
   }, [roundsWonbyTeam1, roundsWonbyTeam2]);
 
   useEffect(() => {
-    if(!isMobile)
-    if (turnSuit && cardSet.length < 2) {
-      handleSelectOtherHands();
-    }
+    if (!isMobile)
+      if (turnSuit && cardSet.length < 2) {
+        handleSelectOtherHands();
+      }
   }, [turnSuit, isCardsGenerated]);
-
 
   return (
     <div className="hidden  w-full h-screen sm:flex flex-col ">
@@ -550,10 +567,18 @@ export default function Board() {
             )}
           </div>
           {/* Scoreboard */}
-          <div className="w-1/3">
+          <div className="flex flex-col w-1/3 ">
             <div className="flex justify-center items-center w-full h-full">
               <Scoreboard />
             </div>
+            {/* <div className="flex flex-row justify-between w-full gap">
+              <div className="w-full">
+                <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
+              </div>
+              <div className="w-full">
+                <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
+              </div>
+            </div> */}
           </div>
         </div>
 

@@ -74,7 +74,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
             {winningCard && !isGameOver ? (
               <div>
                 {isCardsGone ? (
-                  <div className="flex justify-center">
+                  <div className="flex justify-center w-full">
                     {isSubmitted && (
                       <div>
                         <ControllerNextRound onNextStart={onNextStart} />

@@ -24,6 +24,9 @@ interface UseState {
   turnSuit: Suit | null;
   generatedCards: Card[] | null;
   lastWinner: number | null;
+  team_1_penaltyCards: number;
+  team_2_penaltyCards: number;
+  trumpSetter: number;
 
   setTrumpSuit: (newSuit: Suit | null) => void;
   setTrumpSelected: (selected: boolean) => void;
@@ -46,6 +49,9 @@ interface UseState {
   setTurnSuit: (newSuit: Suit | null) => void;
   setGeneratedCards: (newCards: Card[] | null) => void;
   setLastWinner: (newWinner: number | null) => void;
+  setTeam_1_penaltyCards: (newNumber: number) => void;
+  setTeam_2_penaltyCards: (newNumber: number) => void;
+  setTrumpSetter: (newSetter: number) => void;
 }
 
 export const useStore = create<UseState>((set) => ({
@@ -70,6 +76,9 @@ export const useStore = create<UseState>((set) => ({
   turnSuit: null,
   generatedCards: null,
   lastWinner: 0,
+  team_1_penaltyCards: 10,
+  team_2_penaltyCards: 10,
+  trumpSetter: 1,
 
   setTrumpSuit: (newSuit: Suit | null) => set({ trumpSuit: newSuit }),
   setTrumpSelected: (selected: boolean) => set({ trumpSelected: selected }),
@@ -98,4 +107,9 @@ export const useStore = create<UseState>((set) => ({
   setGeneratedCards: (newCards: Card[] | null) =>
     set({ generatedCards: newCards }),
   setLastWinner: (newWinner: number | null) => set({ lastWinner: newWinner }),
+  setTeam_1_penaltyCards: (newNumber: number) =>
+    set({ team_1_penaltyCards: newNumber }),
+  setTeam_2_penaltyCards: (newNumber: number) =>
+    set({ team_2_penaltyCards: newNumber }),
+  setTrumpSetter: (newSetter: number) => set({ trumpSetter: newSetter }),
 }));

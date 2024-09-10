@@ -13,6 +13,10 @@ import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import { GameOverDialog } from "../game-over";
+import Winner1Mobile from "../collecting-cards/mobile/winner-1-mobile";
+import Winner2Mobile from "../collecting-cards/mobile/winner-2-mobile";
+import Winner3Mobile from "../collecting-cards/mobile/winner-3-mobile";
+import Winner4Mobile from "../collecting-cards/mobile/winner-4-mobile";
 
 interface GameBoardProps {
   onRestart:()=> void;
@@ -85,10 +89,10 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                   </div>
                 ) : (
                   <div className="flex flex-col">
-                    {winningCard === player_1_card && <Winner1 />}
-                    {winningCard === player_2_card && <Winner2 />}
-                    {winningCard === player_3_card && <Winner3 />}
-                    {winningCard === player_4_card && <Winner4 />}
+                    {winningCard === player_1_card && <Winner1Mobile />}
+                    {winningCard === player_2_card && <Winner2Mobile />}
+                    {winningCard === player_3_card && <Winner3Mobile />}
+                    {winningCard === player_4_card && <Winner4Mobile />}
                   </div>
                 )}
               </div>

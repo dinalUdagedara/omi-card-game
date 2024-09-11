@@ -8,11 +8,12 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import CardComponent from "../cards/card";
+import CardComponent from "../../cards/card";
 import { Card } from "@/utils/types";
-import { SuitSelector } from "./suit-selector";
+import { SuitSelector } from "../suit-selector";
 import { useStore } from "@/store/state";
 import { motion } from "framer-motion";
+import { SuitSelectorMobile } from "./suit-selector-mobile";
 
 const exampleCards: Card[] = [
   { suit: "clubs", value: "10" },
@@ -26,7 +27,7 @@ interface SuitDrawerProps {
   onClose: () => void;
 }
 
-export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
+export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const setTrumpSelected = useStore((state) => state.setTrumpSelected);
   const trumpSuit = useStore((state) => state.trumpSuit);
@@ -38,7 +39,7 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
   return (
     <Drawer open={true} onClose={onClose}>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-[600px]">
+        <div className="mx-auto w-full max-w-md">
           <DrawerHeader>
             <DrawerTitle>Select Trumps</DrawerTitle>
           </DrawerHeader>
@@ -68,8 +69,8 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
               })}
             </div>
 
-            <div>
-              <SuitSelector />
+            <div className="">
+              <SuitSelectorMobile />
             </div>
           </div>
           <DrawerFooter>

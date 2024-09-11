@@ -29,6 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 import { useIsMobile } from "./mobile/game-play-mobile";
 import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
+import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -369,7 +370,6 @@ export default function Board() {
     }
   }
 
-
   function resetTeamPoints() {
     setTeam1Points(0);
     setTeam2Points(0);
@@ -705,12 +705,18 @@ export default function Board() {
 
           {lastWinner === 0 && dealtHands[0]?.hand.length > 7 ? (
             <div>
-              {!isTrumpSelected && (
-                <SuitDrawer
-                  userHand={dealtHands[0].hand}
-                  onClose={handleCloseDrawer}
-                />
-              )}
+              {!isTrumpSelected &&
+                (isMobile ? (
+                  <SuitDrawerMobile
+                    userHand={dealtHands[0].hand}
+                    onClose={handleCloseDrawer}
+                  />
+                ) : (
+                  <SuitDrawer
+                    userHand={dealtHands[0].hand}
+                    onClose={handleCloseDrawer}
+                  />
+                ))}
             </div>
           ) : null}
         </div>

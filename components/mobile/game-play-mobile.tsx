@@ -9,6 +9,8 @@ import {
   setTurnSuit,
   shuffleDeck,
   setLastWinner,
+  checkTurnSuitCards,
+  getPlayerXP,
 } from "@/utils/game-logic";
 import { Card, Suit, suits } from "@/utils/types";
 import { useState, useEffect } from "react";
@@ -120,6 +122,8 @@ const GamePlayMobile = () => {
   const trumpSetter = useStore((state) => state.trumpSetter);
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
 
+  const playerXp = getPlayerXP();
+
   function initailSetup() {
     //Creating and Shuffling the Deck
     const deck = createDeck();
@@ -146,13 +150,15 @@ const GamePlayMobile = () => {
     );
     setSelectedCardByUser(selectedCard);
 
-    if (selectedCard) {
+    if (selectedCard && !generatedCards) {
       setTurnSuit(selectedCard.suit);
       setturnSuit(selectedCard.suit);
     }
   }
 
   function handleSubmit() {
+    if (turnSuit && selectedCardByUser)
+      checkTurnSuitCards(selectedCardByUser, dealtHands[0].hand, turnSuit);
     setIsSubmitted(true);
     selectWinningCard();
   }
@@ -467,7 +473,7 @@ const GamePlayMobile = () => {
     if (!isSubmitted && isCardsGenerated && selectedCardByUser) {
       setTimeout(() => {
         handleSubmit();
-      }, 3000);
+      }, 2000);
     }
   }
 
@@ -475,7 +481,7 @@ const GamePlayMobile = () => {
     if (isSubmitted) {
       setTimeout(() => {
         handleNextTurn();
-      }, 3000);
+      }, 2000);
     }
   }
 
@@ -576,6 +582,7 @@ const GamePlayMobile = () => {
     <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
       <div>
         <div>
+          player Xp : {playerXp}
           <ScoreBoardMobile />
         </div>
         <div>
@@ -621,7 +628,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full flex w-full min-w-64 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75"
+            className="h-full max-h-80 flex max-w-20  min-w-64 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -629,7 +636,7 @@ const GamePlayMobile = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full h-full justify-center items-center">
+            <div className="w-full h-full justify-center  items-center ">
               <GameBoardMobile
                 onRestart={restartGame}
                 onStart={handleSelectOtherHands}
@@ -643,7 +650,6 @@ const GamePlayMobile = () => {
           <div className="">
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center">
-                {" "}
                 <OtherDecksMobile userHand={dealtHands[1].hand} />
                 <Avatar className="w-14 h-14 shadow-md">
                   <AvatarImage src={`/assets/player2.png`} />
@@ -659,13 +665,13 @@ const GamePlayMobile = () => {
           </div>
         </div>
       </div>
-      <div className="mt-auto relative">
-        <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative">
+      <div className="mt-auto relative min-mt-28">
+        <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative mt-20">
           <div className="flex w-full justify-center items-center">
             <div className="">
               {dealtHands.length > 0 && dealtHands[0]?.hand ? (
-                <div className="relative w-full pl-32">
-                  <div className="absolute -bottom-8 left-0 right-0">
+                <div className="relative w-full ">
+                  <div className="">
                     <UserDeckMobile
                       userHand={dealtHands[0].hand}
                       onCardSelect={handleCardSelectDeck}
@@ -673,15 +679,15 @@ const GamePlayMobile = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-row justify-center w-full items-center my-5">
+                <div className="flex flex-row justify-center w-full items-center mt-14">
                   <Skeleton className="h-[125px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex w-full justify-center mt-16 pr-6">
-            <Avatar className="w-16 h-16 shadow-md">
+          <div className="flex w-full justify-center mt-5 pr-6 ">
+            <Avatar className="w-16 h-16 shadow-md mb-2">
               <AvatarImage src={`/assets/user.jpg`} />
               <AvatarFallback>
                 <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />

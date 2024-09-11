@@ -16,8 +16,8 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
 
   return (
-    <div className="h-24 w-60">
-      <div className="relative ">
+    <div className="h-16 w-60  flex justify-center mr-5">
+      <div className="bg-black flex justify-center">
         {userHand.map((card, index) => {
           const angle = (index - (userHand.length - 1) / 2) * 10;
 
@@ -31,8 +31,8 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
               }}
             >
               <motion.div
-                initial={{ opacity: 0, x: -200 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: -200 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
               >
                 <button
@@ -42,7 +42,7 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
                   onClick={() => onCardSelect(index)}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 hover:shadow-lg"
                 >
-                  <CardComponent card={card} />
+                  <CardComponentMobile card={card} />
                 </button>
               </motion.div>
             </div>

@@ -10,62 +10,68 @@ const Winner4Mobile = () => {
   const player_4_card = CardStore((state) => state.player_4_card);
 
   return (
-    <div>
+    <div className="flex flex-row justify-between">
       {player_4_card && (
-        <div className="flex flex-row w-full h-full justify-center items-center">
-          <motion.div
-            className="flex justify-center items-center w-24 h-36"
-            animate={{
-              scale: [1, 1.5, 1.5, 1, 1],
-              rotate: [0, 0, 180, 180, 0],
-              borderRadius: ["0%", "0%", "50%", "50%", "0%"],
-            }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              times: [0, 0.2, 0.5, 0.8, 1],
-              repeatDelay: 1,
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 1, x: 0 }}
-              animate={{ opacity: 0, x: -200 }}
-              transition={{ duration: 0.8, delay: 2.0 }} 
-            >
-              <CardComponentMobile card={player_4_card} />
-            </motion.div>
-          </motion.div>
-
-          <div className="flex flex-col justify-between h-full gap-10 w-full">
-            {player_3_card && (
-              <motion.div
-                initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.8, delay: 2.0 }} // Adding delay for sequential animation
-              >
-                <CardComponentMobile card={player_3_card} />
-              </motion.div>
-            )}
-
-            {player_1_card && (
+        <div className="flex flex-row w-full justify-between items-center min-h-72 gap-5">
+          <div className="w-1/3 min-w-16">
+            {/* <motion.div
+              className="flex justify-center items-center w-24 h-36"
+              animate={{
+                scale: [1, 1.5, 1.5, 1, 1],
+                rotate: [0, 0, 180, 180, 0],
+                borderRadius: ["0%", "0%", "50%", "50%", "0%"],
+              }}
+              transition={{
+                duration: 2,
+                ease: "easeInOut",
+                times: [0, 0.2, 0.5, 0.8, 1],
+                repeatDelay: 1,
+              }}
+            > */}
               <motion.div
                 initial={{ opacity: 1, x: 0 }}
                 animate={{ opacity: 0, x: -200 }}
-                transition={{ duration: 0.8, delay: 2.0 }}
+                transition={{ duration: 0.8,  }}
               >
-                <CardComponentMobile card={player_1_card} />
+                <CardComponentMobile card={player_4_card} />
+              </motion.div>
+            {/* </motion.div> */}
+          </div>
+          <div className="w-1/3">
+            <div className="flex flex-col justify-between h-full gap-10 w-full">
+              {player_3_card && (
+                <motion.div
+                  initial={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 0, x: -200 }}
+                  transition={{ duration: 0.8 }} // Adding delay for sequential animation
+                >
+                  <CardComponentMobile card={player_3_card} />
+                </motion.div>
+              )}
+
+              {player_1_card && (
+                <motion.div
+                  initial={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 0, x: -200 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <CardComponentMobile card={player_1_card} />
+                </motion.div>
+              )}
+            </div>
+          </div>
+
+          <div className="w-1/3">
+            {player_2_card && (
+              <motion.div
+                initial={{ opacity: 1, x: 0 }}
+                animate={{ opacity: 0, x: -400 }}
+                transition={{ duration: 0.8 }}
+              >
+                <CardComponentMobile card={player_2_card} />
               </motion.div>
             )}
           </div>
-          {player_2_card && (
-            <motion.div
-              initial={{ opacity: 1, x: 0 }}
-              animate={{ opacity: 0, x: -200 }}
-              transition={{ duration: 0.8, delay: 2.0 }}
-            >
-              <CardComponentMobile card={player_2_card} />
-            </motion.div>
-          )}
         </div>
       )}
     </div>

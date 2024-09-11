@@ -4,6 +4,7 @@ export const suits: Suit[] = ["hearts", "diamonds", "clubs", "spades"];
 export const values: Value[] = ["7", "8", "9", "10", "J", "Q", "K", "A"];
 let trumpSuit: TrumpSuit = null;
 let turnSuit: TrumpSuit = null;
+let playerXP: number = 100;
 
 let lastWinnerNumber: number | null = null;
 export function createDeck(): Card[] {
@@ -38,6 +39,10 @@ export function dealCards(deck: Card[], numberOfPlayers: number): Player[] {
 
 export function setTrump(suit: Suit | null): void {
   trumpSuit = suit;
+}
+
+export function getPlayerXP(): number {
+  return playerXP;
 }
 
 export function getTrump(): TrumpSuit {
@@ -126,6 +131,30 @@ export function determineTrickWinner(cards: Card[]): Card {
   });
 
   return winningCard;
+}
+
+export function checkTurnSuitCards(
+  playedCard: Card,
+  cardDeck: Card[],
+  turnSuit: Suit
+): void {
+  const hasTurnSuitCards = cardDeck.some((card) => card.suit === turnSuit);
+  const sameSuitcard = playedCard.suit === turnSuit;
+
+  if (hasTurnSuitCards && !sameSuitcard) {
+    // Player had cards from the turn suit but played something else, reduce 10 XP
+    playerXP = Math.max(0, playerXP - 10); // Ensure XP doesn't go below 0
+    console.log("Player XP reduced: ", playerXP);
+  }
+  console.log("Card deck passed: ", cardDeck);
+  console.log("Turn suit now: ", turnSuit);
+
+  console.log("hasTurnSuitCards: ", hasTurnSuitCards);  
+  console.log("Played card suit: ", playedCard.suit);
+  console.log("sameSuitcard: ", sameSuitcard);
+
+
+  console.log("Violation occurred: ", hasTurnSuitCards && !sameSuitcard);
 }
 
 function getValueRank(value: Value): number {

@@ -41,30 +41,31 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
                   delay: index * 0.2,
                 }}
               >
-                <motion.div
-                  initial={{ boxShadow: "none" }}
-                  animate={{
-                    boxShadow: isUserTurn
-                      ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
-                      : "none", // No shadow when it's not user's turn
-                  }}
-                  transition={{
-                    duration: 0.8,
-                    delay: index * 0.2,
-                    repeat: isUserTurn ? Infinity : 0, 
-                    repeatType: "reverse",
-                  }}
+                <button
+                  disabled={
+                    !!selectedCardByUser || !isCardsGenerated || !trumpSuit
+                  }
+                  onClick={() => onCardSelect(index)}
+                  className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
                 >
-                  <button
-                    disabled={
-                      !!selectedCardByUser || !isCardsGenerated || !trumpSuit
-                    }
-                    onClick={() => onCardSelect(index)}
-                    className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
+                  {" "}
+                  <motion.div
+                    initial={{ boxShadow: "none" }}
+                    animate={{
+                      boxShadow: isUserTurn
+                        ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
+                        : "none", // No shadow when it's not user's turn
+                    }}
+                    transition={{
+                      duration: 0.8,
+                      delay: index * 0.2,
+                      repeat: isUserTurn ? Infinity : 0,
+                      repeatType: "reverse",
+                    }}
                   >
-                    <CardComponentMobile card={card} />
-                  </button>
-                </motion.div>
+                    <CardComponentMobile card={card} />{" "}
+                  </motion.div>
+                </button>
               </motion.div>
             </div>
           );

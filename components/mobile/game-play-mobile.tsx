@@ -590,8 +590,7 @@ const GamePlayMobile = () => {
     <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
       <div>
         <div>
-          player Xp : {playerXp}
-          {isUserTurn ? <p> isUserTurn</p> : <p> Not User Turn </p>}
+          {/* player Xp : {playerXp} */}
           <ScoreBoardMobile />
         </div>
         <div>

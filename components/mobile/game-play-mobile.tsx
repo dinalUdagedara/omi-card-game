@@ -121,6 +121,8 @@ const GamePlayMobile = () => {
   );
   const trumpSetter = useStore((state) => state.trumpSetter);
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
+  const isUserTurn = useStore((state) => state.isUserTurn);
+  const setIsUserTurn = useStore((state) => state.setIsUserTurn);
 
   const playerXp = getPlayerXP();
 
@@ -137,6 +139,7 @@ const GamePlayMobile = () => {
   }
 
   function handleCardSelectDeck(cardIndex: number) {
+    setIsUserTurn(false);
     const player1Hand = dealtHands[0].hand;
     const selectedCard = player1Hand[cardIndex];
 
@@ -184,6 +187,11 @@ const GamePlayMobile = () => {
         selectOtherHandsWithoutTurnSuit(chosenCard, 3);
         console.log("chosen card without the turnsuit", chosenCard);
       }
+    }
+    if (selectedCardByUser) {
+      setIsUserTurn(false);
+    } else {
+      setIsUserTurn(true);
     }
 
     console.log("turnSuit", turnSuit);
@@ -583,6 +591,7 @@ const GamePlayMobile = () => {
       <div>
         <div>
           player Xp : {playerXp}
+          {isUserTurn ? <p> isUserTurn</p> : <p> Not User Turn </p>}
           <ScoreBoardMobile />
         </div>
         <div>

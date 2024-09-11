@@ -15,6 +15,7 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
   const isTrumpSelected = useStore((state) => state.trumpSelected);
   const selectedCardByUser = useStore((state) => state.selectedCardByUser);
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
+  const isUserTurn = useStore((state) => state.isUserTurn);
 
   return (
     <div className="w-full flex justify-center ">
@@ -33,10 +34,25 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
               <motion.div
                 initial={{ opacity: 0, y: 20, rotateY: 180 }}
                 animate={{ opacity: 1, y: 0, rotateY: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.3}}
+                transition={{ duration: 0.8, delay: index * 0.3 }}
                 style={{ transformStyle: "preserve-3d" }}
               >
-                <CardComponent card={card} />
+                <motion.div
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow: isUserTurn
+                      ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
+                      : "none", // No shadow when it's not user's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    delay: index * 0.2,
+                    repeat: isUserTurn ? Infinity : 0,
+                    repeatType: "reverse",
+                  }}
+                >
+                  <CardComponent card={card} />
+                </motion.div>
               </motion.div>
             ) : (
               <div>

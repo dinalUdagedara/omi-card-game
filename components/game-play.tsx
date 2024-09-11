@@ -108,6 +108,8 @@ export default function Board() {
   );
   const trumpSetter = useStore((state) => state.trumpSetter);
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
+  const isUserTurn = useStore((state) => state.isUserTurn);
+  const setIsUserTurn = useStore((state) => state.setIsUserTurn);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -122,6 +124,7 @@ export default function Board() {
   }
 
   function handleCardSelectDeck(cardIndex: number) {
+    setIsUserTurn(false);
     const player1Hand = dealtHands[0].hand;
     const selectedCard = player1Hand[cardIndex];
 
@@ -167,6 +170,12 @@ export default function Board() {
         selectOtherHandsWithoutTurnSuit(chosenCard, 3);
         console.log("chosen card without the turnsuit", chosenCard);
       }
+    }
+
+    if (selectedCardByUser) {
+      setIsUserTurn(false);
+    } else {
+      setIsUserTurn(true);
     }
 
     console.log("turnSuit", turnSuit);
@@ -310,11 +319,55 @@ export default function Board() {
     resetCards();
   }
 
-function setStarterForRound() {
-  const winnerIndex = (roundNumber - 1) % 4; // Cycles through 0, 1, 2, 3
-  handleLastWinner(winnerIndex);
-  setRandomSuit();
-}
+  function setStarterForRound() {
+    switch (roundNumber) {
+      case 1:
+        handleLastWinner(1);
+        setRandomSuit();
+        setTrumpSetter(2);
+        break;
+      case 2:
+        handleLastWinner(2);
+        setRandomSuit();
+        setTrumpSetter(1);
+        break;
+      case 3:
+        handleLastWinner(3);
+        setRandomSuit();
+        setTrumpSetter(2);
+        break;
+      case 4:
+        handleLastWinner(0);
+        setRandomSuit();
+        setTrumpSetter(1);
+        break;
+      case 5:
+        handleLastWinner(1);
+        setRandomSuit();
+        setTrumpSetter(2);
+        break;
+      case 6:
+        handleLastWinner(2);
+        setRandomSuit();
+        setTrumpSetter(1);
+        break;
+      case 7:
+        handleLastWinner(3);
+        setRandomSuit();
+        setTrumpSetter(2);
+        break;
+      case 8:
+        handleLastWinner(0);
+        setRandomSuit();
+        setTrumpSetter(1);
+        break;
+      case 9:
+        handleLastWinner(1);
+        setRandomSuit();
+        setTrumpSetter(2);
+        break;
+    }
+  }
 
 
   function resetTeamPoints() {

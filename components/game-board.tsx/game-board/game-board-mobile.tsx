@@ -98,7 +98,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                       className="flex justify-center items-center"
                       initial={{ opacity: 0, x: -100 }} // Start  values
                       animate={{ opacity: 1, x: 0 }} // end to these values
-                      transition={{ duration: 0.8, delay: 1. }} // Animation duration
+                      transition={{ duration: 0.8, delay: 1 }} // Animation duration
                     >
                       <CardComponentMobile card={player_4_card} />
                     </motion.div>

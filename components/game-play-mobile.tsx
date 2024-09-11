@@ -20,11 +20,13 @@ import { useStore } from "@/store/state";
 import { CardStore } from "@/store/player-card-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import ScoreBoardMobile from "../game-board.tsx/score-board/score-board-mobile";
-import { OtherDecksMobile } from "../decks/mobile/other-decks-mobile";
-import GameBoardMobile from "../game-board.tsx/game-board/game-board-mobile";
-import { UserDeckMobile } from "../decks/user-deck-mobile";
-import Penaltycards from "../game-board.tsx/penalty-cards/penalty-cards-mobile";
+import ScoreBoardMobile from "./game-board.tsx/score-board/score-board-mobile";
+import { OtherDecksMobile } from "./decks/mobile/other-decks-mobile";
+import GameBoardMobile from "./game-board.tsx/game-board/game-board-mobile";
+import { UserDeckMobile } from "./decks/user-deck-mobile";
+import Penaltycards from "./game-board.tsx/penalty-cards/penalty-cards-mobile";
+import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
+import { FinishStateStore } from "@/store/finish-round-state";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -123,6 +125,20 @@ const GamePlayMobile = () => {
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setIsUserTurn = useStore((state) => state.setIsUserTurn);
+  const setwonCallingTrumps = FinishStateStore(
+    (state) => state.setwonCallingTrumps
+  );
+  const setwonWithoutCallingTrumps = FinishStateStore(
+    (state) => state.setwonWithoutCallingTrumps
+  );
+  const setlostCallingTrumps = FinishStateStore(
+    (state) => state.setlostCallingTrumps
+  );
+  const setlostWithoutCallingTrumps = FinishStateStore(
+    (state) => state.setlostWithoutCallingTrumps
+  );
+  const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
+  const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
 
   const playerXp = getPlayerXP();
 
@@ -285,20 +301,27 @@ const GamePlayMobile = () => {
     } else {
       if (roundWinners === 1) {
         if (trumpSetter === 1) {
+          // won without telling trumps
+          setwonWithoutCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 1;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         } else {
+          // won  telling trumps
+          setwonCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 2;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         }
-
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
       } else if (roundWinners === 2) {
         if (trumpSetter === 2) {
+          // lost without telling trumps
+          setlostWithoutCallingTrumps(true);
           const remainingPenaltyCards = team1PenaltyCards - 1;
           setTeam_1_penaltyCards(remainingPenaltyCards);
         } else {
+          // lost  telling trumps
+          setlostCallingTrumps(true);
           const remainingPenaltyCards = team1PenaltyCards - 2;
           setTeam_1_penaltyCards(remainingPenaltyCards);
         }
@@ -306,6 +329,7 @@ const GamePlayMobile = () => {
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
+      setDialogOpen(true);
       setTurnNumber(1);
       const nextRoundNumber = roundNumber !== null ? roundNumber + 1 : 1;
       setRoundNumber(nextRoundNumber);
@@ -588,6 +612,14 @@ const GamePlayMobile = () => {
 
   return (
     <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
+      {/* Dialog after a Round  */}
+
+      {isDialogOpen && (
+        <div className="bg-black w-full">
+          <RoundOverDialogMobile />
+        </div>
+      )}
+
       <div>
         <div>
           {/* player Xp : {playerXp} */}

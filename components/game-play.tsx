@@ -27,7 +27,7 @@ import Scoreboard from "./game-board.tsx/score-board/score-board";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
-import { useIsMobile } from "./mobile/game-play-mobile";
+import { useIsMobile } from "./game-play-mobile";
 import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
 import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
 

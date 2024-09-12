@@ -91,14 +91,14 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                 )}
               </div>
             ) : (
-              <div className="flex flex-row w-full  justify-between items-center  min-h-72 gap-5 mt-10 ">
+              <div className="flex flex-row w-full justify-between items-center min-h-72 gap-5">
                 <div className="w-1/3 min-w-16">
                   {player_4_card && !winningCard && (
                     <motion.div
                       className="flex justify-center items-center"
                       initial={{ opacity: 0, x: -100 }} // Start  values
                       animate={{ opacity: 1, x: 0 }} // end to these values
-                      transition={{ duration: 0.8, delay: 1.6 }} // Animation duration
+                      transition={{ duration: 0.8, delay: 1 }} // Animation duration
                     >
                       <CardComponentMobile card={player_4_card} />
                     </motion.div>
@@ -111,7 +111,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                       <motion.div
                         initial={{ opacity: 0, y: -50 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 1.2 }} // Adding delay for animation
+                        transition={{ duration: 0.8, delay: 0.8 }} // Adding delay for animation
                       >
                         <CardComponentMobile card={player_3_card} />
                       </motion.div>
@@ -135,7 +135,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
                       className="flex justify-center items-center"
                       initial={{ opacity: 0, x: 50 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
+                      transition={{ duration: 0.5, delay: 0.6 }}
                     >
                       <CardComponentMobile card={player_2_card} />
                     </motion.div>

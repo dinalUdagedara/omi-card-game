@@ -39,7 +39,7 @@ const Winner4 = () => {
             {player_3_card && (
               <motion.div
                 initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 0, x: -100 }}
+                animate={{ opacity: 0, x: -200 }}
                 transition={{ duration: 0.8, delay: 2.0 }} // Adding delay for sequential animation
               >
                 <CardComponent card={player_3_card} />

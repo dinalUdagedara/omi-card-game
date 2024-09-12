@@ -1,5 +1,5 @@
 import Board from "./game-play";
-import GamePlayMobile from "./mobile/game-play-mobile";
+import GamePlayMobile from "./game-play-mobile";
 
 const GameScreen = () => {
 

@@ -105,8 +105,34 @@ export const exampleCardSet: Card[] = [
   },
 ];
 
+export const roundFinishMessages: RoundFinishMessage[] = [
+  {
+    value: 1,
+    title: "Won Without Calling Trumps",
+    message: "Gained 2 tokens",
+  },
+  {
+    value: 2,
+    title: "Won Calling Trumps",
+    message: "Gained 1 token",
+  },
+  {
+    value: 3,
+    title: "Lost Without Calling Trumps",
+    message: "Lost 1 token",
+  },
+  {
+    value: 4,
+    title: "Lost Calling Trumps",
+    message: "Lost 2 tokens",
+  },
+];
 
-
+export interface RoundFinishMessage {
+  value: number;
+  title: string;
+  message: string;
+}
 
 export interface Card {
   suit: Suit;

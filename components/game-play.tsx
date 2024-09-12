@@ -27,8 +27,12 @@ import Scoreboard from "./game-board.tsx/score-board/score-board";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
-import { useIsMobile } from "./mobile/game-play-mobile";
+import { useIsMobile } from "./game-play-mobile";
 import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
+import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
+import { FinishStateStore } from "@/store/finish-round-state";
+import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
+import { motion } from "framer-motion";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -108,6 +112,25 @@ export default function Board() {
   );
   const trumpSetter = useStore((state) => state.trumpSetter);
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
+  const isUserTurn = useStore((state) => state.isUserTurn);
+  const setIsUserTurn = useStore((state) => state.setIsUserTurn);
+  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
+  const isRoundOver = FinishStateStore((state) => state.isRoundOver);
+
+  const setwonCallingTrumps = FinishStateStore(
+    (state) => state.setwonCallingTrumps
+  );
+  const setwonWithoutCallingTrumps = FinishStateStore(
+    (state) => state.setwonWithoutCallingTrumps
+  );
+  const setlostCallingTrumps = FinishStateStore(
+    (state) => state.setlostCallingTrumps
+  );
+  const setlostWithoutCallingTrumps = FinishStateStore(
+    (state) => state.setlostWithoutCallingTrumps
+  );
+  const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
+  const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -122,6 +145,7 @@ export default function Board() {
   }
 
   function handleCardSelectDeck(cardIndex: number) {
+    setIsUserTurn(false);
     const player1Hand = dealtHands[0].hand;
     const selectedCard = player1Hand[cardIndex];
 
@@ -167,6 +191,12 @@ export default function Board() {
         selectOtherHandsWithoutTurnSuit(chosenCard, 3);
         console.log("chosen card without the turnsuit", chosenCard);
       }
+    }
+
+    if (selectedCardByUser) {
+      setIsUserTurn(false);
+    } else {
+      setIsUserTurn(true);
     }
 
     console.log("turnSuit", turnSuit);
@@ -241,9 +271,11 @@ export default function Board() {
       if (team1Points > team2Points) {
         setRoundWinners(1);
         toast("This Round is Won by Team 1 ");
+        setRoundOver(true);
       } else {
         setRoundWinners(2);
         toast("This Round is Won by Team 2 ");
+        setRoundOver(true);
       }
       resetStates();
     } else {
@@ -260,26 +292,35 @@ export default function Board() {
     } else {
       if (roundWinners === 1) {
         if (trumpSetter === 1) {
+          // won  telling trumps
+          setwonCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 1;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         } else {
+          // won without telling trumps
+          setwonWithoutCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 2;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         }
-
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
       } else if (roundWinners === 2) {
         if (trumpSetter === 2) {
+          // lost without telling trumps
+          setlostWithoutCallingTrumps(true);
           const remainingPenaltyCards = team1PenaltyCards - 1;
           setTeam_1_penaltyCards(remainingPenaltyCards);
         } else {
+          // lost  telling trumps
+          setlostCallingTrumps(true);
           const remainingPenaltyCards = team1PenaltyCards - 2;
           setTeam_1_penaltyCards(remainingPenaltyCards);
         }
+
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
+      setDialogOpen(true);
       setTurnNumber(1);
       const nextRoundNumber = roundNumber !== null ? roundNumber + 1 : 1;
       setRoundNumber(nextRoundNumber);
@@ -310,12 +351,68 @@ export default function Board() {
     resetCards();
   }
 
-function setStarterForRound() {
-  const winnerIndex = (roundNumber - 1) % 4; // Cycles through 0, 1, 2, 3
-  handleLastWinner(winnerIndex);
-  setRandomSuit();
-}
+  // function setStarterForRound() {
+  //   switch (roundNumber) {
+  //     case 1:
+  //       handleLastWinner(1);
+  //       setRandomSuit();
+  //       setTrumpSetter(2);
+  //       break;
+  //     case 2:
+  //       handleLastWinner(2);
+  //       setRandomSuit();
+  //       setTrumpSetter(1);
+  //       break;
+  //     case 3:
+  //       handleLastWinner(3);
+  //       setRandomSuit();
+  //       setTrumpSetter(2);
+  //       break;
+  //     case 4:
+  //       handleLastWinner(0);
+  //       setRandomSuit();
+  //       setTrumpSetter(1);
+  //       break;
+  //     case 5:
+  //       handleLastWinner(1);
+  //       setRandomSuit();
+  //       setTrumpSetter(2);
+  //       break;
+  //     case 6:
+  //       handleLastWinner(2);
+  //       setRandomSuit();
+  //       setTrumpSetter(1);
+  //       break;
+  //     case 7:
+  //       handleLastWinner(3);
+  //       setRandomSuit();
+  //       setTrumpSetter(2);
+  //       break;
+  //     case 8:
+  //       handleLastWinner(0);
+  //       setRandomSuit();
+  //       setTrumpSetter(1);
+  //       break;
+  //     case 9:
+  //       handleLastWinner(1);
+  //       setRandomSuit();
+  //       setTrumpSetter(2);
+  //       break;
+  //   }
+  // }
 
+  function setStarterForRound() {
+    const playerCycle = [1, 2, 3, 0]; // player
+    const trumpSetterCycle = [2, 1]; // Alternating between team 2 and team 1
+    const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
+    const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
+    const starterPlayer = playerCycle[playerIndex];  
+    const trumpSetterNumber = trumpSetterCycle[trumpSetterIndex];
+
+    setTrumpSetter(trumpSetterNumber);
+    handleLastWinner(starterPlayer);
+    setRandomSuit();
+}
 
   function resetTeamPoints() {
     setTeam1Points(0);
@@ -520,8 +617,23 @@ function setStarterForRound() {
       }
   }, [turnSuit, isCardsGenerated]);
 
+  useEffect(() => {
+    if (!isMobile)
+      if (isRoundOver) {
+        handleNextTurnofShuffling();
+      }
+  }, [isSubmitted]);
+
   return (
     <div className="hidden  w-full h-screen sm:flex flex-col ">
+      {/* Dialog after a Round  */}
+
+      {isDialogOpen && (
+        <div className=" ">
+          <RoundOverDialogMobile />
+        </div>
+      )}
+
       <div className="flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
         {/* All the other things */}
         <div className="flex justify-end gap-4">
@@ -530,10 +642,26 @@ function setStarterForRound() {
             {dealtHands.length > 0 && dealtHands[2]?.hand ? (
               <div className="flex flex-row justify-center items-center">
                 <OtherDecks userHand={dealtHands[2].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player3.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 2
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md rounded-full">
+                    <AvatarImage src={`/assets/player3.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
+
                 <div className="font-bold text-gray-100 tracking-wide m-2">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 3
@@ -570,10 +698,24 @@ function setStarterForRound() {
             {dealtHands.length > 0 && dealtHands[3]?.hand ? (
               <div className="flex flex-col justify-center items-center">
                 <OtherDecks userHand={dealtHands[3].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player4.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 3
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md">
+                    <AvatarImage src={`/assets/player4.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
                 <div className="font-bold text-gray-100 tracking-wide m-2">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 4
@@ -614,10 +756,24 @@ function setStarterForRound() {
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center ">
                 <OtherDecks userHand={dealtHands[1].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player2.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 1
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md">
+                    <AvatarImage src={`/assets/player2.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
                 <div className="font-bold text-gray-100 tracking-wide m-2">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 2
@@ -652,12 +808,19 @@ function setStarterForRound() {
 
           {lastWinner === 0 && dealtHands[0]?.hand.length > 7 ? (
             <div>
-              {!isTrumpSelected && (
-                <SuitDrawer
-                  userHand={dealtHands[0].hand}
-                  onClose={handleCloseDrawer}
-                />
-              )}
+              {!isTrumpSelected &&
+                !isRoundOver &&
+                (isMobile ? (
+                  <SuitDrawerMobile
+                    userHand={dealtHands[0].hand}
+                    onClose={handleCloseDrawer}
+                  />
+                ) : (
+                  <SuitDrawer
+                    userHand={dealtHands[0].hand}
+                    onClose={handleCloseDrawer}
+                  />
+                ))}
             </div>
           ) : null}
         </div>
@@ -696,12 +859,26 @@ function setStarterForRound() {
 
           {/* Player Avatar */}
           <div className="flex justify-start items-start p-5">
-            <Avatar className="w-20 h-20 shadow-md">
-              <AvatarImage src={`/assets/user.jpg`} />
-              <AvatarFallback>
-                <Skeleton className="h-full w-full  rounded-full bg-slate-600" />
-              </AvatarFallback>
-            </Avatar>
+            <motion.div
+              className=" rounded-full"
+              initial={{ boxShadow: "none" }}
+              animate={{
+                boxShadow:
+                  lastWinner === 0
+                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+                    : "none", // No shadow when it's not user's turn
+              }}
+              transition={{
+                duration: 0.8,
+              }}
+            >
+              <Avatar className="w-16 h-16 ">
+                <AvatarImage src={`/assets/user.jpg`} />
+                <AvatarFallback>
+                  <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
+                </AvatarFallback>
+              </Avatar>
+            </motion.div>
           </div>
 
           {/* Trump Suit Section */}

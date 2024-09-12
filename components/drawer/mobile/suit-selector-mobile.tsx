@@ -12,7 +12,7 @@ import { useStore } from "@/store/state";
 import { useState } from "react";
 import Image from "next/image";
 
-export function SuitSelector() {
+export function SuitSelectorMobile() {
   const [selectedSuit, setSelectedSuit] = useState<Suit | null>(null);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   function handleSuitSelected(suit: Suit) {
@@ -20,25 +20,23 @@ export function SuitSelector() {
     setTrumpSuit(suit);
   }
   return (
-    <Carousel className="w-full">
+    <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
         {suitsWithLogos.map((suit, index) => (
-          <div 
-          key={index} 
-          className="flex justify-center w-full">
+          <div key={index}>
             <CarouselItem
               key={index}
-              className="pl-1 basis-24 md:basis-1/2 lg:basis-32"
+              className="w-full pl-1 basis-20 md:basis-1/2 lg:basis-1/3"
             >
               <div className="p-1">
-                <Card className="hover:scale-110 bg-slate-300 rounded-3xl">
+                <Card className="hover:scale-110 bg-slate-300 rounded-2xl">
                   <CardContent
                     className={` ${
-                      selectedSuit === suit.suit ? "bg-slate-400" : ""
+                      selectedSuit === suit.suit ? "bg-slate-400 rounded-3xl" : ""
                     } flex aspect-square items-center justify-center p-6 rounded-lg`}
                   >
                     <button
-                      className="h-full w-full justify-center items-center"
+                      className="h-full w-full justify-center items-center "
                       onClick={() => {
                         handleSuitSelected(suit.suit);
                       }}
@@ -57,7 +55,7 @@ export function SuitSelector() {
                   </CardContent>
                 </Card>
               </div>
-            </CarouselItem>
+            </CarouselItem>{" "}
           </div>
         ))}
       </CarouselContent>

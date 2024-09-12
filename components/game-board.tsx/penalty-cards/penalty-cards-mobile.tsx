@@ -9,7 +9,7 @@ const Penaltycards = () => {
 
   return (
     <div>
-      <div className="flex gap-5">
+      <div className="flex gap-5 mx-5">
         <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
         <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
       </div>

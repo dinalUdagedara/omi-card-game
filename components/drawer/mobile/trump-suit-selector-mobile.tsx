@@ -8,11 +8,12 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import CardComponent from "../cards/card";
+import CardComponent from "../../cards/card";
 import { Card } from "@/utils/types";
-import { SuitSelector } from "./suit-selector";
+import { SuitSelector } from "../suit-selector";
 import { useStore } from "@/store/state";
 import { motion } from "framer-motion";
+import { SuitSelectorMobile } from "./suit-selector-mobile";
 
 const exampleCards: Card[] = [
   { suit: "clubs", value: "10" },
@@ -26,7 +27,7 @@ interface SuitDrawerProps {
   onClose: () => void;
 }
 
-export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
+export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const setTrumpSelected = useStore((state) => state.setTrumpSelected);
   const trumpSuit = useStore((state) => state.trumpSuit);
@@ -38,12 +39,12 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
   return (
     <Drawer open={true} onClose={onClose}>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-[600px]">
+        <div className="mx-auto w-full max-w-md ">
           <DrawerHeader>
             <DrawerTitle>Select Trumps</DrawerTitle>
           </DrawerHeader>
           <div className="p-4 pb-0">
-            <div className="relative flex items-center justify-center h-64">
+            <div className="relative flex items-center justify-center h-56">
               {userHand.slice(0, 4).map((card, index) => {
                 const angle = (index - (exampleCards.length - 1) / 2) * 30;
 
@@ -68,13 +69,14 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
               })}
             </div>
 
-            <div>
-              <SuitSelector />
+            <div className="">
+              <SuitSelectorMobile />
             </div>
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="">
             <DrawerClose asChild>
               <Button
+              className=" rounded-2xl"
                 onClick={() => {
                   setTrumpSelected(true);
                   onClose();

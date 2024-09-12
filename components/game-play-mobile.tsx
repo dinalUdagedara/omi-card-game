@@ -655,7 +655,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full  max-h-80 flex max-w-20  min-w-64 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -673,7 +673,7 @@ const GamePlayMobile = () => {
             </div>
           </div>
         </div>
-        <div className=" flex justify-center items-center">
+        <div className=" flex justify-center items-center   ">
           <div className="">
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center  min-w-[70px]">

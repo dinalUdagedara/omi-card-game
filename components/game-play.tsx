@@ -30,6 +30,7 @@ import { Button } from "./ui/button";
 import { useIsMobile } from "./game-play-mobile";
 import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
 import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
+import { FinishStateStore } from "@/store/finish-round-state";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -111,6 +112,8 @@ export default function Board() {
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setIsUserTurn = useStore((state) => state.setIsUserTurn);
+  const isRoundOver = FinishStateStore((state) => state.isRoundOver);
+
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -705,8 +708,8 @@ export default function Board() {
 
           {lastWinner === 0 && dealtHands[0]?.hand.length > 7 ? (
             <div>
-              {!isTrumpSelected &&
-                (isMobile ? (
+              {(!isTrumpSelected && !isRoundOver) &&
+                (isMobile  ? (
                   <SuitDrawerMobile
                     userHand={dealtHands[0].hand}
                     onClose={handleCloseDrawer}

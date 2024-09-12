@@ -619,7 +619,7 @@ const GamePlayMobile = () => {
       if (isRoundOver) {
         handleNextTurnofShuffling();
       }
-  }, [turnSuit, isCardsGenerated]);
+  }, [isSubmitted]);
 
   return (
     <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">

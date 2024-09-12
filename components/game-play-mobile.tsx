@@ -27,13 +27,14 @@ import { UserDeckMobile } from "./decks/user-deck-mobile";
 import Penaltycards from "./game-board.tsx/penalty-cards/penalty-cards-mobile";
 import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
+import { motion } from "framer-motion";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint 
+      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -365,15 +366,15 @@ const GamePlayMobile = () => {
   }
 
   function setStarterForRound() {
-    const playerCycle = [1, 2, 3,0]; //player
-    const trumpSetterCycle = [1,2]; // Alternating between Player 2 and Player 1
-    
+    const playerCycle = [1, 2, 3, 0]; //player
+    const trumpSetterCycle = [1, 2]; // Alternating between Player 2 and Player 1
+
     const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
     const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
-    
+
     const starterPlayer = playerCycle[playerIndex];
     const trumpSetter = trumpSetterCycle[trumpSetterIndex];
-    
+
     handleLastWinner(starterPlayer);
     setRandomSuit();
     setTrumpSetter(trumpSetter);
@@ -451,9 +452,8 @@ const GamePlayMobile = () => {
       toast("Congratulations Your Team wons the Game");
       setIsGameOver(true);
     }
-
   }
-  
+
   function handleAutomaticSubmit() {
     if (!isSubmitted && isCardsGenerated && selectedCardByUser) {
       setTimeout(() => {
@@ -594,10 +594,26 @@ const GamePlayMobile = () => {
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
-            <Avatar className="w-14 h-14 shadow-md">
-              <AvatarImage src={`/assets/player3.png`} />
-              <AvatarFallback>Dp</AvatarFallback>
-            </Avatar>
+
+            <motion.div
+              className=" rounded-full"
+              initial={{ boxShadow: "none" }}
+              animate={{
+                boxShadow:
+                  lastWinner === 2
+                    ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                    : "none", // No shadow when it's not players's turn
+              }}
+              transition={{
+                duration: 0.8,
+              }}
+            >
+              <Avatar className="w-14 h-14 shadow-md rounded-full">
+                <AvatarImage src={`/assets/player3.png`} />
+                <AvatarFallback>Dp</AvatarFallback>
+              </Avatar>
+            </motion.div>
+
           </div>
         ) : (
           <div className="flex flex-row justify-center w-full items-center gap-5">
@@ -611,15 +627,28 @@ const GamePlayMobile = () => {
         <div className="flex justify-center items-center">
           {dealtHands.length > 0 && dealtHands[3]?.hand ? (
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
-              <Avatar className="w-14 h-14 shadow-md">
-                <AvatarImage src={`/assets/player4.png`} />
-                <AvatarFallback>Dp</AvatarFallback>
-              </Avatar>
+              <motion.div
+                className=" rounded-full"
+                initial={{ boxShadow: "none" }}
+                animate={{
+                  boxShadow:
+                    lastWinner === 3
+                      ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                      : "none", // No shadow when it's not players's turn
+                }}
+                transition={{
+                  duration: 0.8,
+                }}
+              >
+                <Avatar className="w-14 h-14 shadow-md">
+                  <AvatarImage src={`/assets/player4.png`} />
+                  <AvatarFallback>Dp</AvatarFallback>
+                </Avatar>
+              </motion.div>
               <OtherDecksMobile userHand={dealtHands[3].hand} />
             </div>
           ) : (
             <div className="flex flex-col justify-center gap-6 items-center mx-1 ">
-              {" "}
               <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
               <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
             </div>
@@ -651,10 +680,25 @@ const GamePlayMobile = () => {
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center  min-w-[70px]">
                 <OtherDecksMobile userHand={dealtHands[1].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player2.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 1
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md">
+                    <AvatarImage src={`/assets/player2.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
               </div>
             ) : (
               <div className=" w-full flex flex-col justify-center gap-6 items-center  mx-1">
@@ -687,12 +731,26 @@ const GamePlayMobile = () => {
           </div>
 
           <div className="flex w-full justify-center mt-5 pr-6 ">
-            <Avatar className="w-16 h-16 shadow-md mb-2">
-              <AvatarImage src={`/assets/user.jpg`} />
-              <AvatarFallback>
-                <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
-              </AvatarFallback>
-            </Avatar>
+            <motion.div
+              className=" rounded-full"
+              initial={{ boxShadow: "none" }}
+              animate={{
+                boxShadow:
+                  lastWinner === 0
+                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+                    : "none", // No shadow when it's not user's turn
+              }}
+              transition={{
+                duration: 0.8,
+              }}
+            >
+              <Avatar className="w-16 h-16 ">
+                <AvatarImage src={`/assets/user.jpg`} />
+                <AvatarFallback>
+                  <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
+                </AvatarFallback>
+              </Avatar>
+            </motion.div>
           </div>
         </div>
       </div>

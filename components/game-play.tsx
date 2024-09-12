@@ -32,6 +32,7 @@ import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
 import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
+import { motion } from "framer-motion";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -627,15 +628,14 @@ export default function Board() {
 
   return (
     <div className="hidden  w-full h-screen sm:flex flex-col ">
-      
-       {/* Dialog after a Round  */}
+      {/* Dialog after a Round  */}
 
-       {isDialogOpen && (
+      {isDialogOpen && (
         <div className=" ">
           <RoundOverDialogMobile />
         </div>
       )}
-      
+
       <div className="flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
         {/* All the other things */}
         <div className="flex justify-end gap-4">
@@ -644,10 +644,26 @@ export default function Board() {
             {dealtHands.length > 0 && dealtHands[2]?.hand ? (
               <div className="flex flex-row justify-center items-center">
                 <OtherDecks userHand={dealtHands[2].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player3.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 2
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md rounded-full">
+                    <AvatarImage src={`/assets/player3.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
+
                 <div className="font-bold text-gray-100 tracking-wide m-2">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 3
@@ -684,10 +700,24 @@ export default function Board() {
             {dealtHands.length > 0 && dealtHands[3]?.hand ? (
               <div className="flex flex-col justify-center items-center">
                 <OtherDecks userHand={dealtHands[3].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player4.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 3
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md">
+                    <AvatarImage src={`/assets/player4.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
                 <div className="font-bold text-gray-100 tracking-wide m-2">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 4
@@ -728,10 +758,24 @@ export default function Board() {
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center ">
                 <OtherDecks userHand={dealtHands[1].hand} />
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player2.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 1
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-14 h-14 shadow-md">
+                    <AvatarImage src={`/assets/player2.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
                 <div className="font-bold text-gray-100 tracking-wide m-2">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 2
@@ -817,12 +861,26 @@ export default function Board() {
 
           {/* Player Avatar */}
           <div className="flex justify-start items-start p-5">
-            <Avatar className="w-20 h-20 shadow-md">
-              <AvatarImage src={`/assets/user.jpg`} />
-              <AvatarFallback>
-                <Skeleton className="h-full w-full  rounded-full bg-slate-600" />
-              </AvatarFallback>
-            </Avatar>
+            <motion.div
+              className=" rounded-full"
+              initial={{ boxShadow: "none" }}
+              animate={{
+                boxShadow:
+                  lastWinner === 0
+                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+                    : "none", // No shadow when it's not user's turn
+              }}
+              transition={{
+                duration: 0.8,
+              }}
+            >
+              <Avatar className="w-16 h-16 ">
+                <AvatarImage src={`/assets/user.jpg`} />
+                <AvatarFallback>
+                  <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
+                </AvatarFallback>
+              </Avatar>
+            </motion.div>
           </div>
 
           {/* Trump Suit Section */}

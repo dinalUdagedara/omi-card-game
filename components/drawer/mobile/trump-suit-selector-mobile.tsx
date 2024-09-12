@@ -39,12 +39,12 @@ export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
   return (
     <Drawer open={true} onClose={onClose}>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-md">
+        <div className="mx-auto w-full max-w-md ">
           <DrawerHeader>
             <DrawerTitle>Select Trumps</DrawerTitle>
           </DrawerHeader>
           <div className="p-4 pb-0">
-            <div className="relative flex items-center justify-center h-64">
+            <div className="relative flex items-center justify-center h-56">
               {userHand.slice(0, 4).map((card, index) => {
                 const angle = (index - (exampleCards.length - 1) / 2) * 30;
 
@@ -73,9 +73,10 @@ export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
               <SuitSelectorMobile />
             </div>
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="">
             <DrawerClose asChild>
               <Button
+              className=" rounded-2xl"
                 onClick={() => {
                   setTrumpSelected(true);
                   onClose();

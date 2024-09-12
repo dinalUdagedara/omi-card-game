@@ -29,10 +29,10 @@ export function SuitSelectorMobile() {
               className="w-full pl-1 basis-20 md:basis-1/2 lg:basis-1/3"
             >
               <div className="p-1">
-                <Card className="hover:scale-110 bg-slate-300 rounded-3xl">
+                <Card className="hover:scale-110 bg-slate-300 rounded-2xl">
                   <CardContent
                     className={` ${
-                      selectedSuit === suit.suit ? "bg-slate-400" : ""
+                      selectedSuit === suit.suit ? "bg-slate-400 rounded-3xl" : ""
                     } flex aspect-square items-center justify-center p-6 rounded-lg`}
                   >
                     <button

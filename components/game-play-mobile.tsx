@@ -139,6 +139,8 @@ const GamePlayMobile = () => {
   );
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
+  const isRoundOver = FinishStateStore((state) => state.isRoundOver);
 
   const playerXp = getPlayerXP();
 
@@ -282,9 +284,11 @@ const GamePlayMobile = () => {
       if (team1Points > team2Points) {
         setRoundWinners(1);
         toast("This Round is Won by Team 1 ");
+        setRoundOver(true);
       } else {
         setRoundWinners(2);
         toast("This Round is Won by Team 2 ");
+        setRoundOver(true);
       }
       resetStates();
     } else {
@@ -301,13 +305,13 @@ const GamePlayMobile = () => {
     } else {
       if (roundWinners === 1) {
         if (trumpSetter === 1) {
-          // won without telling trumps
-          setwonWithoutCallingTrumps(true);
+          // won  telling trumps
+          setwonCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 1;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         } else {
-          // won  telling trumps
-          setwonCallingTrumps(true);
+          // won without telling trumps
+          setwonWithoutCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 2;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         }
@@ -607,6 +611,13 @@ const GamePlayMobile = () => {
     if (isMobile)
       if (turnSuit && cardSet.length < 2) {
         handleSelectOtherHands();
+      }
+  }, [turnSuit, isCardsGenerated]);
+
+  useEffect(() => {
+    if (isMobile)
+      if (isRoundOver) {
+        handleNextTurnofShuffling();
       }
   }, [turnSuit, isCardsGenerated]);
 

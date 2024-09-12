@@ -27,15 +27,20 @@ export function RoundOverDialogMobile() {
   );
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const handleClosee = () => {
     setAllFalse(false);
     setDialogOpen(false);
+    setRoundOver(false);
   };
 
   let message = { title: "", message: "" };
-
+  console.log("wonWithoutCallingTrumps",wonWithoutCallingTrumps)
+  console.log("wonCallingTrumps",wonCallingTrumps)
+  console.log("lostWithoutCallingTrumps",lostWithoutCallingTrumps)
+  console.log("lostCallingTrumps",lostCallingTrumps)
   if (wonWithoutCallingTrumps) {
     message = roundFinishMessages.find((msg) => msg.value === 1) || message;
   } else if (wonCallingTrumps) {

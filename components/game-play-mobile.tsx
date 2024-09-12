@@ -33,7 +33,7 @@ export function useIsMobile() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint (768px is typical)
+      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint 
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -452,24 +452,8 @@ const GamePlayMobile = () => {
       setIsGameOver(true);
     }
 
-    // if (roundsWonbyTeam1) {
-    //   if (roundsWonbyTeam1 >= 4) {
-    //     toast("Congratulations Your Team wons the Game");
-    //     setIsGameOver(true);
-    //   }
-    // }
-    // if (roundsWonbyTeam2) {
-    //   if (roundsWonbyTeam2 >= 4) {
-    //     toast("Your Team lost");
-    //     setIsGameOver(true);
-    //   }
-    // }
   }
-  function handleCloseDrawer() {
-    handleSuitChange(trumpSuit);
-    setTrumpSelected(true);
-  }
-
+  
   function handleAutomaticSubmit() {
     if (!isSubmitted && isCardsGenerated && selectedCardByUser) {
       setTimeout(() => {
@@ -591,7 +575,7 @@ const GamePlayMobile = () => {
       {/* Dialog after a Round  */}
 
       {isDialogOpen && (
-        <div className="bg-black w-full">
+        <div className=" ">
           <RoundOverDialogMobile />
         </div>
       )}
@@ -606,7 +590,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
 
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center min-h-24">
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
@@ -623,10 +607,10 @@ const GamePlayMobile = () => {
         )}
       </div>
 
-      <div className="w-full h-full  flex justify-between mt-5">
+      <div className="w-full h-full  flex justify-between mt-5 ">
         <div className="flex justify-center items-center">
           {dealtHands.length > 0 && dealtHands[3]?.hand ? (
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center  min-w-[70px]">
               <Avatar className="w-14 h-14 shadow-md">
                 <AvatarImage src={`/assets/player4.png`} />
                 <AvatarFallback>Dp</AvatarFallback>
@@ -634,7 +618,7 @@ const GamePlayMobile = () => {
               <OtherDecksMobile userHand={dealtHands[3].hand} />
             </div>
           ) : (
-            <div className="flex flex-col justify-center gap-6 items-center mx-2 ">
+            <div className="flex flex-col justify-center gap-6 items-center mx-1 ">
               {" "}
               <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
               <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
@@ -644,7 +628,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full max-h-80 flex max-w-20  min-w-64 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75"
+            className="h-full  max-h-80 flex max-w-20  min-w-64 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -652,7 +636,7 @@ const GamePlayMobile = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full h-full justify-center  items-center ">
+            <div className="w-full h-full justify-center  items-center  ">
               <GameBoardMobile
                 onRestart={restartGame}
                 onStart={handleSelectOtherHands}
@@ -665,7 +649,7 @@ const GamePlayMobile = () => {
         <div className=" flex justify-center items-center">
           <div className="">
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
-              <div className="flex flex-col justify-center items-center">
+              <div className="flex flex-col justify-center items-center  min-w-[70px]">
                 <OtherDecksMobile userHand={dealtHands[1].hand} />
                 <Avatar className="w-14 h-14 shadow-md">
                   <AvatarImage src={`/assets/player2.png`} />
@@ -673,7 +657,7 @@ const GamePlayMobile = () => {
                 </Avatar>
               </div>
             ) : (
-              <div className="flex flex-col justify-center gap-6 items-center mx-2 ">
+              <div className=" w-full flex flex-col justify-center gap-6 items-center  mx-1">
                 <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
                 <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
               </div>

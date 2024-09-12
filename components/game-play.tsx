@@ -31,6 +31,7 @@ import { useIsMobile } from "./game-play-mobile";
 import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
 import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
+import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -112,8 +113,23 @@ export default function Board() {
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setIsUserTurn = useStore((state) => state.setIsUserTurn);
+  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
   const isRoundOver = FinishStateStore((state) => state.isRoundOver);
 
+  const setwonCallingTrumps = FinishStateStore(
+    (state) => state.setwonCallingTrumps
+  );
+  const setwonWithoutCallingTrumps = FinishStateStore(
+    (state) => state.setwonWithoutCallingTrumps
+  );
+  const setlostCallingTrumps = FinishStateStore(
+    (state) => state.setlostCallingTrumps
+  );
+  const setlostWithoutCallingTrumps = FinishStateStore(
+    (state) => state.setlostWithoutCallingTrumps
+  );
+  const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
+  const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -254,9 +270,11 @@ export default function Board() {
       if (team1Points > team2Points) {
         setRoundWinners(1);
         toast("This Round is Won by Team 1 ");
+        setRoundOver(true);
       } else {
         setRoundWinners(2);
         toast("This Round is Won by Team 2 ");
+        setRoundOver(true);
       }
       resetStates();
     } else {
@@ -273,26 +291,35 @@ export default function Board() {
     } else {
       if (roundWinners === 1) {
         if (trumpSetter === 1) {
+          // won  telling trumps
+          setwonCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 1;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         } else {
+          // won without telling trumps
+          setwonWithoutCallingTrumps(true);
           const remainingPenaltyCards = team2PenaltyCards - 2;
           setTeam_2_penaltyCards(remainingPenaltyCards);
         }
-
         const roundNumber = roundsWonbyTeam1 + 1;
         setRoundsWonbyTeam1(roundNumber);
       } else if (roundWinners === 2) {
         if (trumpSetter === 2) {
+          // lost without telling trumps
+          setlostWithoutCallingTrumps(true);
           const remainingPenaltyCards = team1PenaltyCards - 1;
           setTeam_1_penaltyCards(remainingPenaltyCards);
         } else {
+          // lost  telling trumps
+          setlostCallingTrumps(true);
           const remainingPenaltyCards = team1PenaltyCards - 2;
           setTeam_1_penaltyCards(remainingPenaltyCards);
         }
+
         const roundNumber = roundsWonbyTeam2 + 1;
         setRoundsWonbyTeam2(roundNumber);
       }
+      setDialogOpen(true);
       setTurnNumber(1);
       const nextRoundNumber = roundNumber !== null ? roundNumber + 1 : 1;
       setRoundNumber(nextRoundNumber);
@@ -373,17 +400,16 @@ export default function Board() {
   //   }
   // }
 
-
   function setStarterForRound() {
-    const playerCycle = [1, 2, 3,0]; //player
-    const trumpSetterCycle = [1,2]; // Alternating between Player 2 and Player 1
-    
+    const playerCycle = [1, 2, 3, 0]; //players
+    const trumpSetterCycle = [1, 2]; // Alternating the trumpsetter between Player 2 and Player 1
+
     const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
     const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
-    
+
     const starterPlayer = playerCycle[playerIndex];
     const trumpSetter = trumpSetterCycle[trumpSetterIndex];
-    
+
     handleLastWinner(starterPlayer);
     setRandomSuit();
     setTrumpSetter(trumpSetter);
@@ -592,8 +618,24 @@ export default function Board() {
       }
   }, [turnSuit, isCardsGenerated]);
 
+  useEffect(() => {
+    if (!isMobile)
+      if (isRoundOver) {
+        handleNextTurnofShuffling();
+      }
+  }, [isSubmitted]);
+
   return (
     <div className="hidden  w-full h-screen sm:flex flex-col ">
+      
+       {/* Dialog after a Round  */}
+
+       {isDialogOpen && (
+        <div className=" ">
+          <RoundOverDialogMobile />
+        </div>
+      )}
+      
       <div className="flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
         {/* All the other things */}
         <div className="flex justify-end gap-4">
@@ -724,8 +766,9 @@ export default function Board() {
 
           {lastWinner === 0 && dealtHands[0]?.hand.length > 7 ? (
             <div>
-              {(!isTrumpSelected && !isRoundOver) &&
-                (isMobile  ? (
+              {!isTrumpSelected &&
+                !isRoundOver &&
+                (isMobile ? (
                   <SuitDrawerMobile
                     userHand={dealtHands[0].hand}
                     onClose={handleCloseDrawer}

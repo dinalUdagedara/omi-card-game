@@ -37,10 +37,10 @@ export function RoundOverDialogMobile() {
   };
 
   let message = { title: "", message: "" };
-  console.log("wonWithoutCallingTrumps",wonWithoutCallingTrumps)
-  console.log("wonCallingTrumps",wonCallingTrumps)
-  console.log("lostWithoutCallingTrumps",lostWithoutCallingTrumps)
-  console.log("lostCallingTrumps",lostCallingTrumps)
+  console.log("wonWithoutCallingTrumps", wonWithoutCallingTrumps);
+  console.log("wonCallingTrumps", wonCallingTrumps);
+  console.log("lostWithoutCallingTrumps", lostWithoutCallingTrumps);
+  console.log("lostCallingTrumps", lostCallingTrumps);
   if (wonWithoutCallingTrumps) {
     message = roundFinishMessages.find((msg) => msg.value === 1) || message;
   } else if (wonCallingTrumps) {
@@ -52,21 +52,22 @@ export function RoundOverDialogMobile() {
   }
 
   return (
-    <div className="">
+    <div>
       <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-[240px] rounded-3xl ">
-          <DialogHeader>
-            <DialogTitle>{message.title}</DialogTitle>
-            <DialogDescription>{message.message}</DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter>
-            <div className=" flex justify-center w-full">
-              <Button className="w-20" type="button" onClick={handleClosee}>
-                Ok
-              </Button>{" "}
-            </div>
-          </DialogFooter>
+          <div className="">
+            <DialogHeader>
+              <DialogTitle>{message.title}</DialogTitle>
+              <DialogDescription>{message.message}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <div className=" flex justify-center w-full">
+                <Button className="w-20" type="button" onClick={handleClosee}>
+                  Ok
+                </Button>{" "}
+              </div>
+            </DialogFooter>{" "}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

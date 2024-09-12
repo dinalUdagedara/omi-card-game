@@ -365,53 +365,18 @@ const GamePlayMobile = () => {
   }
 
   function setStarterForRound() {
-    switch (roundNumber) {
-      case 1:
-        handleLastWinner(1);
-        setRandomSuit();
-        setTrumpSetter(2);
-        break;
-      case 2:
-        handleLastWinner(2);
-        setRandomSuit();
-        setTrumpSetter(1);
-        break;
-      case 3:
-        handleLastWinner(3);
-        setRandomSuit();
-        setTrumpSetter(2);
-        break;
-      case 4:
-        handleLastWinner(0);
-        setRandomSuit();
-        setTrumpSetter(1);
-        break;
-      case 5:
-        handleLastWinner(1);
-        setRandomSuit();
-        setTrumpSetter(2);
-        break;
-      case 6:
-        handleLastWinner(2);
-        setRandomSuit();
-        setTrumpSetter(1);
-        break;
-      case 7:
-        handleLastWinner(3);
-        setRandomSuit();
-        setTrumpSetter(2);
-        break;
-      case 8:
-        handleLastWinner(0);
-        setRandomSuit();
-        setTrumpSetter(1);
-        break;
-      case 9:
-        handleLastWinner(1);
-        setRandomSuit();
-        setTrumpSetter(2);
-        break;
-    }
+    const playerCycle = [1, 2, 3,0]; //player
+    const trumpSetterCycle = [1,2]; // Alternating between Player 2 and Player 1
+    
+    const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
+    const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
+    
+    const starterPlayer = playerCycle[playerIndex];
+    const trumpSetter = trumpSetterCycle[trumpSetterIndex];
+    
+    handleLastWinner(starterPlayer);
+    setRandomSuit();
+    setTrumpSetter(trumpSetter);
   }
 
   function resetTeamPoints() {

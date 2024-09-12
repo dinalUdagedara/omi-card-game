@@ -402,19 +402,17 @@ export default function Board() {
   // }
 
   function setStarterForRound() {
-    const playerCycle = [1, 2, 3, 0]; //players
-    const trumpSetterCycle = [1, 2]; // Alternating the trumpsetter between Player 2 and Player 1
-
+    const playerCycle = [1, 2, 3, 0]; // player
+    const trumpSetterCycle = [2, 1]; // Alternating between team 2 and team 1
     const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
     const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
+    const starterPlayer = playerCycle[playerIndex];  
+    const trumpSetterNumber = trumpSetterCycle[trumpSetterIndex];
 
-    const starterPlayer = playerCycle[playerIndex];
-    const trumpSetter = trumpSetterCycle[trumpSetterIndex];
-
+    setTrumpSetter(trumpSetterNumber);
     handleLastWinner(starterPlayer);
     setRandomSuit();
-    setTrumpSetter(trumpSetter);
-  }
+}
 
   function resetTeamPoints() {
     setTeam1Points(0);

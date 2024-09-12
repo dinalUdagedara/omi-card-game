@@ -23,7 +23,7 @@ export function SuitSelectorMobile() {
     <Carousel className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
         {suitsWithLogos.map((suit, index) => (
-          <div>
+          <div key={index}>
             <CarouselItem
               key={index}
               className="w-full pl-1 basis-20 md:basis-1/2 lg:basis-1/3"

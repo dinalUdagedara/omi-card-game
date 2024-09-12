@@ -23,7 +23,9 @@ export function SuitSelector() {
     <Carousel className="w-full">
       <CarouselContent className="-ml-1">
         {suitsWithLogos.map((suit, index) => (
-          <div className="flex justify-center w-full">
+          <div 
+          key={index} 
+          className="flex justify-center w-full">
             <CarouselItem
               key={index}
               className="pl-1 basis-24 md:basis-1/2 lg:basis-32"

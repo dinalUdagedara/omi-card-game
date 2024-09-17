@@ -1,7 +1,7 @@
 import { Card } from "@/utils/types";
 import Image from "next/image";
 
-const CardComponent = ({ card }: { card: Card }) => {
+const CardComponentUserDeck = ({ card }: { card: Card }) => {
 
   // Choose a color based on the suit
   const suitColor =
@@ -15,12 +15,12 @@ const CardComponent = ({ card }: { card: Card }) => {
     >
       <Image
         src={`/assets/cards/${card.value}_of_${card.suit}.png`}
-        width={80}
-        height={80}
+        width={100}
+        height={100}
         alt="card"
       />
     </div>
   );
 };
 
-export default CardComponent;
+export default CardComponentUserDeck;

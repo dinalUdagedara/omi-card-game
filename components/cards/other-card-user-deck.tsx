@@ -1,14 +1,14 @@
 import Image from "next/image";
 
-const OtherCardComponent = () => {
+const OtherCardComponentUserDeck = () => {
   return (
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
         <Image
         className="rounded-md"
           src={`/assets/cards/card-back.jpg`}
-          width={80}
-          height={80}
+          width={100}
+          height={100}
           alt="card"
         />
       </div>
@@ -16,4 +16,4 @@ const OtherCardComponent = () => {
   );
 };
 
-export default OtherCardComponent;
+export default OtherCardComponentUserDeck;

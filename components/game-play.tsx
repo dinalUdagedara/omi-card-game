@@ -406,13 +406,13 @@ export default function Board() {
     const trumpSetterCycle = [2, 1]; // Alternating between team 2 and team 1
     const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
     const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
-    const starterPlayer = playerCycle[playerIndex];  
+    const starterPlayer = playerCycle[playerIndex];
     const trumpSetterNumber = trumpSetterCycle[trumpSetterIndex];
 
     setTrumpSetter(trumpSetterNumber);
     handleLastWinner(starterPlayer);
     setRandomSuit();
-}
+  }
 
   function resetTeamPoints() {
     setTeam1Points(0);
@@ -638,10 +638,10 @@ export default function Board() {
         {/* All the other things */}
         <div className="flex justify-end gap-4">
           {/* Player 3 and scoreboard */}
-          <div className="col-span-3 flex items-center justify-center gap-4 w-1/3 p-4 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 shadow-md">
+          <div className="col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 bg-white shadow-md ">
             {dealtHands.length > 0 && dealtHands[2]?.hand ? (
-              <div className="flex flex-row justify-center items-center">
-                <OtherDecks userHand={dealtHands[2].hand} />
+              <div className="flex flex-row justify-center items-center ">
+                <OtherDecks userHand={dealtHands[2].hand} /> 
 
                 <motion.div
                   className=" rounded-full"
@@ -732,7 +732,7 @@ export default function Board() {
 
           {/* Game Board */}
           <div
-            className="flex w-full justify-center items-center rounded-3xl m-4 p-6 shadow-lg bg-opacity-75"
+            className="flex w-full justify-center items-center rounded-3xl m-4 p-6 shadow-lg bg-opacity-75 min-h-80"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -740,7 +740,7 @@ export default function Board() {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full justify-center items-center">
+            <div className="w-full justify-center items-center ">
               {/* <Button onClick={handleInitialStart}>Start</Button> */}
               <GameBoard
                 onRestart={restartGame}

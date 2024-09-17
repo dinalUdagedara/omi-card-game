@@ -4,6 +4,8 @@ import { Card } from "@/utils/types";
 import { useStore } from "@/store/state";
 import OtherCardComponent from "../cards/other-card";
 import { motion } from "framer-motion";
+import CardComponentUserDeck from "../cards/card-user-deck";
+import OtherCardComponentUserDeck from "../cards/other-card-user-deck";
 
 interface UserDeckProps {
   userHand: Card[];
@@ -51,7 +53,7 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
                     repeatType: "reverse",
                   }}
                 >
-                  <CardComponent card={card} />
+                  <CardComponentUserDeck card={card} />
                 </motion.div>
               </motion.div>
             ) : (
@@ -61,7 +63,7 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.2 }}
                 >
-                  <OtherCardComponent />
+                  <OtherCardComponentUserDeck />
                 </motion.div>
               </div>
             )}

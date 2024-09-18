@@ -30,17 +30,14 @@ export function RoundOverDialogMobile() {
   const setRoundOver = FinishStateStore((state) => state.setRoundOver);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
-  const handleClosee = () => {
+  const handleClose = () => {
     setAllFalse(false);
     setDialogOpen(false);
     setRoundOver(false);
   };
 
   let message = { title: "", message: "" };
-  console.log("wonWithoutCallingTrumps", wonWithoutCallingTrumps);
-  console.log("wonCallingTrumps", wonCallingTrumps);
-  console.log("lostWithoutCallingTrumps", lostWithoutCallingTrumps);
-  console.log("lostCallingTrumps", lostCallingTrumps);
+
   if (wonWithoutCallingTrumps) {
     message = roundFinishMessages.find((msg) => msg.value === 1) || message;
   } else if (wonCallingTrumps) {
@@ -54,19 +51,25 @@ export function RoundOverDialogMobile() {
   return (
     <div>
       <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="w-[240px] rounded-3xl ">
-          <div className="">
+        <DialogContent className="w-[300px] sm:w-[310px] p-6 border-none rounded-3xl bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl text-white">
+          <div className="text-center">
             <DialogHeader>
-              <DialogTitle>{message.title}</DialogTitle>
-              <DialogDescription>{message.message}</DialogDescription>
+              <DialogTitle className="text-xl font-semibold tracking-wider text-center">
+                {message.title}
+              </DialogTitle>
+              <DialogDescription className="text-md mt-2 font-light text-center">
+                {message.message}
+              </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
-              <div className=" flex justify-center w-full">
-                <Button className="w-20" type="button" onClick={handleClosee}>
-                  Ok
-                </Button>{" "}
-              </div>
-            </DialogFooter>{" "}
+            <DialogFooter className="mt-6">
+              <Button
+                className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
+                type="button"
+                onClick={handleClose}
+              >
+                Ok
+              </Button>
+            </DialogFooter>
           </div>
         </DialogContent>
       </Dialog>

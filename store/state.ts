@@ -28,6 +28,7 @@ interface UseState {
   team_2_penaltyCards: number;
   trumpSetter: number;
   isUserTurn: boolean;
+  gameWinner: 1 | 2 | null, 
 
   setTrumpSuit: (newSuit: Suit | null) => void;
   setTrumpSelected: (selected: boolean) => void;
@@ -54,6 +55,7 @@ interface UseState {
   setTeam_2_penaltyCards: (newNumber: number) => void;   setTrumpSetter: (newSetter: number) => void;
 
   setIsUserTurn: (newValue: boolean) => void;
+  setGameWinner: (newValue: 1 | 2 | null) => void;
 }
 
 export const useStore = create<UseState>((set) => ({
@@ -82,6 +84,7 @@ export const useStore = create<UseState>((set) => ({
   team_2_penaltyCards: 10,
   trumpSetter: 1,
   isUserTurn: true,
+  gameWinner: null,
 
   setTrumpSuit: (newSuit: Suit | null) => set({ trumpSuit: newSuit }),
   setTrumpSelected: (selected: boolean) => set({ trumpSelected: selected }),
@@ -116,4 +119,5 @@ export const useStore = create<UseState>((set) => ({
     set({ team_2_penaltyCards: newNumber }),
   setTrumpSetter: (newSetter: number) => set({ trumpSetter: newSetter }),
   setIsUserTurn: (newValue: boolean) => set({ isUserTurn: newValue }),
+  setGameWinner: (newValue: 1 | 2 | null) => set({ gameWinner: newValue }),
 }));

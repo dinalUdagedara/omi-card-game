@@ -14,7 +14,7 @@ const Scoreboard = () => {
   const team1PenaltyCards = useStore((state) => state.team_1_penaltyCards);
   const team2PenaltyCards = useStore((state) => state.team_2_penaltyCards);
   return (
-    <div className="flex justify-between items-center bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 text-white w-full m-4 p-6 rounded-xl shadow-lg  hover:scale-105  duration-300 ease-in-out">
+    <div className="flex justify-between items-center bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 text-white w-full mx-4 p-6 rounded-xl shadow-lg  hover:scale-105  duration-300 ease-in-out">
       <div className="flex flex-col justify-center items-center space-y-2 w-full">
         <div className="text-4xl font-bold">{team1Points}</div>
         <div className="text-sm uppercase tracking-wide">Ours</div>

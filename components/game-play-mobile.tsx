@@ -106,6 +106,7 @@ const GamePlayMobile = () => {
 
   const roundWinners = useStore((state) => state.roundWinners);
   const setRoundWinners = useStore((state) => state.setRoundWinners);
+  const gameWinner = useStore((state) => state.gameWinner);
 
   const isGameOver = useStore((state) => state.isGameOver);
   const setIsGameOver = useStore((state) => state.setIsGameOver);
@@ -473,6 +474,8 @@ const GamePlayMobile = () => {
     // Reset the points for both teams
     resetTeamPoints();
     setRoundsWonbyTeam1(0);
+    setTeam_1_penaltyCards(10)
+    setTeam_2_penaltyCards(10)
     setRoundsWonbyTeam2(0);
 
     // Set round and turn numbers back to the first round and turn
@@ -568,6 +571,10 @@ const GamePlayMobile = () => {
         handleNextTurnofShuffling();
       }
   }, [isSubmitted]);
+
+  useEffect(()=>{
+    checkWinner()
+  },[team1PenaltyCards,team2PenaltyCards,gameWinner])
 
   return (
     <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">

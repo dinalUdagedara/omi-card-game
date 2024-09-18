@@ -12,10 +12,11 @@ import ControllerStart from "../controller-start";
 import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
-import { GameOverDialog } from "../game-over";
+import { GameOverDialog } from "../game-over/game-over-win";
+import { GameOverDialogLose } from "../game-over/game-over-lose";
 
 interface GameBoardProps {
-  onRestart:()=> void;
+  onRestart: () => void;
   onStart: () => void;
   onNextStart: () => void;
   onShuffleAgain: () => void;
@@ -37,6 +38,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const isSubmitted = useStore((state) => state.isSubmitted);
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isGameOver = useStore((state) => state.isGameOver);
+  const gameWinner = useStore((state) => state.gameWinner);
 
   useEffect(() => {
     setIsCardsGone(false);
@@ -55,7 +57,11 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <>
           <div className="flex justify-center gap-10">
             <div>
-              <GameOverDialog onRestart = {onRestart} />
+              {gameWinner === 1 ? (
+                <GameOverDialog onRestart={onRestart} />
+              ) : (
+                <GameOverDialogLose onRestart={onRestart}  />
+              )}
             </div>
           </div>
         </>
@@ -73,7 +79,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
           </div>
 
           <div>
-            {winningCard && !isGameOver? (
+            {winningCard && !isGameOver ? (
               <div>
                 {isCardsGone ? (
                   <div className="flex justify-center">

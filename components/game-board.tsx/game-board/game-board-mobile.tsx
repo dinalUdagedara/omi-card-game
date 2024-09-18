@@ -5,12 +5,13 @@ import { useStore } from "@/store/state";
 import ControllerStart from "../controller-start";
 import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
-import { GameOverDialog } from "../game-over";
+import { GameOverDialog } from "../game-over/game-over-win";
 import Winner1Mobile from "../collecting-cards/mobile/winner-1-mobile";
 import Winner2Mobile from "../collecting-cards/mobile/winner-2-mobile";
 import Winner3Mobile from "../collecting-cards/mobile/winner-3-mobile";
 import Winner4Mobile from "../collecting-cards/mobile/winner-4-mobile";
 import CardComponentMobile from "@/components/cards/card-mobile";
+import { GameOverDialogLose } from "../game-over/game-over-lose";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -30,6 +31,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
   const player_2_card = CardStore((state) => state.player_2_card);
   const player_3_card = CardStore((state) => state.player_3_card);
   const player_4_card = CardStore((state) => state.player_4_card);
+  const gameWinner = useStore((state) => state.gameWinner);
 
   const winningCard = useStore((state) => state.winningCard);
   const isSubmitted = useStore((state) => state.isSubmitted);
@@ -52,9 +54,11 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
       {isGameOver ? (
         <>
           <div className="flex justify-center gap-10">
-            <div>
-              <GameOverDialog onRestart={onRestart} />
-            </div>
+          {gameWinner === 1 ? (
+                <GameOverDialog onRestart={onRestart} />
+              ) : (
+                <GameOverDialogLose onRestart={onRestart}  />
+              )}
           </div>
         </>
       ) : (

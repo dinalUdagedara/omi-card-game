@@ -98,6 +98,9 @@ export default function Board() {
   const isGameOver = useStore((state) => state.isGameOver);
   const setIsGameOver = useStore((state) => state.setIsGameOver);
 
+  const gameWinner = useStore((state) => state.gameWinner);
+  const setGameWinner = useStore((state) => state.setGameWinner);
+
   const roundNumber = useStore((state) => state.roundNumber);
   const setRoundNumber = useStore((state) => state.setRoundNumber);
 
@@ -480,10 +483,12 @@ export default function Board() {
   function checkWinner() {
     if (team1PenaltyCards === 0) {
       toast("Your Team lost");
+      setGameWinner(2)
       setIsGameOver(true);
     }
     if (team2PenaltyCards === 0) {
       toast("Congratulations Your Team wons the Game");
+      setGameWinner(1)
       setIsGameOver(true);
     }
 
@@ -527,6 +532,8 @@ export default function Board() {
     resetTeamPoints();
     setRoundsWonbyTeam1(0);
     setRoundsWonbyTeam2(0);
+    setTeam_1_penaltyCards(10)
+    setTeam_2_penaltyCards(10)
 
     // Set round and turn numbers back to the first round and turn
     setRoundNumber(1);
@@ -624,6 +631,9 @@ export default function Board() {
       }
   }, [isSubmitted]);
 
+  useEffect(()=>{
+   if(!isMobile) checkWinner()
+  },[team1PenaltyCards,team2PenaltyCards,gameWinner])
   return (
     <div className="hidden  w-full h-screen sm:flex flex-col ">
       {/* Dialog after a Round  */}

@@ -1,9 +1,11 @@
-import Pool from "@/components-multiplayer/pool";
+import PoolUI from "@/components-multiplayer/pool-ui";
 
-export default function Multiplayer() {
+const Multiplayer = () => {
   return (
     <div>
-      <Pool />
+      <PoolUI />
     </div>
   );
-}
+};
+
+export default Multiplayer;

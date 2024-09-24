@@ -37,7 +37,7 @@ class SocketManager {
     if (this.socket) {
       this.socket.emit("getRoomName");
       this.socket.on("roomNameResponse", (rooms) => {
-        callback(rooms[0]); 
+        callback(rooms[0]);
       });
     }
   }
@@ -56,6 +56,15 @@ class SocketManager {
       this.socket.emit("getAllSocketInfo");
       this.socket.on("allSocketInfoResponse", (socketsData: SocketData[]) => {
         callback(socketsData);
+      });
+    }
+  }
+
+  getAllCustomRooms(callback: (rooms: string[]) => void) {
+    if (this.socket) {
+      this.socket.emit("getAllCustomRooms");
+      this.socket.on("customRoomsList", (rooms: string[]) => {
+        callback(rooms);
       });
     }
   }

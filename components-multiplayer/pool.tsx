@@ -69,7 +69,7 @@ const Pool = () => {
   }, [connectedRoom, userName]);
 
   return (
-    <div className="min-h-screen text-black bg-slate-500 flex w-full justify-center ">
+    <div className="min-h-screen text-black bg-slate-500 flex w-full justify-center gap-20 p-20">
       <div className="ml-20 mt-20 flex justify-start w-full flex-col gap-5">
         <div className="flex gap justify-between">
           <div className="mb-10">

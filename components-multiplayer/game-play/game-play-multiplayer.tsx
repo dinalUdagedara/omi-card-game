@@ -18,9 +18,15 @@ const GamePlayMultiplayer = () => {
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
-  if (userName === null) {
-    setUserName(localStorage.getItem("userName"));
-  }
+  useEffect(() => {
+    // Ensure the code only runs in the browser
+    if (typeof window !== "undefined") {
+      const storedUserName = localStorage.getItem("userName");
+      if (storedUserName) {
+        setUserName(storedUserName);
+      }
+    }
+  }, []);
   useEffect(() => {
     if (webSocketURL)
       // Connect to socket on mount
@@ -50,11 +56,13 @@ const GamePlayMultiplayer = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      {roomSocketData && <div>opponent: {roomSocketData[0].username}</div>}
+      <div>
+        {roomSocketData && <div>opponent: {roomSocketData[0].username}</div>}
 
-      {mySocket && roomSocketData && (
-        <div>me: {roomSocketData[1].username}</div>
-      )}
+        {mySocket && roomSocketData && (
+          <div>me: {roomSocketData[1].username}</div>
+        )}
+      </div>
     </div>
   );
 };

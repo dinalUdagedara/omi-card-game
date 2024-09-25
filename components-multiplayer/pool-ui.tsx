@@ -7,13 +7,13 @@ import Link from "next/link";
 const PoolUI = () => {
   const [availableRooms, setAvailableRooms] = useState<string[]>([]);
 
-  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL
-  
+  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+
   useEffect(() => {
     // Connect to the socket on mount
-    if(webSocketURL)
-    // Connect to socket on mount
-    SocketManager.connect(webSocketURL);
+    if (webSocketURL)
+      // Connect to socket on mount
+      SocketManager.connect(webSocketURL);
     // Fetch available rooms when component mounts
     getAvailableCustomRooms();
 
@@ -55,9 +55,11 @@ const PoolUI = () => {
       )}
 
       <div className="flex items-center justify-center flex-grow h-full">
-        <Button onClick={getAvailableCustomRooms} className="rounded-md">
-          Create a Room
-        </Button>
+        <Link href={"/multiplayer/create-room"}>
+          <Button onClick={getAvailableCustomRooms} className="rounded-md">
+            Create a Room
+          </Button>
+        </Link>
       </div>
     </div>
   );

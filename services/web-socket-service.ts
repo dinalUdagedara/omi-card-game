@@ -30,6 +30,9 @@ class SocketManager {
   joinRoom(roomName: string, userName: string | null) {
     if (this.socket && roomName.trim()) {
       this.socket.emit("joinRoom", roomName, userName);
+      this.socket.on("roomFull", (data) => {
+        console.log(data.message);
+      });
     }
   }
 
@@ -75,6 +78,10 @@ class SocketManager {
         callback(data);
       });
     }
+  }
+
+  getMySocket() {
+    return this.socket;
   }
 }
 

@@ -5,6 +5,8 @@ import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
 const Multiplayer = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
+  const setUserName = MultiplayerStateStore((state) => state.setUsername);
+
   return (
     <div>
       {userName ? (

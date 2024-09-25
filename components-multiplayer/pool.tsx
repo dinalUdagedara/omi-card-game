@@ -18,9 +18,13 @@ const Pool = () => {
     null
   );
 
+  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+
   useEffect(() => {
-    // Connect to socket on mount
-    SocketManager.connect("http://localhost:8080");
+    console.log(process.env.NEXT_PUBLIC_WEBSOCKET_URL);
+    if (webSocketURL)
+      // Connect to socket on mount
+      SocketManager.connect(webSocketURL);
 
     // Listen for incoming messages
     SocketManager.onMessage((data) => {
@@ -31,7 +35,7 @@ const Pool = () => {
       // Disconnect socket when component unmounts
       SocketManager.disconnect();
     };
-  }, []);
+  }, [webSocketURL]);
 
   const handleSendMessage = () => {
     SocketManager.sendMessage(message, roomName, userName);

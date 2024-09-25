@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import SocketManager from "@/services/web-socket-service";
@@ -8,10 +7,13 @@ import Link from "next/link";
 const PoolUI = () => {
   const [availableRooms, setAvailableRooms] = useState<string[]>([]);
 
+  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL
+  
   useEffect(() => {
     // Connect to the socket on mount
-    SocketManager.connect("http://localhost:8080");
-
+    if(webSocketURL)
+    // Connect to socket on mount
+    SocketManager.connect(webSocketURL);
     // Fetch available rooms when component mounts
     getAvailableCustomRooms();
 
@@ -54,7 +56,7 @@ const PoolUI = () => {
 
       <div className="flex items-center justify-center flex-grow h-full">
         <Button onClick={getAvailableCustomRooms} className="rounded-md">
-          Refresh Rooms
+          Create a Room
         </Button>
       </div>
     </div>

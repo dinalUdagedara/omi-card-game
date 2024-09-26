@@ -9,12 +9,14 @@ import { useEffect, useState } from "react";
 type Props = {
   roomId: string;
 };
+const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
 const StartGamePool = (props: Props) => {
   const [roomData, setRoomData] = useState<SocketData[]>([]);
   const [opponentPlayer, setOpponentPlayer] = useState<SocketData | null>(null);
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
+  const [roomName,setRoomName] = useState<string|null>(null)
   const roomId = props.roomId;
 
   const getRoomData = () => {
@@ -28,35 +30,46 @@ const StartGamePool = (props: Props) => {
     });
   };
 
-  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-
-  useEffect(() => {
+  const getUsername = () => {
     // Ensure the code only runs in the browser
-    if (typeof window !== "undefined") {
+
       const storedUserName = localStorage.getItem("userName");
       if (storedUserName) {
         setUserName(storedUserName);
       }
+
+  };
+
+  const handleJoinRoom = () => {
+    console.log("roomId: ", roomId);
+
+    getUsername();
+    console.log("UserName: ", userName);
+    if (roomId && userName) {
+      SocketManager.joinRoom(roomId, userName);
+      console.log("Joined to the Room : ", roomId);
     }
-  }, []);
+  };
+
   useEffect(() => {
     if (webSocketURL)
       // Connect to socket on mount
       SocketManager.connect(webSocketURL);
+    getUsername();
+
     handleJoinRoom();
+    getRoomData();
     // Disconnect socket when component unmounts
     return () => {
       SocketManager.disconnect();
     };
-  }, []);
+  }, [webSocketURL, roomId, userName]);
 
-  const handleJoinRoom = () => {
-    if (roomId) SocketManager.joinRoom(roomId, userName);
-  };
-
-  useEffect(() => {
-    getRoomData();
-  }, []);
+  
+  // useEffect(() => {
+  //   getUsername();
+  //   getRoomData();
+  // }, []);
 
   return (
     <div className="flex flex-col h-full min-h-screen">

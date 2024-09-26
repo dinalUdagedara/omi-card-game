@@ -18,15 +18,7 @@ const GamePlayMultiplayer = () => {
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
-  useEffect(() => {
-    // Ensure the code only runs in the browser
-    if (typeof window !== "undefined") {
-      const storedUserName = localStorage.getItem("userName");
-      if (storedUserName) {
-        setUserName(storedUserName);
-      }
-    }
-  }, []);
+
   useEffect(() => {
     if (webSocketURL)
       // Connect to socket on mount
@@ -40,7 +32,7 @@ const GamePlayMultiplayer = () => {
     return () => {
       SocketManager.disconnect();
     };
-  }, []);
+  }, [webSocketURL, roomId, userName]);
 
   const getRoomInfo = () => {
     if (roomId)
@@ -50,17 +42,43 @@ const GamePlayMultiplayer = () => {
       });
   };
 
+
+  
+  const getUsername = () => {
+    // Ensure the code only runs in the browser
+
+      const storedUserName = localStorage.getItem("userName");
+      if (storedUserName) {
+        setUserName(storedUserName);
+      }
+
+  };
+
+
   const handleJoinRoom = () => {
-    if (roomId) SocketManager.joinRoom(roomId, userName);
+    console.log("roomId: ", roomId);
+
+    getUsername();
+    console.log("UserName: ", userName);
+    if (roomId && userName) {
+      SocketManager.joinRoom(roomId, userName);
+      console.log("Joined to the Room : ", roomId);
+    }
   };
 
   return (
     <div className="flex flex-col gap-10">
       <div>
-        {roomSocketData && <div>opponent: {roomSocketData[0].username}</div>}
+        {roomSocketData && roomSocketData.length > 0 && (
+          <div>
+            opponent: {roomSocketData[0]?.username || "Waiting for opponent..."}
+          </div>
+        )}
 
-        {mySocket && roomSocketData && (
-          <div>me: {roomSocketData[1].username}</div>
+        {mySocket && roomSocketData && roomSocketData.length > 1 && (
+          <div>
+            me: {roomSocketData[1]?.username || "Waiting for player..."}
+          </div>
         )}
       </div>
     </div>

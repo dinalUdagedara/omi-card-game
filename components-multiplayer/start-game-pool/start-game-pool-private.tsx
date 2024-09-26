@@ -2,11 +2,13 @@
 import { Button } from "@/components/ui/button";
 import SocketManager from "@/services/web-socket-service";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { SocketData, StartGamePoolPrivateProps } from "@/utils/types-multiplayer";
+import {
+  SocketData,
+  StartGamePoolPrivateProps,
+} from "@/utils/types-multiplayer";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-
 
 const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
@@ -64,6 +66,15 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
 
     handleJoinRoom();
     getRoomData();
+
+    // Listen for player-joined events
+    SocketManager.onPlayerJoined((newRoomData: SocketData[]) => {
+      setRoomData(newRoomData);
+      if (newRoomData.length > 1) {
+        setOpponentPlayer(newRoomData[1]); // Update opponent player
+      }
+    });
+
     // Disconnect socket when component unmounts
     return () => {
       SocketManager.disconnect();

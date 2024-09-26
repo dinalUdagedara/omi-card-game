@@ -3,25 +3,36 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import SocketManager from "@/services/web-socket-service";
 import Link from "next/link";
+import { SocketData } from "@/utils/types-multiplayer";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
 const PoolUI = () => {
   const [availableRooms, setAvailableRooms] = useState<string[]>([]);
-
+  const userName = MultiplayerStateStore((state) => state.userName);
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
   useEffect(() => {
     // Connect to the socket on mount
-    if (webSocketURL)
-      // Connect to socket on mount
-      SocketManager.connect(webSocketURL);
+    if (webSocketURL) SocketManager.connect(webSocketURL);
+
     // Fetch available rooms when component mounts
     getAvailableCustomRooms();
+
+    // Listen for player-joined or room-created events
+    SocketManager.onRoomCreated((newRoomData: string[]) => {
+      console.log("newRoomData", newRoomData);
+
+      // Update the available rooms with the new room data
+      if (newRoomData) {
+        setAvailableRooms(newRoomData);
+      }
+    });
 
     // Disconnect socket when component unmounts
     return () => {
       SocketManager.disconnect();
     };
-  }, []);
+  }, [webSocketURL, userName]);
 
   // Fetch available custom rooms and update the state
   const getAvailableCustomRooms = () => {

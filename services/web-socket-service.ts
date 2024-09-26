@@ -27,9 +27,9 @@ class SocketManager {
     }
   }
 
-  joinRoom(roomName: string, isRoomPrivate:boolean, userName: string | null) {
+  joinRoom(roomName: string, isRoomPrivate: boolean, userName: string | null) {
     if (this.socket && roomName.trim()) {
-      this.socket.emit("joinRoom", roomName,isRoomPrivate, userName);
+      this.socket.emit("joinRoom", roomName, isRoomPrivate, userName);
       this.socket.on("roomFull", (data) => {
         console.log(data.message);
       });
@@ -50,6 +50,26 @@ class SocketManager {
       this.socket.emit("getRoomData", roomName);
       this.socket.on("RoomSocketInfoResponse", (roomData: SocketData[]) => {
         callback(roomData);
+      });
+    }
+  }
+
+  onPlayerJoined(callback: (data: SocketData[]) => void) {
+    console.log("onPlayerJoined");
+    if (this.socket) {
+      this.socket.on("player-joined", (newRoomData: SocketData[]) => {
+        callback(newRoomData);
+      });
+    }
+  }
+
+  onRoomCreated(callback: (data: string[]) => void) {
+    console.log("new Room Created");
+
+    if (this.socket) {
+      console.log("new Room Created");
+      this.socket.on("new-public-room", (newRoomData: string[]) => {
+        callback(newRoomData);
       });
     }
   }

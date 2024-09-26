@@ -18,7 +18,7 @@ const StartGamePoolPublic = (props: Props) => {
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const [roomName, setRoomName] = useState<string | null>(null);
   const roomId = props.roomId;
-  const [isRoomPrivate,setIsRoomPrivate] = useState<boolean>(false)
+  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
 
   const getRoomData = () => {
     console.log("Getting Room Data", roomId);
@@ -46,7 +46,7 @@ const StartGamePoolPublic = (props: Props) => {
     getUsername();
     console.log("UserName: ", userName);
     if (roomId && userName) {
-      SocketManager.joinRoom(roomId,isRoomPrivate, userName);
+      SocketManager.joinRoom(roomId, isRoomPrivate, userName);
       console.log("Joined to the Room : ", roomId);
     }
   };
@@ -59,16 +59,20 @@ const StartGamePoolPublic = (props: Props) => {
 
     handleJoinRoom();
     getRoomData();
+
+    // Listen for player-joined events
+    SocketManager.onPlayerJoined((newRoomData: SocketData[]) => {
+      setRoomData(newRoomData);
+      if (newRoomData.length > 1) {
+        setOpponentPlayer(newRoomData[1]); // Update opponent player
+      }
+    });
+
     // Disconnect socket when component unmounts
     return () => {
       SocketManager.disconnect();
     };
   }, [webSocketURL, roomId, userName]);
-
-  // useEffect(() => {
-  //   getUsername();
-  //   getRoomData();
-  // }, []);
 
   return (
     <div className="flex flex-col h-full min-h-screen">
@@ -81,7 +85,9 @@ const StartGamePoolPublic = (props: Props) => {
       <div className=" h-full flex justify-center items-center">
         <div className="p-20 mt-20 ">
           <Button disabled={!opponentPlayer} className="h-20 w-80 rounded-2xl">
-            <Link href={`/multiplayer/gameplay/public/${roomId}`}>Start Game</Link>
+            <Link href={`/multiplayer/gameplay/public/${roomId}`}>
+              Start Game
+            </Link>
           </Button>
         </div>
       </div>

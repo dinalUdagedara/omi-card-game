@@ -25,7 +25,7 @@ const PoolUI = () => {
 
   // Fetch available custom rooms and update the state
   const getAvailableCustomRooms = () => {
-    SocketManager.getAllCustomRooms((rooms: string[]) => {
+    SocketManager.getAllPublicRooms((rooms: string[]) => {
       setAvailableRooms(rooms);
     });
   };
@@ -33,14 +33,14 @@ const PoolUI = () => {
   return (
     <div className="flex flex-col h-screen">
       <div className="pt-20 justify-center flex text-center">
-        Available Rooms
+        Available Public Rooms
       </div>
 
       {availableRooms?.length > 0 ? (
         <div className="flex justify-center gap-20 items-center px-20 flex-grow h-full">
           {availableRooms.map((room, index) => (
             <div key={index} className="h-40 w-40">
-              <Link href={`/multiplayer/start/${room}`}>
+              <Link href={`/multiplayer/start/public/${room}`}>
                 <Button className="h-full w-full rounded-2xl">{room}</Button>
               </Link>
             </div>
@@ -49,7 +49,7 @@ const PoolUI = () => {
       ) : (
         <div className="h-64">
           <div className="h-full w-full   items-center justify-center flex">
-            Rooms Will Appear Here
+            No Rooms yet.. Create a One Using Below Button
           </div>
         </div>
       )}

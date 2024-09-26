@@ -23,15 +23,35 @@ const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 const CreateRoomComponent = () => {
   const [roomName, setRoomName] = useState<string>(generateRandomName());
   const [isRoomCreated, setIsRoomCreated] = useState<boolean>(false);
+  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(true);
+  const [privateLinkUrl, setPrivateLinkUrl] = useState<string>(
+    "Link Will Appear Here"
+  );
+  const userName = MultiplayerStateStore((state) => state.userName);
+  const setUserName = MultiplayerStateStore((state) => state.setUsername);
 
-  const handleCreatePublicRoom = () => {
-    SocketManager.joinRoom(roomName, userName);
-    toast(`Public Room has been created. ${roomName}`);
+  const handleCreateRoom = () => {
+    SocketManager.joinRoom(roomName, isRoomPrivate, userName);
+    if (isRoomPrivate) {
+      toast(`Private Room has been created. ${roomName}`);
+      createPrivateRoomLink();
+    } else {
+      toast(`Public Room has been created. ${roomName}`);
+    }
+
     setIsRoomCreated(true);
   };
 
-  const userName = MultiplayerStateStore((state) => state.userName);
-  const setUserName = MultiplayerStateStore((state) => state.setUsername);
+  // Handler to change room type based on tab selection
+  const handleTabChange = (value: string) => {
+    console.log(value);
+    setIsRoomPrivate(value === "private");
+  };
+
+  const createPrivateRoomLink = () => {
+    const prvURL = `http://localhost:3000/multiplayer/start/private/${roomName}`;
+    setPrivateLinkUrl(prvURL);
+  };
 
   useEffect(() => {
     // Ensure the code only runs in the browser
@@ -52,9 +72,14 @@ const CreateRoomComponent = () => {
       SocketManager.disconnect();
     };
   }, []);
+
   return (
     <div className="flex justify-center items-center h-full min-h-[700px] ">
-      <Tabs defaultValue="private" className="w-[400px]">
+      <Tabs
+        defaultValue="private"
+        className="w-[400px]"
+        onValueChange={handleTabChange}
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="private">Private</TabsTrigger>
           <TabsTrigger value="public">Public</TabsTrigger>
@@ -70,7 +95,11 @@ const CreateRoomComponent = () => {
             </CardHeader>
             <CardContent className="space-y-9 mt-4">
               <div className="space-y-1 flex justify-center">
-                <Button disabled={isRoomCreated} className="w-52 h-8">
+                <Button
+                  onClick={handleCreateRoom}
+                  disabled={isRoomCreated}
+                  className="w-52 h-8"
+                >
                   Create a Private Room
                 </Button>
               </div>
@@ -78,24 +107,22 @@ const CreateRoomComponent = () => {
                 <Input
                   disabled
                   type="url"
-                  value="http://localhost:3000/multiplayer/create-room"
+                  value={privateLinkUrl}
                   className="w-full"
                 />
                 <Button
                   size={"icon"}
                   className="ml-2"
-                  onClick={() =>
-                    navigator.clipboard.writeText(
-                      "http://localhost:3000/multiplayer/create-room"
-                    )
-                  }
+                  onClick={() => navigator.clipboard.writeText(privateLinkUrl)}
                 >
                   <FaRegCopy />
                 </Button>
               </div>
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button>Next</Button>
+              <Link href={`/multiplayer/start/private/${roomName}`}>
+                <Button>Next</Button>
+              </Link>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -112,7 +139,7 @@ const CreateRoomComponent = () => {
               <div className="space-y-1 flex justify-center">
                 <Button
                   disabled={isRoomCreated}
-                  onClick={handleCreatePublicRoom}
+                  onClick={handleCreateRoom}
                   className="w-52 h-8"
                 >
                   Create a Public Room
@@ -120,7 +147,7 @@ const CreateRoomComponent = () => {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Link href={`/multiplayer/start/${roomName}`}>
+              <Link href={`/multiplayer/start/public/${roomName}`}>
                 <Button>Next</Button>
               </Link>
             </CardFooter>

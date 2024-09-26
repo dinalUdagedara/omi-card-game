@@ -7,3 +7,8 @@ export type SocketData = {
 export const generateRandomName = () => {
   return `room-${Math.random().toString(36).substr(2, 9)}`;
 };
+
+
+export type StartGamePoolPrivateProps = {
+  roomId: string;
+};

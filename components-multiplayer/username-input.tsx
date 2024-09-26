@@ -20,8 +20,8 @@ const UserNameInput = () => {
           onChange={(e) => {
             setUsername(e.target.value);
           }}
-          type="userName"
-          placeholder="username"
+          type="text"
+          placeholder="Enter a User Name"
         />
         <Button onClick={handleSelectUserName} type="submit">
           Enter

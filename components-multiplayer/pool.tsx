@@ -43,7 +43,7 @@ const Pool = () => {
   };
 
   const handleJoinRoom = () => {
-    SocketManager.joinRoom(roomName, userName);
+    SocketManager.joinRoom(roomName,true, userName);
     SocketManager.getRoomName((room) => {
       setConnectedRoomName(room);
     });

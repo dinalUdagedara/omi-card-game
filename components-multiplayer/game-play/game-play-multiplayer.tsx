@@ -15,6 +15,7 @@ const GamePlayMultiplayer = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const [mySocket, setMySocket] = useState<Socket | null>(null);
+  const [isRoomPrivate,setIsRoomPrivate] = useState<boolean>(false)
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
@@ -61,7 +62,7 @@ const GamePlayMultiplayer = () => {
     getUsername();
     console.log("UserName: ", userName);
     if (roomId && userName) {
-      SocketManager.joinRoom(roomId, userName);
+      SocketManager.joinRoom(roomId,isRoomPrivate, userName);
       console.log("Joined to the Room : ", roomId);
     }
   };

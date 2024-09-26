@@ -11,13 +11,14 @@ type Props = {
 };
 const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
-const StartGamePool = (props: Props) => {
+const StartGamePoolPublic = (props: Props) => {
   const [roomData, setRoomData] = useState<SocketData[]>([]);
   const [opponentPlayer, setOpponentPlayer] = useState<SocketData | null>(null);
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
-  const [roomName,setRoomName] = useState<string|null>(null)
+  const [roomName, setRoomName] = useState<string | null>(null);
   const roomId = props.roomId;
+  const [isRoomPrivate,setIsRoomPrivate] = useState<boolean>(false)
 
   const getRoomData = () => {
     console.log("Getting Room Data", roomId);
@@ -33,11 +34,10 @@ const StartGamePool = (props: Props) => {
   const getUsername = () => {
     // Ensure the code only runs in the browser
 
-      const storedUserName = localStorage.getItem("userName");
-      if (storedUserName) {
-        setUserName(storedUserName);
-      }
-
+    const storedUserName = localStorage.getItem("userName");
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
   };
 
   const handleJoinRoom = () => {
@@ -46,7 +46,7 @@ const StartGamePool = (props: Props) => {
     getUsername();
     console.log("UserName: ", userName);
     if (roomId && userName) {
-      SocketManager.joinRoom(roomId, userName);
+      SocketManager.joinRoom(roomId,isRoomPrivate, userName);
       console.log("Joined to the Room : ", roomId);
     }
   };
@@ -65,7 +65,6 @@ const StartGamePool = (props: Props) => {
     };
   }, [webSocketURL, roomId, userName]);
 
-  
   // useEffect(() => {
   //   getUsername();
   //   getRoomData();
@@ -82,7 +81,7 @@ const StartGamePool = (props: Props) => {
       <div className=" h-full flex justify-center items-center">
         <div className="p-20 mt-20 ">
           <Button disabled={!opponentPlayer} className="h-20 w-80 rounded-2xl">
-            <Link href={`/multiplayer/gameplay/${roomId}`}>Start Game</Link>
+            <Link href={`/multiplayer/gameplay/public/${roomId}`}>Start Game</Link>
           </Button>
         </div>
       </div>
@@ -90,4 +89,4 @@ const StartGamePool = (props: Props) => {
   );
 };
 
-export default StartGamePool;
+export default StartGamePoolPublic;

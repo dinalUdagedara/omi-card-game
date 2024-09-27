@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import SocketManager from "@/services/web-socket-service";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { SocketData } from "@/utils/types-multiplayer";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -19,17 +19,65 @@ const StartGamePoolPublic = (props: Props) => {
   const [roomName, setRoomName] = useState<string | null>(null);
   const roomId = props.roomId;
   const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
+  const [roomCreator, setRoomCreator] = useState<SocketData | null>(null);
+  const [isRoomCreator, setIsRoomCreator] = useState<boolean>(true);
+  const router = useRouter();
 
   const getRoomData = () => {
-    console.log("Getting Room Data", roomId);
-    SocketManager.getRoomData(roomId, (data: SocketData[]) => {
-      setRoomData(data);
-      console.log("Room Data:", data);
-      if (data.length > 1) {
-        setOpponentPlayer(data[0]);
+    SocketManager.getRoomData(
+      roomId,
+      
+      (data: { creator: SocketData; players: SocketData[] }) => {
+        setRoomData(data.players);
+        setRoomCreator(data.creator);
+        console.log("data.creator:", data.creator);
+        console.log(
+          "data.creator.username !== UnKnown",
+          data.creator.username !== "UnKnown"
+        );
+
+        // Check if the creator's username is not "Unknown"
+        if (data.creator.username && data.creator.username !== "Unknown") {
+          // Save the room creator in local storage
+          localStorage.setItem(
+            `roomCreator_${roomId}`,
+            JSON.stringify(data.creator.username)
+          );
+          console.log(
+            "Room creator saved in localStorage:",
+            data.creator.username
+          );
+        } else {
+          console.log("Room creator is 'Unknown', not saving to localStorage.");
+        }
+
+        console.log("Room Data:", data);
+
+        // Set opponent player if there are enough players
+        if (data.players.length > 1) {
+          setOpponentPlayer(data.players[0]);
+        }
+
+        // Update isRoomCreator based on the creator username
+        const currentUserIsCreator = data.creator?.username === userName;
+        setIsRoomCreator(currentUserIsCreator);
+
+        if (data.creator.username && data.creator.username === "Unknown") {
+          const storedCreator = localStorage.getItem(`roomCreator_${roomId}`);
+          if (storedCreator) {
+            const creatorData: string = JSON.parse(storedCreator);
+            console.log("storedCreator", storedCreator);
+            console.log("userName", userName);
+            console.log("storedCreator === userName", creatorData === userName);
+            // setRoomCreator(creatorData);
+            setIsRoomCreator(creatorData === userName);
+          }
+        }
       }
-    });
+    );
   };
+
+  console.log("isRoomCreator : ", isRoomCreator);
 
   const getUsername = () => {
     // Ensure the code only runs in the browser
@@ -51,12 +99,17 @@ const StartGamePoolPublic = (props: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (webSocketURL)
-      // Connect to socket on mount
-      SocketManager.connect(webSocketURL);
-    getUsername();
+  const handleStartGame = () => {
+    SocketManager.emitGameStart(roomId); // Emit the event for game start
+  };
 
+  useEffect(() => {
+    // Connect to socket on mount
+    if (webSocketURL) {
+      SocketManager.connect(webSocketURL);
+    }
+
+    getUsername();
     handleJoinRoom();
     getRoomData();
 
@@ -66,6 +119,11 @@ const StartGamePoolPublic = (props: Props) => {
       if (newRoomData.length > 1) {
         setOpponentPlayer(newRoomData[1]); // Update opponent player
       }
+    });
+
+    // Handle game start event
+    SocketManager.onGameStart(() => {
+      router.push(`/multiplayer/gameplay/public/${roomId}`);
     });
 
     // Disconnect socket when component unmounts
@@ -83,11 +141,20 @@ const StartGamePoolPublic = (props: Props) => {
         </div>
       </div>
       <div className=" h-full flex justify-center items-center">
-        <div className="p-20 mt-20 ">
-          <Button disabled={!opponentPlayer} className="h-20 w-80 rounded-2xl">
+        <div className={`p-20 mt-20 ${isRoomCreator ? "flex" : " hidden"}`}>
+          {/* <Button disabled={!opponentPlayer} className="h-20 w-80 rounded-2xl">
             <Link href={`/multiplayer/gameplay/public/${roomId}`}>
               Start Game
             </Link>
+          </Button>
+           */}
+
+          <Button
+            disabled={!opponentPlayer}
+            onClick={handleStartGame} // Start game on button click
+            className="h-20 w-80 rounded-2xl"
+          >
+            Start Game
           </Button>
         </div>
       </div>

@@ -39,6 +39,11 @@ const CreateRoomComponent = () => {
       toast(`Public Room has been created. ${roomName}`);
     }
 
+    localStorage.setItem(
+      `roomCreator_${roomName}`,
+      JSON.stringify(userName)
+    );
+
     setIsRoomCreated(true);
   };
 

@@ -45,12 +45,18 @@ class SocketManager {
     }
   }
 
-  getRoomData(roomName: string, callback: (data: SocketData[]) => void) {
+  getRoomData(
+    roomName: string,
+    callback: (data: { creator: SocketData; players: SocketData[] }) => void
+  ) {
     if (this.socket) {
       this.socket.emit("getRoomData", roomName);
-      this.socket.on("RoomSocketInfoResponse", (roomData: SocketData[]) => {
-        callback(roomData);
-      });
+      this.socket.on(
+        "RoomSocketInfoResponse",
+        (roomData: { creator: SocketData; players: SocketData[] }) => {
+          callback(roomData);
+        }
+      );
     }
   }
 
@@ -96,6 +102,23 @@ class SocketManager {
     if (this.socket) {
       this.socket.on("message", (data) => {
         callback(data);
+      });
+    }
+  }
+
+  // Emit game start event to all players in the room
+  emitGameStart(roomName: string) {
+    console.log("roomName",roomName)
+    console.log("this.socket",this.socket)
+    if (this.socket && roomName.trim()) {
+      this.socket.emit("startGame", roomName);
+    }
+  }
+
+  onGameStart(callback: () => void) {
+    if (this.socket) {
+      this.socket.on("gameStarted", () => {
+        callback();
       });
     }
   }

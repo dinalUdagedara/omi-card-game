@@ -15,10 +15,9 @@ const GamePlayMultiplayer = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const [mySocket, setMySocket] = useState<Socket | null>(null);
-  const [isRoomPrivate,setIsRoomPrivate] = useState<boolean>(false)
+  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-
 
   useEffect(() => {
     if (webSocketURL)
@@ -38,31 +37,26 @@ const GamePlayMultiplayer = () => {
   const getRoomInfo = () => {
     if (roomId)
       SocketManager.getRoomData(roomId, (roomData) => {
-        setRoomSocketData(roomData);
-        console.log(roomData);
+        setRoomSocketData(roomData.players);
+        console.log("roomData", roomData);
       });
   };
 
-
-  
   const getUsername = () => {
     // Ensure the code only runs in the browser
 
-      const storedUserName = localStorage.getItem("userName");
-      if (storedUserName) {
-        setUserName(storedUserName);
-      }
-
+    const storedUserName = localStorage.getItem("userName");
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
   };
-
 
   const handleJoinRoom = () => {
     console.log("roomId: ", roomId);
 
     getUsername();
-    console.log("UserName: ", userName);
     if (roomId && userName) {
-      SocketManager.joinRoom(roomId,isRoomPrivate, userName);
+      SocketManager.joinRoom(roomId, isRoomPrivate, userName);
       console.log("Joined to the Room : ", roomId);
     }
   };

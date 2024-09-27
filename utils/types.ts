@@ -63,47 +63,18 @@ export const exampleCard = {
 };
 
 export const exampleCardSet: Card[] = [
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
+  { suit: "hearts", value: "7" },
+  { suit: "hearts", value: "8" },
+  { suit: "hearts", value: "9" },
+  { suit: "hearts", value: "10" },
+  { suit: "diamonds", value: "J" },
+  { suit: "diamonds", value: "Q" },
+  { suit: "clubs", value: "K" },
+  { suit: "clubs", value: "A" },
+  { suit: "spades", value: "7" },
+  { suit: "spades", value: "8" },
 ];
+
 
 export const roundFinishMessages: RoundFinishMessage[] = [
   {

@@ -55,7 +55,7 @@ const Pool = () => {
 
   const getRoomInfo = () => {
     SocketManager.getRoomData(roomName, (roomData) => {
-      setRoomSocketData(roomData);
+      setRoomSocketData(roomData.players);
     });
   };
 

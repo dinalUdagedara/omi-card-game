@@ -10,14 +10,18 @@ import { Card, exampleCardSet, Suit } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserDeckMobile } from "@/components/decks/user-deck-mobile";
 import ScoreBoardMobileMultiplayer from "./score-board/score-board-mobile";
 import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
 import { SuitDrawerMobile } from "@/components/drawer/mobile/trump-suit-selector-mobile";
-import { setTrump } from "@/utils/game-logic";
+import { createDeck, dealCards, setTrump, shuffleDeck } from "@/utils/game-logic";
 import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer";
+
+
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { mutation } from "@/convex/_generated/server";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -43,6 +47,9 @@ const GamePlayMultiplayer = () => {
   const selectedCardByUser = useStore((state) => state.selectedCardByUser);
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+  const tasks = useQuery(api.tasks.get);
+  const taskList = useMutation(api.functions.createTask)  
+
 
   useEffect(() => {
     if (webSocketURL)

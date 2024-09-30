@@ -17,6 +17,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { generateRandomName } from "@/utils/types-multiplayer";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
@@ -29,9 +31,17 @@ const CreateRoomComponent = () => {
   );
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
-
+  const createRoomsDB = useMutation(api.rooms.createRoom);
   const handleCreateRoom = () => {
     SocketManager.joinRoom(roomName, isRoomPrivate, userName);
+
+console.log("isRoomPrivate",isRoomPrivate)
+    
+    createRoomsDB({
+      roomName,
+      isRoomPrivate,
+      userName,
+    });
     if (isRoomPrivate) {
       toast(`Private Room has been created. ${roomName}`);
       createPrivateRoomLink();
@@ -39,10 +49,7 @@ const CreateRoomComponent = () => {
       toast(`Public Room has been created. ${roomName}`);
     }
 
-    localStorage.setItem(
-      `roomCreator_${roomName}`,
-      JSON.stringify(userName)
-    );
+    localStorage.setItem(`roomCreator_${roomName}`, JSON.stringify(userName));
 
     setIsRoomCreated(true);
   };

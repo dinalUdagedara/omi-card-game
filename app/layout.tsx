@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import ModeSelector from "@/components/mode-selector";
 import { NightModeToggle } from "@/components/night-mode-selector";
 import Header from "@/components/header";
+import { ConvexClientProvider } from "@/components-multiplayer/ConvexClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,8 +29,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-
-          {children}
+          <ConvexClientProvider>{children}</ConvexClientProvider>
           <Toaster />
         </ThemeProvider>
       </body>

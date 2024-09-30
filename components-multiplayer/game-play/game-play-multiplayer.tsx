@@ -6,7 +6,7 @@ import SocketManager from "@/services/web-socket-service";
 import { SocketData } from "@/utils/types-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
-import { exampleCardSet } from "@/utils/types";
+import { Card, exampleCardSet, Suit } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +14,10 @@ import { UserDeckMobile } from "@/components/decks/user-deck-mobile";
 import ScoreBoardMobileMultiplayer from "./score-board/score-board-mobile";
 import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
+import { useStore } from "@/store/state";
+import { SuitDrawerMobile } from "@/components/drawer/mobile/trump-suit-selector-mobile";
+import { setTrump } from "@/utils/game-logic";
+import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -25,6 +29,18 @@ const GamePlayMultiplayer = () => {
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const [mySocket, setMySocket] = useState<Socket | null>(null);
   const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
+  const isTrumpSelected = useStore((state) => state.trumpSelected);
+  const setTrumpSelected = useStore((state) => state.setTrumpSelected);
+  const trumpSuit = useStore((state) => state.trumpSuit);
+  const setTrumpSuit = useStore((state) => state.setTrumpSuit);
+  const setOpponentCard = MultiplayerStateStore(
+    (state) => state.setOpponentCard
+  );
+
+  const setSelectedCardByUser = useStore(
+    (state) => state.setSelectedCardByUser
+  );
+  const selectedCardByUser = useStore((state) => state.selectedCardByUser);
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
@@ -36,6 +52,7 @@ const GamePlayMultiplayer = () => {
     getRoomInfo();
     const mySocketID = SocketManager.getMySocket();
     if (mySocketID) setMySocket(mySocketID);
+    setTrumpSelected(false);
 
     // Disconnect socket when component unmounts
     return () => {
@@ -70,6 +87,17 @@ const GamePlayMultiplayer = () => {
     }
   };
 
+  function handleSuitChange(suit: string | null) {
+    setTrumpSuit(suit as Suit);
+    setTrump(suit as Suit);
+  }
+
+  function handleCloseDrawer() {
+    if (roomId) SocketManager.emitTrump(trumpSuit, roomId);
+    handleSuitChange(trumpSuit);
+    setTrumpSelected(true);
+  }
+
   function restartGame(): void {
     throw new Error("Function not implemented.");
   }
@@ -86,12 +114,39 @@ const GamePlayMultiplayer = () => {
     throw new Error("Function not implemented.");
   }
 
-  function handleCardSelectDeck(cardIndex: number): void {
-    throw new Error("Function not implemented.");
+  function handleCardSelectDeck(selectedCard: Card): void {
+    console.log("selected card", selectedCard);
+    setSelectedCardByUser(selectedCard);
+
+    if (roomId) SocketManager.emitSelectedCard(selectedCard, roomId);
   }
+
+  useEffect(() => {
+    // Listen for the event when a trump suit is selected
+    SocketManager.onTrumpSelected((selectedTrumpSuit: Suit) => {
+      console.log("Trump suit has been selected:", selectedTrumpSuit);
+      setTrumpSuit(selectedTrumpSuit); // Set the received trump suit in state
+      setTrumpSelected(true); // Update the state to show trump has been chosen
+    });
+    SocketManager.onOpponentCardSelect((opponentCard: Card) => {
+      if (opponentCard.value !== selectedCardByUser?.value || opponentCard.suit !== selectedCardByUser?.suit) {
+        setOpponentCard(opponentCard); // Update the opponent's selected card
+      }
+    });
+  }, []);
 
   return (
     <div className="flex flex-col gap-10 h-full min-h-screen ">
+      {exampleCardSet ? (
+        <div>
+          {!isTrumpSelected && (
+            <SuitDrawerMobile
+              userHand={exampleCardSet}
+              onClose={handleCloseDrawer}
+            />
+          )}
+        </div>
+      ) : null}
       <div>
         <ScoreBoardMobileMultiplayer />
       </div>
@@ -156,7 +211,7 @@ const GamePlayMultiplayer = () => {
             {exampleCardSet ? (
               <div className="relative w-full ">
                 <div className="">
-                  <UserDeckMobile
+                  <UserDeckMobileMultiplayer
                     userHand={exampleCardSet}
                     onCardSelect={handleCardSelectDeck}
                   />

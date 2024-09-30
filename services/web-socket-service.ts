@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { SocketData } from "@/utils/types-multiplayer";
+import { Card, Suit } from "@/utils/types";
 
 class SocketManager {
   private socket: Socket | null = null;
@@ -108,8 +109,8 @@ class SocketManager {
 
   // Emit game start event to all players in the room
   emitGameStart(roomName: string) {
-    console.log("roomName",roomName)
-    console.log("this.socket",this.socket)
+    console.log("roomName", roomName);
+    console.log("this.socket", this.socket);
     if (this.socket && roomName.trim()) {
       this.socket.emit("startGame", roomName);
     }
@@ -119,6 +120,36 @@ class SocketManager {
     if (this.socket) {
       this.socket.on("gameStarted", () => {
         callback();
+      });
+    }
+  }
+
+  // Game Play Related Socket messages
+
+  emitTrump(trumpSuit: Suit | null, roomName: string) {
+    if (this.socket) {
+      this.socket.emit("trumpSelected", trumpSuit, roomName);
+    }
+  }
+
+  onTrumpSelected(callback: (trumpSuit: Suit) => void) {
+    if (this.socket) {
+      this.socket.on("onTrumpSelected", (selectedTrumpSuit: Suit) => {
+        callback(selectedTrumpSuit);
+      });
+    }
+  }
+
+  emitSelectedCard(selectedCard: Card, roomName: string) {
+    if (this.socket) {
+      this.socket.emit("selectedCard", selectedCard, roomName);
+    }
+  }
+
+  onOpponentCardSelect(callback: (selectedCard: Card) => void) {
+    if (this.socket) {
+      this.socket.on("opponentCard", (selectedCard: Card) => {
+        callback(selectedCard);
       });
     }
   }

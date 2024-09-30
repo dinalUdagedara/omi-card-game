@@ -14,6 +14,7 @@ import { GameOverDialogLose } from "@/components/game-board.tsx/game-over/game-o
 import { GameOverDialog } from "@/components/game-board.tsx/game-over/game-over-win";
 import ControllerStart from "@/components/game-board.tsx/controller-start";
 import ControllerNextRound from "@/components/game-board.tsx/controller-next-round";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -39,119 +40,20 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   const isSubmitted = useStore((state) => state.isSubmitted);
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isGameOver = useStore((state) => state.isGameOver);
-
-  useEffect(() => {
-    setIsCardsGone(false);
-    if (isSubmitted) {
-      const timer = setTimeout(() => {
-        setIsCardsGone(true);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isSubmitted]);
+  const selectedCardByUser = useStore((state) => state.selectedCardByUser);
+  const opponentCard = MultiplayerStateStore((state) => state.opponentsCard);
 
   return (
     <div>
-      {isGameOver ? (
-        <>
-          <div className="flex justify-center gap-10">
-          {gameWinner === 1 ? (
-                <GameOverDialog onRestart={onRestart} />
-              ) : (
-                <GameOverDialogLose onRestart={onRestart}  />
-              )}
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex justify-center gap-10">
-            {!isCardsGenerated && (
-              <div>
-                <ControllerStart
-                  onStart={onStart}
-                  onShuffleAgain={onShuffleAgain}
-                />
-              </div>
-            )}
-          </div>
+      <p>
+        Opponent's Card :{opponentCard?.suit} of{" "}
+        {opponentCard?.value}
+      </p>
 
-          <div>
-            {winningCard && !isGameOver ? (
-              <div>
-                {isCardsGone ? (
-                  <div className="flex justify-center w-full">
-                    {isSubmitted && (
-                      <div>
-                        <ControllerNextRound onNextStart={onNextStart} />
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col">
-                    {winningCard === player_1_card && <Winner1Mobile />}
-                    {winningCard === player_2_card && <Winner2Mobile />}
-                    {winningCard === player_3_card && <Winner3Mobile />}
-                    {winningCard === player_4_card && <Winner4Mobile />}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-row w-full justify-between items-center min-h-72 gap-5">
-                <div className="w-1/3 min-w-16">
-                  {player_4_card && !winningCard && (
-                    <motion.div
-                      className="flex justify-center items-center"
-                      initial={{ opacity: 0, x: -100 }} // Start  values
-                      animate={{ opacity: 1, x: 0 }} // end to these values
-                      transition={{ duration: 0.8, delay: 1 }} // Animation duration
-                    >
-                      <CardComponentMobile card={player_4_card} />
-                    </motion.div>
-                  )}
-                </div>
-
-                <div className="flex flex-col justify-between gap-10  w-1/3 ">
-                  <div className="">
-                    {player_3_card && !winningCard && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.8 }} // Adding delay for animation
-                      >
-                        <CardComponentMobile card={player_3_card} />
-                      </motion.div>
-                    )}
-                  </div>
-                  <div className="">
-                    {player_1_card && !winningCard && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <CardComponentMobile card={player_1_card} />
-                      </motion.div>
-                    )}
-                  </div>
-                </div>
-                <div className="w-1/3">
-                  {player_2_card && !winningCard && (
-                    <motion.div
-                      className="flex justify-center items-center"
-                      initial={{ opacity: 0, x: 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.6 }}
-                    >
-                      <CardComponentMobile card={player_2_card} />
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </>
-      )}
+      <p>
+        Selected Card : {selectedCardByUser?.suit} of{" "}
+        {selectedCardByUser?.value}
+      </p>
     </div>
   );
 };

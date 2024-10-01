@@ -66,7 +66,6 @@ class SocketManager {
   }
 
   onPlayerJoined(callback: (data: SocketData[]) => void) {
-    console.log("onPlayerJoined");
     if (this.socket) {
       this.socket.on("player-joined", (newRoomData: SocketData[]) => {
         callback(newRoomData);
@@ -75,10 +74,7 @@ class SocketManager {
   }
 
   onRoomCreated(callback: (data: string[]) => void) {
-    console.log("new Room Created");
-
     if (this.socket) {
-      console.log("new Room Created");
       this.socket.on("new-public-room", (newRoomData: string[]) => {
         callback(newRoomData);
       });
@@ -113,15 +109,12 @@ class SocketManager {
 
   // Emit game start event to all players in the room
   emitGameStart(roomName: string) {
-    console.log("roomName", roomName);
-    console.log("this.socket", this.socket);
     if (this.socket && roomName.trim()) {
       this.socket.emit("startGame", roomName);
     }
   }
 
   onGameStart(callback: () => void) {
-    console.log("gameStarted web-socket-service",this.socket);
     if (this.socket) {
       this.socket.on("gameStarted", () => {
         callback();

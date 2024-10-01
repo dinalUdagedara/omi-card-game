@@ -36,12 +36,6 @@ const StartGamePoolPublic = (props: Props) => {
       (data: { creator: SocketData; players: SocketData[] }) => {
         setRoomData(data.players);
         setRoomCreator(data.creator);
-        console.log("data.creator:", data.creator);
-        console.log(
-          "data.creator.username !== UnKnown",
-          data.creator.username !== "UnKnown"
-        );
-
         // Check if the creator's username is not "Unknown"
         if (data.creator.username && data.creator.username !== "Unknown") {
           // Save the room creator in local storage
@@ -57,8 +51,6 @@ const StartGamePoolPublic = (props: Props) => {
           console.log("Room creator is 'Unknown', not saving to localStorage.");
         }
 
-        console.log("Room Data:", data);
-
         // Set opponent player if there are enough players
         if (data.players.length > 1) {
           setOpponentPlayer(data.players[0]);
@@ -72,9 +64,6 @@ const StartGamePoolPublic = (props: Props) => {
           const storedCreator = localStorage.getItem(`roomCreator_${roomId}`);
           if (storedCreator) {
             const creatorData: string = JSON.parse(storedCreator);
-            console.log("storedCreator", storedCreator);
-            console.log("userName", userName);
-            console.log("storedCreator === userName", creatorData === userName);
             // setRoomCreator(creatorData);
             setIsRoomCreator(creatorData === userName);
           }
@@ -82,8 +71,6 @@ const StartGamePoolPublic = (props: Props) => {
       }
     );
   };
-
-  console.log("isRoomCreator : ", isRoomCreator);
 
   const getUsername = () => {
     // Ensure the code only runs in the browser
@@ -95,26 +82,15 @@ const StartGamePoolPublic = (props: Props) => {
   };
 
   const handleJoinRoom = () => {
-    console.log("roomId: ", roomId);
-  
     getUsername();
-    console.log("UserName: ", userName);
     if (roomId && userName) {
       const roomName = roomId;
       SocketManager.joinRoom(roomId, isRoomPrivate, userName);
-      console.log("Joined to the Room: ", roomId);
-  
       // Only update the database if the player hasn't joined before
-      
-      console.log("!hasJoinedRoom.current",!hasJoinedRoom.current)
-      console.log("roomdataFromDB",roomdataFromDB)
-      console.log("!hasJoinedRoom.current && roomdataFromDB",!hasJoinedRoom.current && roomdataFromDB)
       if (roomdataFromDB) {
-      console.log("roomdataFromDB.players",roomdataFromDB.players)
         const alreadyJoined = roomdataFromDB.players.some(
           (player: string) => player === userName
         );
-
         if (!alreadyJoined) {
           // Updating the database
           joinRoomDB({
@@ -123,7 +99,6 @@ const StartGamePoolPublic = (props: Props) => {
           });
         }
       }
-  
       hasJoinedRoom.current = true;
     }
   };
@@ -133,11 +108,11 @@ const StartGamePoolPublic = (props: Props) => {
   };
 
   useEffect(() => {
-    if(roomdataFromDB)
-    // Connect to socket on mount
-    if (webSocketURL) {
-      SocketManager.connect(webSocketURL);
-    }
+    if (roomdataFromDB)
+      if (webSocketURL) {
+        // Connect to socket on mount
+        SocketManager.connect(webSocketURL);
+      }
 
     getUsername();
     handleJoinRoom();
@@ -160,7 +135,7 @@ const StartGamePoolPublic = (props: Props) => {
     return () => {
       SocketManager.disconnect();
     };
-  }, [webSocketURL, roomId, userName,roomdataFromDB]);
+  }, [webSocketURL, roomId, userName, roomdataFromDB]);
 
   return (
     <div className="flex flex-col h-full min-h-screen">
@@ -172,16 +147,9 @@ const StartGamePoolPublic = (props: Props) => {
       </div>
       <div className=" h-full flex justify-center items-center">
         <div className={`p-20 mt-20 ${isRoomCreator ? "flex" : " hidden"}`}>
-          {/* <Button disabled={!opponentPlayer} className="h-20 w-80 rounded-2xl">
-            <Link href={`/multiplayer/gameplay/public/${roomId}`}>
-              Start Game
-            </Link>
-          </Button>
-           */}
-
           <Button
             disabled={!opponentPlayer}
-            onClick={handleStartGame} // Start game on button click
+            onClick={handleStartGame}
             className="h-20 w-80 rounded-2xl"
           >
             Start Game

@@ -35,7 +35,6 @@ const CreateRoomComponent = () => {
   const handleCreateRoom = () => {
     SocketManager.joinRoom(roomName, isRoomPrivate, userName);
 
-    console.log("isRoomPrivate", isRoomPrivate);
     if (userName)
       createRoomsDB({
         roomName,
@@ -56,7 +55,6 @@ const CreateRoomComponent = () => {
 
   // Handler to change room type based on tab selection
   const handleTabChange = (value: string) => {
-    console.log(value);
     setIsRoomPrivate(value === "private");
   };
 

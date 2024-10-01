@@ -20,8 +20,6 @@ const PoolUI = () => {
 
     // Listen for player-joined or room-created events
     SocketManager.onRoomCreated((newRoomData: string[]) => {
-      console.log("newRoomData", newRoomData);
-
       // Update the available rooms with the new room data
       if (newRoomData) {
         setAvailableRooms(newRoomData);

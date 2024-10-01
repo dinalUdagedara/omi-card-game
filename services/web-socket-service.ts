@@ -15,6 +15,10 @@ class SocketManager {
     }
   }
 
+  getMySocket() {
+    return this.socket;
+  }
+
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
@@ -117,6 +121,7 @@ class SocketManager {
   }
 
   onGameStart(callback: () => void) {
+    console.log("gameStarted web-socket-service",this.socket);
     if (this.socket) {
       this.socket.on("gameStarted", () => {
         callback();
@@ -152,10 +157,6 @@ class SocketManager {
         callback(selectedCard);
       });
     }
-  }
-
-  getMySocket() {
-    return this.socket;
   }
 }
 

@@ -1,10 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
 import SocketManager from "@/services/web-socket-service";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { SocketData } from "@/utils/types-multiplayer";
+import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   roomId: string;
@@ -22,11 +24,15 @@ const StartGamePoolPublic = (props: Props) => {
   const [roomCreator, setRoomCreator] = useState<SocketData | null>(null);
   const [isRoomCreator, setIsRoomCreator] = useState<boolean>(true);
   const router = useRouter();
+  const roomdataFromDB = useQuery(api.rooms.getRoomData, { roomName: roomId });
+
+  const hasJoinedRoom = useRef(false);
+  const joinRoomDB = useMutation(api.rooms.joinRoom);
 
   const getRoomData = () => {
     SocketManager.getRoomData(
       roomId,
-      
+
       (data: { creator: SocketData; players: SocketData[] }) => {
         setRoomData(data.players);
         setRoomCreator(data.creator);
@@ -90,12 +96,35 @@ const StartGamePoolPublic = (props: Props) => {
 
   const handleJoinRoom = () => {
     console.log("roomId: ", roomId);
-
+  
     getUsername();
     console.log("UserName: ", userName);
     if (roomId && userName) {
+      const roomName = roomId;
       SocketManager.joinRoom(roomId, isRoomPrivate, userName);
-      console.log("Joined to the Room : ", roomId);
+      console.log("Joined to the Room: ", roomId);
+  
+      // Only update the database if the player hasn't joined before
+      
+      console.log("!hasJoinedRoom.current",!hasJoinedRoom.current)
+      console.log("roomdataFromDB",roomdataFromDB)
+      console.log("!hasJoinedRoom.current && roomdataFromDB",!hasJoinedRoom.current && roomdataFromDB)
+      if (roomdataFromDB) {
+      console.log("roomdataFromDB.players",roomdataFromDB.players)
+        const alreadyJoined = roomdataFromDB.players.some(
+          (player: string) => player === userName
+        );
+
+        if (!alreadyJoined) {
+          // Updating the database
+          joinRoomDB({
+            userName,
+            roomName,
+          });
+        }
+      }
+  
+      hasJoinedRoom.current = true;
     }
   };
 
@@ -104,6 +133,7 @@ const StartGamePoolPublic = (props: Props) => {
   };
 
   useEffect(() => {
+    if(roomdataFromDB)
     // Connect to socket on mount
     if (webSocketURL) {
       SocketManager.connect(webSocketURL);
@@ -130,7 +160,7 @@ const StartGamePoolPublic = (props: Props) => {
     return () => {
       SocketManager.disconnect();
     };
-  }, [webSocketURL, roomId, userName]);
+  }, [webSocketURL, roomId, userName,roomdataFromDB]);
 
   return (
     <div className="flex flex-col h-full min-h-screen">

@@ -35,13 +35,13 @@ const CreateRoomComponent = () => {
   const handleCreateRoom = () => {
     SocketManager.joinRoom(roomName, isRoomPrivate, userName);
 
-console.log("isRoomPrivate",isRoomPrivate)
-    
-    createRoomsDB({
-      roomName,
-      isRoomPrivate,
-      userName,
-    });
+    console.log("isRoomPrivate", isRoomPrivate);
+    if (userName)
+      createRoomsDB({
+        roomName,
+        isRoomPrivate,
+        userName,
+      });
     if (isRoomPrivate) {
       toast(`Private Room has been created. ${roomName}`);
       createPrivateRoomLink();

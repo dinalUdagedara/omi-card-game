@@ -15,9 +15,13 @@ import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
 import { SuitDrawerMobile } from "@/components/drawer/mobile/trump-suit-selector-mobile";
-import { createDeck, dealCards, setTrump, shuffleDeck } from "@/utils/game-logic";
+import {
+  createDeck,
+  dealCards,
+  setTrump,
+  shuffleDeck,
+} from "@/utils/game-logic";
 import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer";
-
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -47,16 +51,19 @@ const GamePlayMultiplayer = () => {
   const selectedCardByUser = useStore((state) => state.selectedCardByUser);
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-  const tasks = useQuery(api.tasks.get);
-  const taskList = useMutation(api.functions.createTask)  
 
+  const [isRoomCreator, setIsRoomCreator] = useState<boolean>(true);
+  const roomdataFromDB = useQuery(api.rooms.getRoomData, {
+    roomName: roomId || "",
+  });
+  const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
 
   useEffect(() => {
     if (webSocketURL)
       // Connect to socket on mount
       SocketManager.connect(webSocketURL);
     handleJoinRoom();
-    getRoomInfo();
+    // getRoomInfo();
     const mySocketID = SocketManager.getMySocket();
     if (mySocketID) setMySocket(mySocketID);
     setTrumpSelected(false);
@@ -67,13 +74,19 @@ const GamePlayMultiplayer = () => {
     };
   }, [webSocketURL, roomId, userName]);
 
-  const getRoomInfo = () => {
-    if (roomId)
-      SocketManager.getRoomData(roomId, (roomData) => {
-        setRoomSocketData(roomData.players);
-        console.log("roomData", roomData);
-      });
-  };
+  useEffect(() => {
+    if (roomdataFromDB) {
+      // Update isRoomCreator based on the creator username
+      const currentUserIsCreator = roomdataFromDB.creator === userName;
+      if (roomdataFromDB.players.length > 1 && roomdataFromDB.players[0] === userName) {
+        setOpponentPlayerDB(roomdataFromDB.players[1]);
+      } else if (roomdataFromDB.players.length > 1) {
+        setOpponentPlayerDB(roomdataFromDB.players[0]);
+      }
+      setIsRoomCreator(currentUserIsCreator);
+    }
+  }, [roomdataFromDB]);
+
 
   const getUsername = () => {
     // Ensure the code only runs in the browser
@@ -136,7 +149,10 @@ const GamePlayMultiplayer = () => {
       setTrumpSelected(true); // Update the state to show trump has been chosen
     });
     SocketManager.onOpponentCardSelect((opponentCard: Card) => {
-      if (opponentCard.value !== selectedCardByUser?.value || opponentCard.suit !== selectedCardByUser?.suit) {
+      if (
+        opponentCard.value !== selectedCardByUser?.value ||
+        opponentCard.suit !== selectedCardByUser?.suit
+      ) {
         setOpponentCard(opponentCard); // Update the opponent's selected card
       }
     });
@@ -183,11 +199,8 @@ const GamePlayMultiplayer = () => {
               <AvatarImage src={`/assets/player3.png`} />
             </Avatar>
           </motion.div>
-          {roomSocketData && roomSocketData.length > 0 && (
-            <div>
-              {roomSocketData[0]?.username || "Waiting for opponent..."}
-            </div>
-          )}
+
+          <div>{opponentPlayerDB || "Waiting for opponent..."}</div>
         </div>
       </div>
 

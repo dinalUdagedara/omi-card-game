@@ -3,7 +3,6 @@ import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import SocketManager from "@/services/web-socket-service";
-import { SocketData } from "@/utils/types-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
 import { Card, exampleCardSet, Suit } from "@/utils/types";
@@ -25,14 +24,11 @@ import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer"
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { mutation } from "@/convex/_generated/server";
+
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
   const roomId = pathname.split("/").pop(); // Get the last part of the URL, which is the roomId
-  const [roomSocketData, setRoomSocketData] = useState<SocketData[] | null>(
-    null
-  );
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const [mySocket, setMySocket] = useState<Socket | null>(null);
@@ -52,11 +48,53 @@ const GamePlayMultiplayer = () => {
 
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
-  const [isRoomCreator, setIsRoomCreator] = useState<boolean>(true);
+  const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
+  const [roomCreatorID, setRoomCreatorID] = useState<string | null>(null);
   const roomdataFromDB = useQuery(api.rooms.getRoomData, {
     roomName: roomId || "",
   });
   const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
+  const [playersIDs, setPlayersIDs] = useState<string[] | null>(null); // State to store the players' IDs
+
+  const createGameState = useMutation(api.gameStates.createGameState);
+
+  // Query to fetch all players' IDs in the room
+  const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
+    roomName: roomId || "",
+  });
+  const userID = useQuery(api.gameStates.getIdByUserName,{
+    userName: userName || "",
+  })
+
+  useEffect(() => {
+    if (playersInRoom) {
+      setPlayersIDs(playersInRoom); // Update state when the query returns data
+      console.log("Players in the room: ", playersInRoom);
+      if(isRoomCreator && userID){
+        setRoomCreatorID(userID)
+      }
+    }
+  }, [playersInRoom]);
+
+  const createGameInstanceDB = async () => {
+    console.log("isRoomCreator", isRoomCreator);
+
+    if (isRoomCreator && playersInRoom) {
+      const players = playersInRoom
+      try {
+        const roomName = roomId;
+        const playerTurn = userID
+        if (roomName && playerTurn) {
+          const gameStateID = await createGameState({
+            roomName,
+            players,
+            playerTurn
+          });
+          alert(`Game state created successfully with ID: ${gameStateID}`);
+        }
+      } catch (error) {}
+    }
+  };
 
   useEffect(() => {
     if (webSocketURL)
@@ -67,7 +105,6 @@ const GamePlayMultiplayer = () => {
     const mySocketID = SocketManager.getMySocket();
     if (mySocketID) setMySocket(mySocketID);
     setTrumpSelected(false);
-
     // Disconnect socket when component unmounts
     return () => {
       SocketManager.disconnect();
@@ -78,15 +115,18 @@ const GamePlayMultiplayer = () => {
     if (roomdataFromDB) {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
-      if (roomdataFromDB.players.length > 1 && roomdataFromDB.players[0] === userName) {
+      if (
+        roomdataFromDB.players.length > 1 &&
+        roomdataFromDB.players[0] === userName
+      ) {
         setOpponentPlayerDB(roomdataFromDB.players[1]);
       } else if (roomdataFromDB.players.length > 1) {
         setOpponentPlayerDB(roomdataFromDB.players[0]);
       }
       setIsRoomCreator(currentUserIsCreator);
+      createGameInstanceDB();
     }
   }, [roomdataFromDB]);
-
 
   const getUsername = () => {
     // Ensure the code only runs in the browser

@@ -81,3 +81,67 @@ export const addPlayer = mutation({
     return playerID;
   },
 });
+
+
+
+
+// Query to get the room creator's ID by room name
+export const getRoomCreator = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    // Check if the room exists
+    if (!roomInfo) {
+      throw new Error("Room not found");
+    }
+
+    // Return the creator's userName
+    return roomInfo.creator; 
+  },
+});
+
+
+// Query to get the player's ID by username
+export const getPlayerIdByUserName = query({
+  args: {
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const playerInfo = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), args.userName))
+      .first();
+
+    // Check if the player exists
+    if (!playerInfo) {
+      throw new Error("Player not found");
+    }
+
+    // Return the player's ID
+    return playerInfo._id; // Assuming _id is the field for the player's ID
+  },
+});
+
+
+export const getAllPlayersIDInTheRoom = query({
+  args:{
+    roomName: v.string(),
+  },
+  handler: async (ctx,args) => {
+    const room = await ctx.db
+    .query("rooms")
+    .filter((q)=> q.eq(q.field("roomName"),args.roomName))
+    .first();
+    // Check if the player exists
+    if (!room) {
+      throw new Error("room not found");
+    }
+    return room?.players
+  }
+})

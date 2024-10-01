@@ -81,14 +81,23 @@ const StartGamePoolPublic = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    // Ensure roomdataFromDB is available and the user hasn't already joined the room
+    if (roomdataFromDB && !hasJoinedRoom.current) {
+      handleJoinRoom(); // Call handleJoinRoom once roomdataFromDB is available
+      hasJoinedRoom.current = true; // Set to true to prevent future calls
+    }
+  }, [roomdataFromDB]); // Add roomdataFromDB as a dependency
+
   const handleJoinRoom = () => {
     getUsername();
     if (roomId && userName) {
       const roomName = roomId;
       SocketManager.joinRoom(roomId, isRoomPrivate, userName);
       // Only update the database if the player hasn't joined before
+      console.log("roomdataFromDB", roomdataFromDB);
       if (roomdataFromDB) {
-        const alreadyJoined = roomdataFromDB.players.some(
+        const alreadyJoined = roomdataFromDB.playerUserNames.some(
           (player: string) => player === userName
         );
         if (!alreadyJoined) {
@@ -98,8 +107,8 @@ const StartGamePoolPublic = (props: Props) => {
             roomName,
           });
         }
+        hasJoinedRoom.current = true;
       }
-      hasJoinedRoom.current = true;
     }
   };
 
@@ -108,11 +117,10 @@ const StartGamePoolPublic = (props: Props) => {
   };
 
   useEffect(() => {
-    if (roomdataFromDB)
-      if (webSocketURL) {
-        // Connect to socket on mount
-        SocketManager.connect(webSocketURL);
-      }
+    if (webSocketURL) {
+      // Connect to socket on mount
+      SocketManager.connect(webSocketURL);
+    }
 
     getUsername();
     handleJoinRoom();
@@ -135,7 +143,7 @@ const StartGamePoolPublic = (props: Props) => {
     return () => {
       SocketManager.disconnect();
     };
-  }, [webSocketURL, roomId, userName, roomdataFromDB]);
+  }, [webSocketURL, roomId, userName]);
 
   return (
     <div className="flex flex-col h-full min-h-screen">

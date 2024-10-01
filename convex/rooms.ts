@@ -1,22 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-// // Create a new todo with the given data
-// export const createtodo = mutation({
-//   args: { text: v.string() },
-//   handler: async (ctx, args) => {
-//     await ctx.db.insert("todos", {
-//       text: args.text,
-//     });
-//   },
-// });
-
-// export const getTodos = query({
-//   handler: async (ctx) => {
-//     return ctx.db.query("todos").collect();
-//   },
-// });
-
+// Query to get room data by room name
 export const getRoomData = query({
   args: {
     roomName: v.string(),
@@ -43,19 +28,19 @@ export const createRoom = mutation({
       isRoomPrivate: args.isRoomPrivate,
       creator: args.userName,
       players: [],
+      playerUserNames: [],
       status: "waiting",
     });
     return roomID;
   },
 });
 
-//Joining to a existing room
+// Joining an existing room
 export const joinRoom = mutation({
   args: {
     roomName: v.string(),
     userName: v.string(),
   },
-
   handler: async (ctx, args) => {
     const room = await ctx.db
       .query("rooms")
@@ -63,28 +48,34 @@ export const joinRoom = mutation({
       .first();
 
     if (!room) throw new Error("Room not found");
-    // Add the new player to the 'players' list in the room
+
     const playerID = await ctx.db.insert("players", {
       userName: args.userName,
-      roomName: args.roomName,
+      roomId: room._id, // Reference the room by ID
       isCreator: false,
     });
 
-    await ctx.db.patch(room._id, { players: [...room.players, args.userName] });
+    // Update the room's players array by adding the new player's ID
+    await ctx.db.patch(room._id, { players: [...room.players, playerID] });
+    await ctx.db.patch(room._id, {
+      playerUserNames: [...room.playerUserNames, args.userName],
+    });
+
+    return playerID;
   },
 });
 
-//adding a player to players table
+// Adding a player to the players table
 export const addPlayer = mutation({
   args: {
     userName: v.string(),
-    roomName: v.string(),
+    roomId: v.id("rooms"), // Referencing the room by ID
     isCreator: v.boolean(),
   },
   handler: async (ctx, args) => {
     const playerID = await ctx.db.insert("players", {
       userName: args.userName,
-      roomName: args.roomName,
+      roomId: args.roomId,
       isCreator: args.isCreator,
     });
     return playerID;

@@ -1,29 +1,69 @@
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/utils/types";
 import { useStore } from "@/store/state";
-import CardComponentMobile from "@/components/cards/card-mobile";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { cardMultiplayer } from "@/utils/types-multiplayer";
+import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
 
 interface UserDeckProps {
-  userHand: Card[];
-  onCardSelect: (selectedCard: Card) => void;
+  userID: Id<"players">;
+  roomName: string;
 }
 
-export function UserDeckMobileMultiplayer({
-  userHand,
-  onCardSelect,
-}: UserDeckProps) {
+export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const trumpSuit = useStore((state) => state.trumpSuit);
-
-  const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isUserTurn = useStore((state) => state.isUserTurn);
+  const setUserTurn = useStore((state) => state.setIsUserTurn);
 
+  const [myCardDeck, setMyCardDeck] = useState<
+    { suit: string; value: string }[] | null
+  >(null);
+
+  const myCardSet = useQuery(api.gameStates.getMyCardSet, {
+    playerId: userID,
+    roomName: roomName || "",
+  });
+
+  const turnPlayerID = useQuery(api.gameLogic.getPlayerTurn, {
+    roomName: roomName || "",
+  });
+
+  const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+
+  useEffect(() => {
+    if (myCardSet) {
+      setMyCardDeck(myCardSet);
+    }
+  }, [myCardSet]);
+
+  useEffect(() => {
+    if (turnPlayerID) {
+      if (turnPlayerID === userID) {
+        setUserTurn(true);
+      } else {
+        setUserTurn(false);
+      }
+    }
+  }, [turnPlayerID]);
+
+  async function handleCardSelect(card: cardMultiplayer) {
+    console.log("Selected Card", card);
+    const userId = userID;
+    await selectCard({
+      card,
+      roomName,
+      userId,
+    });
+  }
 
   return (
     <div className="h-16 w-60 flex justify-center mr-5">
       <div className="bg-black flex justify-center">
-        {userHand.map((card, index) => {
-          const angle = (index - (userHand.length - 1) / 2) * 10;
+        {myCardDeck?.map((card, index) => {
+          const angle = (index - (myCardDeck.length - 1) / 2) * 10;
 
           return (
             <div
@@ -46,8 +86,8 @@ export function UserDeckMobileMultiplayer({
                 }}
               >
                 <button
-                  disabled={!trumpSuit}
-                  onClick={() => onCardSelect(card)}
+                  disabled={!trumpSuit || !isUserTurn}
+                  onClick={() => handleCardSelect(card)}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
                 >
                   {" "}
@@ -65,7 +105,7 @@ export function UserDeckMobileMultiplayer({
                       repeatType: "reverse",
                     }}
                   >
-                    <CardComponentMobile card={card} />{" "}
+                    <CardComponentMobileMultiplayer card={card} />{" "}
                   </motion.div>
                 </button>
               </motion.div>

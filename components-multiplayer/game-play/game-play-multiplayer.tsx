@@ -39,25 +39,19 @@ const GamePlayMultiplayer = () => {
   const setOpponentCard = MultiplayerStateStore(
     (state) => state.setOpponentCard
   );
-
-  const setSelectedCardByUser = useStore(
-    (state) => state.setSelectedCardByUser
-  );
-  const selectedCardByUser = useStore((state) => state.selectedCardByUser);
-
   const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
   const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
   const [roomCreatorID, setRoomCreatorID] = useState<Id<"players"> | null>(
     null
   );
-  const [isGameStateCreated, setIsGameStateCreated] = useState(false);
+  const [isRoomActive, setRoomActive] = useState(false);
 
   const roomdataFromDB = useQuery(api.rooms.getRoomData, {
     roomName: roomId || "",
   });
   const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
-  const [playersIDs, setPlayersIDs] = useState<string[] | null>(null); // State to store the players' IDs
+  const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
 
   const createGameState = useMutation(api.gameStates.createGameState);
 
@@ -69,30 +63,31 @@ const GamePlayMultiplayer = () => {
     userName: userName || "",
   });
 
-  // useEffect(() => {
-  //   console.log("Running in client");
-
-  //   // Only run this when the game state is created
-  //   if (isGameStateCreated) {
-  //     const myCardSet = useQuery(api.gameStates.getMyCardSet, {
-  //       roomName: roomId || "",
-  //     });
-
-  //     console.log("myCard Set", myCardSet);
-  //   }
-  // }, [isGameStateCreated, roomId]); // Re-run effect when `isGameStateCreated` changes
+  const roomStatus = useQuery(api.gameStates.checkRoomStatus, {
+    roomName: roomId || "",
+  });
 
   const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
 
   useEffect(() => {
     if (playersInRoom) {
-      setPlayersIDs(playersInRoom); // Update state when the query returns data
+      setPlayersIDs(playersInRoom);
       console.log("Players in the room: ", playersInRoom);
       if (isRoomCreator && userID) {
         setRoomCreatorID(userID);
       }
     }
   }, [playersInRoom]);
+
+  useEffect(() => {
+    if (roomStatus) {
+      if (roomStatus === "started") {
+        setRoomActive(true);
+      } else {
+        setRoomActive(false);
+      }
+    }
+  }, [roomStatus]);
 
   const createGameInstanceDB = async () => {
     if (isRoomCreator && playersInRoom) {
@@ -109,15 +104,13 @@ const GamePlayMultiplayer = () => {
           }));
 
           if (roomName && playerTurn && trumpSetter) {
-            const gameStateID = await createGameState({
+            await createGameState({
               roomName,
               players,
               playerTurn,
               playersDecks,
               trumpSetter,
             });
-            setIsGameStateCreated(true);
-            alert(`Game state created successfully with ID: ${gameStateID}`);
           }
         }
       } catch (error) {}
@@ -181,13 +174,6 @@ const GamePlayMultiplayer = () => {
     throw new Error("Function not implemented.");
   }
 
-  function handleCardSelectDeck(selectedCard: Card): void {
-    console.log("selected card", selectedCard);
-    setSelectedCardByUser(selectedCard);
-
-    if (roomId) SocketManager.emitSelectedCard(selectedCard, roomId);
-  }
-
   useEffect(() => {
     if (webSocketURL)
       // Connect to socket on mount
@@ -221,31 +207,15 @@ const GamePlayMultiplayer = () => {
     }
   }, [roomdataFromDB]);
 
-  useEffect(() => {
-    // Listen for the event when a trump suit is selected
-    SocketManager.onTrumpSelected((selectedTrumpSuit: Suit) => {
-      console.log("Trump suit has been selected:", selectedTrumpSuit);
-      setTrumpSuit(selectedTrumpSuit); // Set the received trump suit in state
-      setTrumpSelected(true); // Update the state to show trump has been chosen
-    });
-    SocketManager.onOpponentCardSelect((opponentCard: Card) => {
-      if (
-        opponentCard.value !== selectedCardByUser?.value ||
-        opponentCard.suit !== selectedCardByUser?.suit
-      ) {
-        setOpponentCard(opponentCard); // Update the opponent's selected card
-      }
-    });
-  }, []);
-
   return (
     <div className="flex flex-col gap-10 h-full min-h-screen ">
       <div>
         {!isTrumpSelected &&
+          !trumpSuit &&
           isRoomCreator &&
           userID &&
           roomId &&
-          isGameStateCreated && (
+          isRoomActive && (
             <SuitDrawerMultiplayer
               userID={userID}
               roomName={roomId}
@@ -299,12 +269,17 @@ const GamePlayMultiplayer = () => {
           }}
         >
           <div className="w-full h-full justify-center  items-center  ">
-            <GameBoardMobileMultiplayer
-              onRestart={restartGame}
-              onStart={handleSelectOtherHands}
-              onNextStart={handleNextTurn}
-              onShuffleAgain={handleNextTurnofShuffling}
-            />
+            {roomId && userID && isRoomActive && (
+              <GameBoardMobileMultiplayer
+                onRestart={restartGame}
+                onStart={handleSelectOtherHands}
+                onNextStart={handleNextTurn}
+                onShuffleAgain={handleNextTurnofShuffling}
+                onTrumpSelected={handleCloseDrawer}
+                roomName={roomId}
+                userID={userID}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -312,12 +287,12 @@ const GamePlayMultiplayer = () => {
       <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative mt-20 ">
         <div className="flex w-full justify-center items-center">
           <div className="">
-            {exampleCardSet ? (
+            {roomId && userID && isRoomActive ? (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer
-                    userHand={exampleCardSet}
-                    onCardSelect={handleCardSelectDeck}
+                    userID={userID}
+                    roomName={roomId}
                   />
                 </div>
               </div>

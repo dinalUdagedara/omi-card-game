@@ -5,7 +5,7 @@ export const createGameState = mutation({
   args: {
     roomName: v.string(), // Room name to find the corresponding room ID
     players: v.array(v.id("players")),
-    playerTurn: v.id("players"),
+    playerTurn: v.id("players"), // initially set to the creators id
     playersDecks: v.array(
       v.object({
         playerId: v.id("players"), // Each player's ID
@@ -56,6 +56,12 @@ export const createGameState = mutation({
       turnSuit: null,
     });
 
+    if (gameStateID) {
+      await ctx.db.patch(roomInfo._id, {
+        status: "started",
+      });
+    }
+
     return gameStateID;
   },
 });
@@ -87,7 +93,6 @@ export const getMyCardSet = query({
     roomName: v.string(),
   },
   handler: async (ctx, args) => {
-    console.log("Running in server", args.roomName);
     const room = await ctx.db
       .query("rooms")
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
@@ -97,10 +102,8 @@ export const getMyCardSet = query({
       throw new Error("Room not found");
     }
 
-    console.log("Room Found", room);
     const roomID = room?._id;
 
-    console.log("Room ID : ", roomID);
     if (roomID) {
       // Fetch  game states where the roomID equals
       const gameState = await ctx.db
@@ -112,10 +115,6 @@ export const getMyCardSet = query({
       if (!gameState) {
         throw new Error("Game state not found for the player");
       }
-
-      console.log("GameState Found ", gameState);
-
-      console.log("playerID", args.playerId);
 
       // Find the player's card set from playersCards
       const playerCardSet = gameState.playersDecks.find(
@@ -132,3 +131,24 @@ export const getMyCardSet = query({
     }
   },
 });
+
+// Query to get the player's ID by username
+export const checkRoomStatus = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    return room.status;
+  },
+});
+
+

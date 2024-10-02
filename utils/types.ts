@@ -31,6 +31,11 @@ export const valueRanking: { [key in Value]: number } = {
   A: 14, // Ace is the highest value
 };
 
+// Helper function to validate the suit
+export function isValidSuit(suit: string): suit is Suit {
+  return suits.includes(suit as Suit);
+}
+
 export type suitWithLogo = {
   suit: Suit;
   logoUrl: string;

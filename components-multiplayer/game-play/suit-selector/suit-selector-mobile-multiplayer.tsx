@@ -7,12 +7,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Suit, suits, suitsWithLogos } from "@/utils/types";
+import { isValidSuit, Suit, suits, suitsWithLogos } from "@/utils/types";
 import { useStore } from "@/store/state";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 interface SuitSelectorProps {

@@ -17,6 +17,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
+import { SuitSelectorMobileMultiplayer } from "./suit-selector-mobile-multiplayer";
 
 const exampleCards: Card[] = [
   { suit: "clubs", value: "10" },
@@ -93,7 +94,7 @@ export function SuitDrawerMultiplayer({
             </div>
 
             <div className="">
-              <SuitSelectorMobile />
+              <SuitSelectorMobileMultiplayer roomName={roomName} />
             </div>
           </div>
           <DrawerFooter className="">

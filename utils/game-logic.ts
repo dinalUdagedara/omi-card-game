@@ -2,7 +2,7 @@ import { Suit, Value, Card, Player, TrumpSuit } from "./types";
 
 export const suits: Suit[] = ["hearts", "diamonds", "clubs", "spades"];
 export const values: Value[] = ["7", "8", "9", "10", "J", "Q", "K", "A"];
-let trumpSuit: TrumpSuit = null;
+export let trumpSuit: TrumpSuit = null;
 let turnSuit: TrumpSuit = null;
 let playerXP: number = 100;
 

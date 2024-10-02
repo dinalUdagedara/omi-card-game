@@ -1,7 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-
 export default defineSchema({
   players: defineTable({
     isCreator: v.boolean(),
@@ -18,21 +17,23 @@ export default defineSchema({
   }),
   gameStates: defineTable({
     roomId: v.id("rooms"), // Reference to the room
-      players: v.array(v.id("players")),
+    players: v.array(v.id("players")),
     penaltyCards: v.object({
-      team1: v.number(), 
-      team2: v.number(), 
+      team1: v.number(),
+      team2: v.number(),
     }),
-    playersDecks: v.object({
-      team1: v.array(v.object({ suit: v.string(), value: v.string() })), 
-      team2: v.array(v.object({ suit: v.string(), value: v.string() })), 
-    }),
+    playersDecks: v.array(
+      v.object({
+        playerId: v.id("players"), // Reference to the player
+        deck: v.array(v.object({ suit: v.string(), value: v.string() })), // Deck of cards
+      })
+    ),
     playersCards: v.array(
       v.object({
         playerId: v.id("players"), // Reference to the player
         card: v.object({
-          suit: v.string(), 
-          value: v.string(), 
+          suit: v.string(),
+          value: v.string(),
         }),
       })
     ),
@@ -40,12 +41,12 @@ export default defineSchema({
       team1: v.number(),
       team2: v.number(),
     }),
-    playerTurn: v.union(v.id("players"), v.null()), 
-    roundWinner:  v.optional(v.union(v.id("players"), v.null())), 
-    winner:  v.optional(v.union(v.id("players"), v.null())),
+    playerTurn: v.union(v.id("players"), v.null()),
+    roundWinner: v.optional(v.union(v.id("players"), v.null())),
+    winner: v.optional(v.union(v.id("players"), v.null())),
     currentRound: v.number(),
-    trump: v.optional(v.union(v.string(), v.null())), 
-    trumpSetter:  v.optional(v.union(v.id("players"), v.null())), 
-    turnSuit: v.optional(v.union(v.string(), v.null())), 
+    trump: v.optional(v.union(v.string(), v.null())),
+    trumpSetter: v.union(v.id("players"), v.null()),
+    turnSuit: v.optional(v.union(v.string(), v.null())),
   }),
 });

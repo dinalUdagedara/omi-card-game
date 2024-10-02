@@ -49,19 +49,38 @@ export const joinRoom = mutation({
 
     if (!room) throw new Error("Room not found");
 
-    const playerID = await ctx.db.insert("players", {
-      userName: args.userName,
-      roomId: room._id, // Reference the room by ID
-      isCreator: false,
-    });
+    // Check if the player is already in the room
+    const existingPlayer = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), args.userName))
+      .first();
 
-    // Update the room's players array by adding the new player's ID
-    await ctx.db.patch(room._id, { players: [...room.players, playerID] });
-    await ctx.db.patch(room._id, {
-      playerUserNames: [...room.playerUserNames, args.userName],
-    });
+    if (existingPlayer) {
+      // Player already exists, return their ID or a message
+      // Update the room's players array by adding the new player's ID
+      await ctx.db.patch(room._id, {
+        players: [...room.players, existingPlayer._id],
+      });
+      await ctx.db.patch(room._id, {
+        playerUserNames: [...room.playerUserNames, args.userName],
+      });
 
-    return playerID;
+      return existingPlayer._id; // or return a message indicating the player is already in the room
+    } else {
+      const playerID = await ctx.db.insert("players", {
+        userName: args.userName,
+        roomId: room._id, // Reference the room by ID
+        isCreator: false,
+      });
+
+      // Update the room's players array by adding the new player's ID
+      await ctx.db.patch(room._id, { players: [...room.players, playerID] });
+      await ctx.db.patch(room._id, {
+        playerUserNames: [...room.playerUserNames, args.userName],
+      });
+
+      return playerID;
+    }
   },
 });
 
@@ -82,9 +101,6 @@ export const addPlayer = mutation({
   },
 });
 
-
-
-
 // Query to get the room creator's ID by room name
 export const getRoomCreator = query({
   args: {
@@ -102,10 +118,9 @@ export const getRoomCreator = query({
     }
 
     // Return the creator's userName
-    return roomInfo.creator; 
+    return roomInfo.creator;
   },
 });
-
 
 // Query to get the player's ID by username
 export const getPlayerIdByUserName = query({
@@ -128,20 +143,19 @@ export const getPlayerIdByUserName = query({
   },
 });
 
-
 export const getAllPlayersIDInTheRoom = query({
-  args:{
+  args: {
     roomName: v.string(),
   },
-  handler: async (ctx,args) => {
+  handler: async (ctx, args) => {
     const room = await ctx.db
-    .query("rooms")
-    .filter((q)=> q.eq(q.field("roomName"),args.roomName))
-    .first();
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
     // Check if the player exists
     if (!room) {
       throw new Error("room not found");
     }
-    return room?.players
-  }
-})
+    return room?.players;
+  },
+});

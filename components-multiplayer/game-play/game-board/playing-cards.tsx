@@ -8,19 +8,16 @@ import { GameOverDialog } from "@/components/game-board.tsx/game-over/game-over-
 import ControllerStart from "@/components/game-board.tsx/controller-start";
 import ControllerNextRound from "@/components/game-board.tsx/controller-next-round";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import {
   cardMultiplayer,
   getWinnerMultiplayer,
 } from "@/utils/types-multiplayer";
-import { isValidSuit, Suit } from "@/utils/types";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { motion } from "framer-motion";
-import { useStore } from "@/store/state";
 import { use, useEffect, useState } from "react";
-import Winner1 from "@/components/game-board.tsx/collecting-cards/winner-1";
 import Winner1Multiplayer from "./collecting-cards/winner-1-multiplayer";
 import Winner2Multiplayer from "./collecting-cards/winner-2-multiplayer";
 
@@ -43,9 +40,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   userID,
   trumps,
 }) => {
-  //   const [myCard, setMyCard] = useState<cardMultiplayer>();
-  //   const [opponentCard, setOpponentCard] = useState<cardMultiplayer>();
-  //   const [winningCard, setWinningCard] = useState<cardMultiplayer>();
   const [isCardsGone, setIsCardsGone] = useState<boolean>(false);
   const [cardSet, setCardSet] = useState<cardMultiplayer[]>();
 

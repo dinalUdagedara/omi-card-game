@@ -54,6 +54,10 @@ const GamePlayMultiplayer = () => {
   const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
 
   const createGameState = useMutation(api.gameStates.createGameState);
+  const resetStatesinDB = useMutation(api.gameLogic.resetStates);
+  const winningCard = MultiplayerStateStore((state) => state.winningCard);
+  const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
+  const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
 
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
@@ -173,6 +177,21 @@ const GamePlayMultiplayer = () => {
   function handleNextTurnofShuffling(): void {
     throw new Error("Function not implemented.");
   }
+
+  //resetting States
+  useEffect(() => {
+    if (winningCard)
+      setTimeout(() => {
+        const roomName = roomId;
+        if (roomName)
+          resetStatesinDB({
+            roomName,
+          });
+        setWinningCard(null);
+        setMyCard(null);
+        setOpponentCard(null);
+      }, 3000);
+  }, [winningCard]);
 
   useEffect(() => {
     if (webSocketURL)

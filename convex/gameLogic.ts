@@ -244,8 +244,6 @@ export const getPlayingCards = query({
   },
 });
 
-
-
 export const getTurnSuit = query({
   args: {
     roomName: v.string(),
@@ -278,7 +276,7 @@ export const getTurnSuit = query({
       const turnSuit = gameState.turnSuit;
 
       if (!turnSuit) {
-        throw new Error("No turnSuit in Play");
+        return null
       }
 
       // Return the cards on play
@@ -324,6 +322,49 @@ export const getTrumpSuit = query({
 
       // Return the cards on play
       return trumpSuit;
+    }
+  },
+});
+
+
+export const resetStates = mutation({
+  args: {
+    roomName: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    const id = gameState?._id;
+
+    if (id) {
+      // Clear all entries in playersCards by setting it to an empty array
+      await ctx.db.patch(id, {
+        playersCards: [],
+      });
+
+      // Clear  turnSuit by setting it to an empty array
+      await ctx.db.patch(id, {
+        turnSuit: null,
+      });
+
+      console.log(await ctx.db.get(id));
     }
   },
 });

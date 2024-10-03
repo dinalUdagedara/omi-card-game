@@ -25,6 +25,8 @@ import {
 import { isValidSuit, Suit } from "@/utils/types";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import PlayingCards from "./playing-cards";
+import RoundOverMultiplayer from "../round-over/round-over";
+import { FinishStateStore } from "@/store/finish-round-state";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -58,9 +60,22 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   const [isCardsAvailable, setCardsAvailable] = useState<boolean>(false);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const setmyCard = MultiplayerStateStore((state) => state.setMyCard);
-  const setopponentCard = MultiplayerStateStore((state) => state.setOpponentCard);
+  const setopponentCard = MultiplayerStateStore(
+    (state) => state.setOpponentCard
+  );
+  const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const setwonCallingTrumps = FinishStateStore(
+    (state) => state.setwonCallingTrumps
+  );
+
+  const isRoundOver = MultiplayerStateStore((state) => state.roundOver);
+  const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
 
   const playingCards = useQuery(api.gameLogic.getPlayingCards, {
+    roomName: roomName,
+  });
+
+  const playersDecks = useQuery(api.gameLogic.getPlayersDecks, {
     roomName: roomName,
   });
 
@@ -77,22 +92,41 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   }, [trumpSuitInDB]);
 
   useEffect(() => {
-    if (playingCards && playingCards.length > 0) {
-      setCardsAvailable(true);
+    if (playersDecks)
+      if (
+        playingCards &&
+        (playersDecks[0].deck.length > 0 || playersDecks[1].deck.length > 0)
+      ) {
+        setCardsAvailable(true);
+      } else {
+        setTimeout(() => {
+          setCardsAvailable(false);
+          setRoundOver(true); // rendering the round over component
 
-      
-    }
+          // setwonCallingTrumps(true);
+          setDialogOpen(true);
+        }, 4000);
+      }
   }, [playingCards]);
 
   return (
     <div>
-      {isCardsAvailable && playingCards && trumpSuitInDB && (
-        <PlayingCards
-          trumps={trumpSuitInDB}
-          playingCards={playingCards}
-          roomName={roomName}
-          userID={userID}
-        />
+      {isRoundOver ? (
+        <>
+          {isRoundOver}
+          <RoundOverMultiplayer userID={userID} roomName={roomName} />
+        </>
+      ) : (
+        <>
+          {isCardsAvailable && playingCards && trumpSuitInDB && (
+            <PlayingCards
+              trumps={trumpSuitInDB}
+              playingCards={playingCards}
+              roomName={roomName}
+              userID={userID}
+            />
+          )}
+        </>
       )}
     </div>
   );

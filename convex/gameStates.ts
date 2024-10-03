@@ -51,6 +51,7 @@ export const createGameState = mutation({
       roundWinner: null,
       winner: null,
       currentRound: 1,
+      points:[],
       trump: null,
       trumpSetter: args.trumpSetter,
       turnSuit: null,

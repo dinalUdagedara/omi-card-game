@@ -52,6 +52,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
 
   const winningCard = MultiplayerStateStore((state) => state.winningCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
+  const incrementPoints = useMutation(api.gameLogic.incrementPlayerPoints);
 
   useEffect(() => {
     if (playingCards) {
@@ -82,6 +83,12 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
     if (cardSet && cardSet.length > 1) {
       const winningCard = getWinner();
       console.log("Winning Card", winningCard);
+      if (winningCard === myCard) {
+        incrementPoints({
+          roomName: roomName,
+          userId: userID,
+        });
+      }
       if (winningCard)
         setTimeout(() => {
           setWinningCard(winningCard);

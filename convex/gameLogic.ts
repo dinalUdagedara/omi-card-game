@@ -197,8 +197,6 @@ export const clearPlayingCards = mutation({
       await ctx.db.patch(id, {
         playersCards: [],
       });
-
-      console.log(await ctx.db.get(id));
     }
   },
 });
@@ -244,6 +242,47 @@ export const getPlayingCards = query({
   },
 });
 
+export const getPlayersDecks = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // Find the cards on play in the room current turn
+      const playersDecks = gameState.playersDecks;
+
+      if (!playersDecks) {
+        throw new Error("No cards in Play");
+      }
+
+      // Return the cards on play
+      return playersDecks;
+    }
+  },
+});
+
 export const getTurnSuit = query({
   args: {
     roomName: v.string(),
@@ -276,7 +315,7 @@ export const getTurnSuit = query({
       const turnSuit = gameState.turnSuit;
 
       if (!turnSuit) {
-        return null
+        return null;
       }
 
       // Return the cards on play
@@ -326,7 +365,6 @@ export const getTrumpSuit = query({
   },
 });
 
-
 export const resetStates = mutation({
   args: {
     roomName: v.string(),
@@ -363,8 +401,206 @@ export const resetStates = mutation({
       await ctx.db.patch(id, {
         turnSuit: null,
       });
-
-      console.log(await ctx.db.get(id));
     }
   },
 });
+
+export const updatePlayerPoints = mutation({
+  args: {
+    roomName: v.string(),
+    userId: v.id("players"),
+    points: v.number(), // This is the value to add or subtract (2, 1, -1, -2)
+  },
+
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("GameState not found");
+    }
+
+    const id = gameState._id;
+
+    if (id) {
+      // Update the players' points in the gameState
+      const updatedPlayerPoints = gameState.points || [];
+      const existingPlayerIndex = updatedPlayerPoints.findIndex(
+        (pc) => pc.playerId === args.userId
+      );
+
+      if (existingPlayerIndex !== -1) {
+        // If the player already exists, add or subtract the points
+        updatedPlayerPoints[existingPlayerIndex].points += args.points;
+      } else {
+        // If the player doesn't exist, add a new entry with the passed points
+        updatedPlayerPoints.push({
+          playerId: args.userId,
+          points: args.points, // This will start with the value passed (2, 1, -1, -2)
+        });
+      }
+
+      // Update the players' points in the database
+      await ctx.db.patch(id, {
+        points: updatedPlayerPoints,
+      });
+    }
+  },
+});
+
+export const incrementPlayerPoints = mutation({
+  args: {
+    roomName: v.string(),
+    userId: v.id("players"),
+  },
+
+  handler: async (ctx, args) => {
+    const incrementValue = 1;
+
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("GameState not found");
+    }
+
+    const id = gameState._id;
+
+    if (id) {
+      // Update the players' points in the gameState
+      const updatedPlayerPoints = gameState.points || [];
+      const existingPlayerIndex = updatedPlayerPoints.findIndex(
+        (pc) => pc.playerId === args.userId
+      );
+
+      if (existingPlayerIndex !== -1) {
+        // Increment the player's points if they exist
+        updatedPlayerPoints[existingPlayerIndex].points += incrementValue;
+      } else {
+        // Add a new entry for the player if they don't exist, with the increment value
+        updatedPlayerPoints.push({
+          playerId: args.userId,
+          points: incrementValue, // Initialize with the increment value
+        });
+      }
+
+      // Update the players' points in the database
+      await ctx.db.patch(id, {
+        points: updatedPlayerPoints,
+      });
+    }
+  },
+});
+
+export const getPlayersPoints = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // Find the points
+      const playersPoints = gameState.points;
+      console.log("points",playersPoints)
+
+      if (!playersPoints) {
+        throw new Error("No cards in Play");
+      }
+
+      // Return points
+      return playersPoints;
+    }
+  },
+});
+
+export const getTrumpSetter = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // Find the trump setter
+      const trumpSetter = gameState.trumpSetter;
+
+      if (!trumpSetter) {
+        throw new Error("No cards in Play");
+      }
+
+      // Return points
+      return trumpSetter;
+    }
+  },
+});
+
+
+
+

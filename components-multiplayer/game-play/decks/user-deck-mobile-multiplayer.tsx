@@ -33,12 +33,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
 
-  // useEffect(() => {
-  //   if (myCardSet) {
-  //     setMyCardDeck(myCardSet);
-  //   }
-  // }, [myCardSet]);
-
   useEffect(() => {
     if (turnPlayerID) {
       if (turnPlayerID === userID) {

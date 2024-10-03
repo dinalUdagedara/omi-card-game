@@ -42,6 +42,12 @@ export default defineSchema({
       team2: v.number(),
     }),
     playerTurn: v.union(v.id("players"), v.null()),
+    points: v.array(
+      v.object({
+        playerId: v.id("players"), // Reference to the player
+        points: v.number(),
+      })
+    ),
     roundWinner: v.optional(v.union(v.id("players"), v.null())),
     winner: v.optional(v.union(v.id("players"), v.null())),
     currentRound: v.number(),

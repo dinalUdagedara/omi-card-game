@@ -1,18 +1,28 @@
-import { Card } from "@/utils/types";
+import { cardMultiplayer } from "@/utils/types-multiplayer";
 import { create } from "zustand";
 
 interface MultiplayerState {
   userName: string | null;
-  opponentsCard: Card | null;
+  myCard: cardMultiplayer | null;
+  opponentsCard: cardMultiplayer | null;
+  winningCard: cardMultiplayer | null;
   setUsername: (newName: string | null) => void;
-  setOpponentCard: (newCard: Card | null) => void;
+  setOpponentCard: (newCard: cardMultiplayer | null) => void;
 
+  setMyCard: (newCard: cardMultiplayer | null) => void;
+  setWinningCard: (newCard: cardMultiplayer | null) => void;
 }
 
 export const MultiplayerStateStore = create<MultiplayerState>((set) => ({
   userName: null,
-  opponentsCard:null,
+  opponentsCard: null,
+  myCard: null,
+  winningCard: null,
 
   setUsername: (newName: string | null) => set({ userName: newName }),
-  setOpponentCard: (newCard: Card | null) => set({ opponentsCard: newCard }),
+  setOpponentCard: (newCard: cardMultiplayer | null) =>
+    set({ opponentsCard: newCard }),
+  setMyCard: (newCard: cardMultiplayer | null) => set({ myCard: newCard }),
+  setWinningCard: (newCard: cardMultiplayer | null) =>
+    set({ winningCard: newCard }),
 }));

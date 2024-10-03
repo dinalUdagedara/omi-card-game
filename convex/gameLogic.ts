@@ -30,7 +30,6 @@ export const updateTrumpSuit = mutation({
       await ctx.db.patch(id, {
         trump: args.trumpSuit,
       });
-      console.log(await ctx.db.get(id));
     }
   },
 });
@@ -93,9 +92,23 @@ export const updatePlayingCards = mutation({
         });
       }
 
-      // Update the players' cards in the database
+      // Find the player's deck and remove the selected card
+      const updatedPlayersDecks = gameState.playersDecks.map((deck) => {
+        if (deck.playerId === args.userId) {
+          return {
+            ...deck,
+            deck: deck.deck.filter(
+              (c) => c.suit !== args.card.suit || c.value !== args.card.value
+            ),
+          };
+        }
+        return deck;
+      });
+
+      // Update the players' decks and cards in the database
       await ctx.db.patch(id, {
         playersCards: updatedPlayersCards,
+        playersDecks: updatedPlayersDecks,
       });
 
       // Switch the player turn to the next player
@@ -227,6 +240,49 @@ export const getPlayingCards = query({
 
       // Return the cards on play
       return cardsOnPlay;
+    }
+  },
+});
+
+
+
+export const getTurnSuit = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // Find the turn suit for the current turn
+      const turnSuit = gameState.turnSuit;
+
+      if (!turnSuit) {
+        throw new Error("No turnSuit in Play");
+      }
+
+      // Return the cards on play
+      return turnSuit;
     }
   },
 });

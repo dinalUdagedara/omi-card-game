@@ -18,9 +18,13 @@ import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { cardMultiplayer } from "@/utils/types-multiplayer";
+import {
+  cardMultiplayer,
+  getWinnerMultiplayer,
+} from "@/utils/types-multiplayer";
 import { isValidSuit, Suit } from "@/utils/types";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
+import PlayingCards from "./playing-cards";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -44,22 +48,24 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   const [isCardsGone, setIsCardsGone] = useState<boolean>(false);
   const gameWinner = useStore((state) => state.gameWinner);
 
-  const winningCard = useStore((state) => state.winningCard);
   const isSubmitted = useStore((state) => state.isSubmitted);
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isGameOver = useStore((state) => state.isGameOver);
 
   // const opponentCard = MultiplayerStateStore((state) => state.opponentsCard);
-  const [myCard, setMyCard] = useState<cardMultiplayer>();
-  const [opponentCard, setOpponentCard] = useState<cardMultiplayer>();
+
   const [selectedSuit, setSelectedSuit] = useState<Suit | null>(null);
+  const [isCardsAvailable, setCardsAvailable] = useState<boolean>(false);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
+  const setmyCard = MultiplayerStateStore((state) => state.setMyCard);
+  const setopponentCard = MultiplayerStateStore((state) => state.setOpponentCard);
 
   const playingCards = useQuery(api.gameLogic.getPlayingCards, {
-    roomName: roomName || "",
+    roomName: roomName,
   });
+
   const trumpSuitInDB = useQuery(api.gameLogic.getTrumpSuit, {
-    roomName: roomName || "",
+    roomName: roomName,
   });
 
   useEffect(() => {
@@ -71,45 +77,23 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   }, [trumpSuitInDB]);
 
   useEffect(() => {
-    if (playingCards) {
-      playingCards.map((cardSet) => {
-        if (cardSet.playerId === userID) {
-          setMyCard(cardSet.card);
-        } else {
-          setOpponentCard(cardSet.card);
-        }
-      });
+    if (playingCards && playingCards.length > 0) {
+      setCardsAvailable(true);
+
+      
     }
   }, [playingCards]);
+
   return (
     <div>
-      <div className="flex flex-col w-full h-full justify-between items-center gap-10 ">
-        <div>
-          {opponentCard && !winningCard && (
-            <motion.div
-              className="flex justify-center items-center"
-              initial={{ opacity: 0, y: -100 }} // Start  values
-              animate={{ opacity: 1, y: 0 }} // end to these values
-              transition={{ duration: 0.8, delay: 1.6 }} // Animation duration
-            >
-              <CardComponentMultiplayer card={opponentCard} />
-            </motion.div>
-          )}
-        </div>
-
-        <div>
-          {myCard && !winningCard && (
-            <motion.div
-              className="flex justify-center items-center"
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
-            >
-              <CardComponentMultiplayer card={myCard} />
-            </motion.div>
-          )}
-        </div>
-      </div>
+      {isCardsAvailable && playingCards && trumpSuitInDB && (
+        <PlayingCards
+          trumps={trumpSuitInDB}
+          playingCards={playingCards}
+          roomName={roomName}
+          userID={userID}
+        />
+      )}
     </div>
   );
 };

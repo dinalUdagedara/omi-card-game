@@ -33,11 +33,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
 
-  useEffect(() => {
-    if (myCardSet) {
-      setMyCardDeck(myCardSet);
-    }
-  }, [myCardSet]);
+  // useEffect(() => {
+  //   if (myCardSet) {
+  //     setMyCardDeck(myCardSet);
+  //   }
+  // }, [myCardSet]);
 
   useEffect(() => {
     if (turnPlayerID) {
@@ -62,8 +62,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   return (
     <div className="h-16 w-60 flex justify-center mr-5">
       <div className="bg-black flex justify-center">
-        {myCardDeck?.map((card, index) => {
-          const angle = (index - (myCardDeck.length - 1) / 2) * 10;
+        {myCardSet?.map((card, index) => {
+          const angle = (index - (myCardSet.length - 1) / 2) * 10;
 
           return (
             <div

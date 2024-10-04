@@ -53,6 +53,8 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   const winningCard = MultiplayerStateStore((state) => state.winningCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
   const incrementPoints = useMutation(api.gameLogic.incrementPlayerPoints);
+  const updateTurnWinner = useMutation(api.gameLogic.updateTurnWinner);
+  const updatePlayerTurn = useMutation(api.gameLogic.updatePlayerTurn);
 
   useEffect(() => {
     if (playingCards) {
@@ -88,6 +90,14 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           roomName: roomName,
           userId: userID,
         });
+        updateTurnWinner({
+          roomName: roomName,
+          userId: userID,
+        });
+        updatePlayerTurn({
+          roomName: roomName,
+          userId: userID,
+        });
       }
       if (winningCard)
         setTimeout(() => {
@@ -113,7 +123,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
                 className="flex justify-center items-center"
                 initial={{ opacity: 0, y: -100 }} // Start  values
                 animate={{ opacity: 1, y: 0 }} // end to these values
-                transition={{ duration: 0.8}} // Animation duration
+                transition={{ duration: 0.8 }} // Animation duration
               >
                 <CardComponentMultiplayer card={opponentCard} />
               </motion.div>
@@ -125,7 +135,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
                 className="flex justify-center items-center"
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5}}
+                transition={{ duration: 0.5 }}
               >
                 <CardComponentMultiplayer card={myCard} />
               </motion.div>

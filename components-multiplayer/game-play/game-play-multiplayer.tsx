@@ -54,10 +54,16 @@ const GamePlayMultiplayer = () => {
   const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
 
   const createGameState = useMutation(api.gameStates.createGameState);
+  const updateGameStateAfterRound = useMutation(
+    api.gameStates.updateGameStateAfterRound
+  );
   const resetStatesinDB = useMutation(api.gameLogic.resetStates);
   const winningCard = MultiplayerStateStore((state) => state.winningCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
   const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
+  const newRound = MultiplayerStateStore((state) => state.newRound);
+  const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
+  const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
 
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
@@ -82,7 +88,7 @@ const GamePlayMultiplayer = () => {
       }
     }
   }, [playersInRoom]);
-
+  setTrumpSelected(false);
   useEffect(() => {
     if (roomStatus) {
       if (roomStatus === "started") {
@@ -133,10 +139,10 @@ const GamePlayMultiplayer = () => {
     console.log("roomId: ", roomId);
 
     getUsername();
-    if (roomId && userName) {
-      SocketManager.joinRoom(roomId, isRoomPrivate, userName);
-      console.log("Joined to the Room : ", roomId);
-    }
+    // if (roomId && userName) {
+    //   SocketManager.joinRoom(roomId, isRoomPrivate, userName);
+    //   console.log("Joined to the Room : ", roomId);
+    // }
   };
 
   function initialSetup() {
@@ -157,8 +163,9 @@ const GamePlayMultiplayer = () => {
   }
 
   function handleCloseDrawer() {
-    if (roomId) SocketManager.emitTrump(trumpSuit, roomId);
-    handleSuitChange(trumpSuit);
+    if (roomId)
+      // SocketManager.emitTrump(trumpSuit, roomId);
+      handleSuitChange(trumpSuit);
     setTrumpSelected(true);
   }
 
@@ -195,18 +202,65 @@ const GamePlayMultiplayer = () => {
 
   useEffect(() => {
     if (webSocketURL)
-      // Connect to socket on mount
-      SocketManager.connect(webSocketURL);
-    handleJoinRoom();
+      // // Connect to socket on mount
+      // SocketManager.connect(webSocketURL);
+      handleJoinRoom();
     // getRoomInfo();
-    const mySocketID = SocketManager.getMySocket();
-    if (mySocketID) setMySocket(mySocketID);
-    setTrumpSelected(false);
-    // Disconnect socket when component unmounts
-    return () => {
-      SocketManager.disconnect();
-    };
-  }, [webSocketURL, roomId, userName]);
+    // const mySocketID = SocketManager.getMySocket();
+    // if (mySocketID) setMySocket(mySocketID);
+  }, [roomId, userName]);
+
+  function resetAfterRound() {
+    if (roomdataFromDB) {
+      initialSetup();
+      updateGameInstanceDB();
+    }
+  }
+
+  function changeTrumptoNull() {
+    setTrumpSuit(null);
+    const trumpSuit = null;
+    const roomName = roomId;
+    if (trumpSuit && roomName) {
+      updateTrump({
+        roomName,
+        trumpSuit,
+      });
+    }
+  }
+
+  const updateGameInstanceDB = async () => {
+    if (isRoomCreator && playersInRoom) {
+      const players = playersInRoom;
+      try {
+        if (dealtHands) {
+          // Map playersInRoom and dealtHands to match player IDs with their decks
+          const playersDecks = players.map((playerId, index) => ({
+            playerId,
+            deck: dealtHands[index].hand,
+          }));
+          const roomName = roomId;
+          if (roomName) {
+            await updateGameStateAfterRound({
+              roomName,
+              playersDecks,
+            });
+          }
+          changeTrumptoNull();
+        }
+
+        setNewRound(false);
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (newRound) {
+      resetAfterRound();
+    }
+  }, [newRound]);
 
   useEffect(() => {
     if (roomdataFromDB) {
@@ -242,13 +296,17 @@ const GamePlayMultiplayer = () => {
             />
           )}
       </div>
+      {roomId && isRoomActive && (
+        <>
+          <div>
+            <ScoreBoardMobileMultiplayer />
+          </div>
+          <div>
+            <PenaltycardsMultiplayer roomName={roomId} />
+          </div>
+        </>
+      )}
 
-      <div>
-        <ScoreBoardMobileMultiplayer />
-      </div>
-      <div>
-        <PenaltycardsMultiplayer />
-      </div>
       <div className=" flex justify-center ">
         <div className=" flex  gap-4 justify-center items-center ">
           <div className="">

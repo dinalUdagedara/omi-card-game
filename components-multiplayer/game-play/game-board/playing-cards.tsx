@@ -92,7 +92,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
       if (winningCard)
         setTimeout(() => {
           setWinningCard(winningCard);
-        }, 3000);
+        }, 1000);
     }
   }, [cardSet]);
 
@@ -113,7 +113,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
                 className="flex justify-center items-center"
                 initial={{ opacity: 0, y: -100 }} // Start  values
                 animate={{ opacity: 1, y: 0 }} // end to these values
-                transition={{ duration: 0.8, delay: 1.6 }} // Animation duration
+                transition={{ duration: 0.8}} // Animation duration
               >
                 <CardComponentMultiplayer card={opponentCard} />
               </motion.div>
@@ -125,7 +125,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
                 className="flex justify-center items-center"
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
+                transition={{ duration: 0.5}}
               >
                 <CardComponentMultiplayer card={myCard} />
               </motion.div>

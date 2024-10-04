@@ -2,7 +2,8 @@ import { RoundOverDialogMobile } from "@/components/game-board.tsx/dialogs/round
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { FinishStateStore } from "@/store/finish-round-state";
-import { useQuery } from "convex/react";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
+import { useMutation, useQuery } from "convex/react";
 import { use, useEffect } from "react";
 
 interface RoundOverMultiplayerProps {
@@ -33,6 +34,14 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
     roomName: roomName,
   });
 
+  const incrementPenaltyCards = useMutation(
+    api.gameLogic.incrementPenaltyCards
+  );
+
+  const decrementPenaltycards = useMutation(
+    api.gameLogic.decrementPenaltyCards
+  );
+
   function checkRoundWinner() {
     if (teamPoints) {
       const myPoints = teamPoints.find(
@@ -52,8 +61,18 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
           }
         } else if (opponentsPoint > myPoints) {
           if (trumpSetter === userID) {
+            decrementPenaltycards({
+              decrementvalue: 2,
+              roomName,
+              userID,
+            });
             setlostCallingTrumps(true);
           } else {
+            decrementPenaltycards({
+              decrementvalue: 1,
+              roomName,
+              userID,
+            });
             setlostWithoutCallingTrumps(true);
           }
         } else {
@@ -61,6 +80,11 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
           if (trumpSetter === userID) {
             setwonCallingTrumps(true);
           } else {
+            incrementPenaltyCards({
+              incrementValue: 0,
+              roomName,
+              userID,
+            });
             setwonWithoutCallingTrumps(true);
           }
         }
@@ -70,51 +94,6 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
   useEffect(() => {
     if (teamPoints) checkRoundWinner();
   }, [teamPoints]);
-  // funtion for referencing
-  // function handleNextTurnofShuffling() {
-  //   checkWinner();
-  //   if (isGameOver) {
-  //     console.log("Game over");
-  //   } else {
-  //     if (roundWinners === 1) {
-  //       if (trumpSetter === 1) {
-  //         // won  telling trumps
-  //         setwonCallingTrumps(true);
-  //         const remainingPenaltyCards = team2PenaltyCards - 1;
-  //         setTeam_2_penaltyCards(remainingPenaltyCards);
-  //       } else {
-  //         // won without telling trumps
-  //         setwonWithoutCallingTrumps(true);
-  //         const remainingPenaltyCards = team2PenaltyCards - 2;
-  //         setTeam_2_penaltyCards(remainingPenaltyCards);
-  //       }
-  //       const roundNumber = roundsWonbyTeam1 + 1;
-  //       setRoundsWonbyTeam1(roundNumber);
-  //     } else if (roundWinners === 2) {
-  //       if (trumpSetter === 2) {
-  //         // lost without telling trumps
-  //         setlostWithoutCallingTrumps(true);
-  //         const remainingPenaltyCards = team1PenaltyCards - 1;
-  //         setTeam_1_penaltyCards(remainingPenaltyCards);
-  //       } else {
-  //         // lost  telling trumps
-  //         setlostCallingTrumps(true);
-  //         const remainingPenaltyCards = team1PenaltyCards - 2;
-  //         setTeam_1_penaltyCards(remainingPenaltyCards);
-  //       }
-
-  //       const roundNumber = roundsWonbyTeam2 + 1;
-  //       setRoundsWonbyTeam2(roundNumber);
-  //     }
-  //     setDialogOpen(true);
-  //     setTurnNumber(1);
-  //     const nextRoundNumber = roundNumber !== null ? roundNumber + 1 : 1;
-  //     setRoundNumber(nextRoundNumber);
-  //     resetTeamPoints();
-  //     setStarterForRound();
-  //     initailSetup();
-  //   }
-  // }
 
   return (
     <div>

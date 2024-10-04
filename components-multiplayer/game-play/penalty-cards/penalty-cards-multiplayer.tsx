@@ -1,17 +1,26 @@
 "use client";
 import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks";
+import { api } from "@/convex/_generated/api";
 import { useStore } from "@/store/state";
-import { exampleCardSet } from "@/utils/types";
+import { useQuery } from "convex/react";
 
-const PenaltycardsMultiplayer = () => {
-  const team1PenaltyCards = useStore((state) => state.team_1_penaltyCards);
-  const team2PenaltyCards = useStore((state) => state.team_2_penaltyCards);
+interface PenaltycardsMultiplayerProps {
+  roomName: string;
+}
+
+const PenaltycardsMultiplayer = ({
+  roomName,
+}: PenaltycardsMultiplayerProps) => {
+  const playersInRoom = useQuery(api.gameLogic.getPenaltyCards, {
+    roomName: roomName,
+  });
 
   return (
     <div>
       <div className="flex gap-5 mx-5">
-        <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
-        <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
+        {playersInRoom?.map((player) => (
+          <PenaltyDeckMobile penaltyCardNumber={player.penaltyCards} />
+        ))}
       </div>
     </div>
   );

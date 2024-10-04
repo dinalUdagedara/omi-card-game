@@ -27,7 +27,7 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   const getRoomData = () => {
     SocketManager.getRoomData(
       roomId,
-      
+
       (data: { creator: SocketData; players: SocketData[] }) => {
         setRoomData(data.players);
         setRoomCreator(data.creator);
@@ -133,7 +133,7 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   }, [webSocketURL, roomId, userName]);
 
   const handleStartGame = () => {
-    SocketManager.emitGameStart(roomId); // Emit the event for start game 
+    SocketManager.emitGameStart(roomId); // Emit the event for start game
   };
 
   return (
@@ -147,7 +147,7 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
             </div>
           </div>
           <div className=" h-full flex justify-center items-center">
-          <div className={`p-20 mt-20 ${isRoomCreator ? "flex" : " hidden"}`}>
+            <div className={`p-20 mt-20 ${isRoomCreator ? "flex" : " hidden"}`}>
               <Button
                 disabled={!opponentPlayer}
                 className="h-20 w-80 rounded-2xl"

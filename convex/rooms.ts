@@ -1,3 +1,4 @@
+import { argv } from "process";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -12,6 +13,131 @@ export const getRoomData = query({
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
       .first();
     return roomInfo;
+  },
+});
+
+// Query to check if public rooms are empty
+export const checkIfPublicRoomsEmpty = query({
+  handler: async (ctx) => {
+    // Fetch all public rooms (where isRoomPrivate is false)
+    const publicRooms = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("isRoomPrivate"), false))
+      .collect();
+
+    // If no public rooms exist, consider the public rooms as "empty"
+    if (publicRooms.length === 0) {
+      return true;
+    }
+
+    // Filter the public rooms that have no players
+    const emptyPublicRooms = publicRooms.filter(
+      (room) => room.players.length === 0
+    );
+
+    // Return true if all public rooms are empty, false otherwise
+    return emptyPublicRooms.length === publicRooms.length;
+  },
+});
+
+export const isOpponentJoined = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (roomInfo) return roomInfo.players.length > 1;
+  },
+});
+
+export const isRoomCreator = query({
+  args: {
+    roomName: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (roomInfo) return roomInfo.creator === args.userName;
+  },
+});
+
+export const getOpponentsName = query({
+  args: {
+    roomName: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the current user's ID
+    const myUserID = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), args.userName))
+      .first();
+
+    if (!myUserID) {
+      throw new Error("User not found"); // Handle case where user is not found
+    }
+
+    // Fetch room info based on room name
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!roomInfo) {
+      throw new Error("Room not found"); // Handle case where room is not found
+    }
+
+    // Find the opponent's ID (the only other player in the room)
+    const opponentID = roomInfo.players.find(
+      (player) => player !== myUserID._id // Find the player that is not the current user
+    );
+
+    if (!opponentID) {
+      throw new Error("Opponent not found"); // Handle case where opponent is not found
+    }
+
+    // Fetch the opponent's name
+    const opponent = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("_id"), opponentID))
+      .first();
+
+    return opponent ? opponent.userName : null; // Return the opponent's name or null if not found
+  },
+});
+
+// Query to get all public rooms with at least one player
+export const getAllActivePublicRooms = query({
+  handler: async (ctx) => {
+    // Fetch all public rooms where `isRoomPrivate` is false and `players` array is not empty
+    const activePublicRooms = await ctx.db
+      .query("rooms")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("isRoomPrivate"), false), // Public rooms
+          q.eq(q.field("status"), "waiting") // Public rooms
+        )
+      )
+      .collect();
+
+    console.log("activePublicRooms", activePublicRooms);
+
+    // Filter for rooms with 0 or 1 player
+    const waitingJoinableRooms = activePublicRooms.filter((room) => {
+      // Check the length of players; it should be 0 or 1
+      const playerCount = room.players.length;
+      return playerCount === 0 || playerCount === 1;
+    });
+
+    return waitingJoinableRooms;
   },
 });
 
@@ -81,6 +207,40 @@ export const joinRoom = mutation({
 
       return playerID;
     }
+  },
+});
+
+// update the gamestate to joined
+export const updateRoomStatustoJoined = mutation({
+  args: {
+    roomName: v.string(), // Referencing the room by ID
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (room) {
+      await ctx.db.patch(room._id, {
+        status: "joined",
+      });
+    }
+  },
+});
+
+
+export const isPlayersJoined = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (roomInfo) return roomInfo.status === "joined";
   },
 });
 

@@ -24,11 +24,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
     playerId: userID,
-    roomName: roomName || "",
+    roomName: roomName,
   });
 
   const turnPlayerID = useQuery(api.gameLogic.getPlayerTurn, {
-    roomName: roomName || "",
+    roomName: roomName,
   });
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);

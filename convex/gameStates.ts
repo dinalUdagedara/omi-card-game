@@ -15,6 +15,7 @@ export const createGameState = mutation({
     trumpSetter: v.id("players"),
   },
   handler: async (ctx, args) => {
+    console.log("Creating state");
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")
@@ -40,10 +41,16 @@ export const createGameState = mutation({
       };
     }
 
+    // Initialize penalty cards for each player with 10 cards
+    const penaltyCards = args.players.map((playerId) => ({
+      playerId,
+      penaltyCards: 10, // Default initial penalty card count
+    }));
+
     const gameStateID = await ctx.db.insert("gameStates", {
       roomId: roomInfo._id, // Use the room ID fetched from the query
       players: args.players,
-      penaltyCards: { team1: 10, team2: 10 },
+      penaltyCards: penaltyCards,
       playersDecks: args.playersDecks,
       playersCards: [],
       teamPoints: { team1: 0, team2: 0 },
@@ -51,7 +58,7 @@ export const createGameState = mutation({
       roundWinner: null,
       winner: null,
       currentRound: 1,
-      points:[],
+      points: [],
       trump: null,
       trumpSetter: args.trumpSetter,
       turnSuit: null,
@@ -152,4 +159,65 @@ export const checkRoomStatus = query({
   },
 });
 
+export const updateGameStateAfterRound = mutation({
+  args: {
+    roomName: v.string(), // Room name to find the corresponding room ID
+    playersDecks: v.array(
+      v.object({
+        playerId: v.id("players"), // Each player's ID
+        deck: v.array(v.object({ suit: v.string(), value: v.string() })), // Each player's deck of cards
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    console.log("Updating state");
+    // Fetch room data using the room name
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
 
+    // Check if the room exists
+    if (!roomInfo) {
+      throw new Error("Room not found");
+    }
+
+    // Check if a game state exists for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), roomInfo._id))
+      .first();
+
+    if (gameState) {
+      // Increment currentRound by one
+      const nextRound = gameState.currentRound + 1;
+
+      // Get the list of players
+      const players = gameState.players;
+      const currentPlayerID = gameState.playerTurn;
+      if (currentPlayerID) {
+        // Find the index of the current playerTurn
+        const currentPlayerIndex = players.indexOf(currentPlayerID);
+
+        // Calculate the next player's index (wrap around if necessary)
+        const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
+
+        // Update the playerTurn and trumpSetter to the next player
+        const nextPlayerTurn = players[nextPlayerIndex];
+        const nextTrumpSetter = players[nextPlayerIndex]; // Update logic as needed
+
+        // Update the game state with the new round and other data
+        await ctx.db.patch(gameState._id, {
+          currentRound: nextRound,
+          playerTurn: nextPlayerTurn,
+          trumpSetter: nextTrumpSetter, // Rotate trump setter as well
+          trump: null,
+          playersDecks: args.playersDecks,
+          points: [], // Reset points for the new round
+        });
+
+        return gameState._id; // Return the updated game state ID
+      }
+    }
+  },
+});

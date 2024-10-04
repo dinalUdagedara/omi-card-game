@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { FaRegCopy } from "react-icons/fa6";
-import SocketManager from "@/services/web-socket-service";
+// import SocketManager from "@/services/web-socket-service";
 import {
   Card,
   CardContent,
@@ -33,7 +33,7 @@ const CreateRoomComponent = () => {
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const createRoomsDB = useMutation(api.rooms.createRoom);
   const handleCreateRoom = () => {
-    SocketManager.joinRoom(roomName, isRoomPrivate, userName);
+    // SocketManager.joinRoom(roomName, isRoomPrivate, userName);
 
     if (userName)
       createRoomsDB({
@@ -73,15 +73,15 @@ const CreateRoomComponent = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (webSocketURL)
-      // Connect to socket on mount
-      SocketManager.connect(webSocketURL);
-    // Disconnect socket when component unmounts
-    return () => {
-      SocketManager.disconnect();
-    };
-  }, []);
+  // useEffect(() => {
+  //   if (webSocketURL)
+  //     // Connect to socket on mount
+  //     SocketManager.connect(webSocketURL);
+  //   // Disconnect socket when component unmounts
+  //   return () => {
+  //     SocketManager.disconnect();
+  //   };
+  // }, []);
 
   return (
     <div className="flex justify-center items-center h-full min-h-[700px] ">

@@ -548,7 +548,7 @@ export const getPlayersPoints = query({
 
       // Find the points
       const playersPoints = gameState.points;
-      console.log("points",playersPoints)
+      console.log("points", playersPoints);
 
       if (!playersPoints) {
         throw new Error("No cards in Play");
@@ -601,6 +601,231 @@ export const getTrumpSetter = query({
   },
 });
 
+export const decrementPenaltyCards = mutation({
+  args: {
+    roomName: v.string(),
+    userID: v.id("players"),
+    decrementvalue: v.number(),
+  },
 
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
 
+    if (!room) {
+      throw new Error("Room not found");
+    }
 
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("GameState not found");
+    }
+
+    const id = gameState._id;
+
+    if (id) {
+      // Update the penalty cards in the gameState
+      const updatedPenaltyCards = gameState.penaltyCards || [];
+      const existingPlayerIndex = updatedPenaltyCards.findIndex(
+        (pc) => pc.playerId === args.userID
+      );
+
+      if (existingPlayerIndex !== -1) {
+        // Increment the player's points if they exist
+        updatedPenaltyCards[existingPlayerIndex].penaltyCards -=
+          args.decrementvalue;
+      } else {
+        // Add a new entry for the player if they don't exist, with the decrement value
+        updatedPenaltyCards.push({
+          playerId: args.userID,
+          penaltyCards: args.decrementvalue, // Initialize with the decrement value
+        });
+      }
+
+      // Update the players' points in the database
+      await ctx.db.patch(id, {
+        penaltyCards: updatedPenaltyCards,
+      });
+      return ctx.db.get(id);
+    }
+  },
+});
+
+export const incrementPenaltyCards = mutation({
+  args: {
+    roomName: v.string(),
+    userID: v.id("players"),
+    incrementValue: v.number(),
+  },
+
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("GameState not found");
+    }
+
+    const id = gameState._id;
+
+    if (id) {
+      // Update the penalty cards in the gameState
+      const updatedPenaltyCards = gameState.penaltyCards || [];
+      const existingPlayerIndex = updatedPenaltyCards.findIndex(
+        (pc) => pc.playerId === args.userID
+      );
+
+      if (existingPlayerIndex !== -1) {
+        // Increment the player's points if they exist
+        updatedPenaltyCards[existingPlayerIndex].penaltyCards +=
+          args.incrementValue;
+      } else {
+        // Add a new entry for the player if they don't exist, with the decrement value
+        updatedPenaltyCards.push({
+          playerId: args.userID,
+          penaltyCards: args.incrementValue, // Initialize with the increment value
+        });
+      }
+
+      // Update the penalty cards in the database
+      await ctx.db.patch(id, {
+        penaltyCards: updatedPenaltyCards,
+      });
+      console.log(ctx.db.get(id));
+      return ctx.db.get(id);
+    }
+  },
+});
+
+export const getPenaltyCards = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // Find the penaltyCards
+      const penaltyCards = gameState.penaltyCards;
+
+      if (!penaltyCards) {
+        return null;
+      }
+
+      // Return penaltyCards
+      return penaltyCards;
+    }
+  },
+});
+
+export const updateTurnWinner = mutation({
+  args: {
+    roomName: v.string(),
+    userId: v.id("players"),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    const id = gameState?._id;
+    if (id) {
+      await ctx.db.patch(id, {
+        winner: args.userId,
+      });
+    }
+  },
+});
+
+export const getTurnWinner = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // get the whose turn it is to play
+      const winnerPlayerID = gameState.winner;
+
+      // Return the turnPlayerId
+      return winnerPlayerID;
+    }
+  },
+});

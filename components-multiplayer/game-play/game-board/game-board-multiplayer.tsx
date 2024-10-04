@@ -105,7 +105,7 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
 
           // setwonCallingTrumps(true);
           setDialogOpen(true);
-        }, 4000);
+        }, 3000);
       }
   }, [playingCards]);
 

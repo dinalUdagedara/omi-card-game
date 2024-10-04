@@ -18,10 +18,12 @@ export default defineSchema({
   gameStates: defineTable({
     roomId: v.id("rooms"), // Reference to the room
     players: v.array(v.id("players")),
-    penaltyCards: v.object({
-      team1: v.number(),
-      team2: v.number(),
-    }),
+    penaltyCards: v.array(
+      v.object({
+        playerId: v.id("players"), // Reference to the player
+        penaltyCards: v.number(),
+      })
+    ),
     playersDecks: v.array(
       v.object({
         playerId: v.id("players"), // Reference to the player

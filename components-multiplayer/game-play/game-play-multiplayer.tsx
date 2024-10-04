@@ -299,10 +299,10 @@ const GamePlayMultiplayer = () => {
       {roomId && isRoomActive && userID && (
         <>
           <div>
-            <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId}  />
+            <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
           </div>
           <div>
-            <PenaltycardsMultiplayer roomName={roomId} />
+            <PenaltycardsMultiplayer userID={userID} roomName={roomId} />
           </div>
         </>
       )}

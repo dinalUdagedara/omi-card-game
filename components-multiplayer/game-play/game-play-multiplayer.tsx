@@ -281,30 +281,29 @@ const GamePlayMultiplayer = () => {
   }, [roomdataFromDB]);
 
   return (
-    <div className="flex flex-col gap-10 h-full min-h-screen ">
-      <div>
-        {!isTrumpSelected &&
-          !trumpSuit &&
-          isRoomCreator &&
-          userID &&
-          roomId &&
-          isRoomActive && (
-            <SuitDrawerMultiplayer
-              userID={userID}
-              roomName={roomId}
-              onClose={handleCloseDrawer}
-            />
-          )}
-      </div>
+    <div className="flex flex-col h-full min-h-screen justify-between">
+      {!isTrumpSelected &&
+        !trumpSuit &&
+        isRoomCreator &&
+        userID &&
+        roomId &&
+        isRoomActive && (
+          <SuitDrawerMultiplayer
+            userID={userID}
+            roomName={roomId}
+            onClose={handleCloseDrawer}
+          />
+        )}
+
       {roomId && isRoomActive && userID && (
-        <>
+        <div>
           <div>
             <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
           </div>
           <div>
             <PenaltycardsMultiplayer userID={userID} roomName={roomId} />
           </div>
-        </>
+        </div>
       )}
 
       <div className=" flex justify-center ">

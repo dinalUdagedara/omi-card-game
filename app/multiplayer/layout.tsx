@@ -1,5 +1,4 @@
 import Header from "@/components/header";
-
 export default function MultiplayerLayout({
   children,
 }: {
@@ -7,8 +6,7 @@ export default function MultiplayerLayout({
 }) {
   return (
     <section>
-      <Header />
-
+      {/* <Header /> */}
       {children}
     </section>
   );

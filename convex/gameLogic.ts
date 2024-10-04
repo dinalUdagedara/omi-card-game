@@ -829,3 +829,50 @@ export const getTurnWinner = query({
     }
   },
 });
+
+export const getScore = query({
+  args: {
+    roomName: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the current user's ID
+    const userID = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), args.userName))
+      .first();
+
+    if (!userID) {
+      throw new Error("User not found"); // Handle case where user is not found
+    }
+
+    // Fetch room info based on room name
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!roomInfo) {
+      throw new Error("Room not found"); // Handle case where room is not found
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), roomInfo._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("GameState not found"); // Handle case where gameState is not found
+    }
+
+    const myInfo = gameState.points.find(
+      (players) => players.playerId === userID._id
+    );
+    const opponentsInfo = gameState.points.find(
+      (player)=> player.playerId !== userID._id
+    )
+
+    return myInfo?.points , opponentsInfo?.points;
+
+  },
+});

@@ -31,6 +31,11 @@ export const valueRanking: { [key in Value]: number } = {
   A: 14, // Ace is the highest value
 };
 
+// Helper function to validate the suit
+export function isValidSuit(suit: string): suit is Suit {
+  return suits.includes(suit as Suit);
+}
+
 export type suitWithLogo = {
   suit: Suit;
   logoUrl: string;
@@ -63,47 +68,18 @@ export const exampleCard = {
 };
 
 export const exampleCardSet: Card[] = [
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
-  {
-    suit: "hearts",
-    value: "7",
-  },
+  { suit: "hearts", value: "7" },
+  { suit: "hearts", value: "8" },
+  { suit: "hearts", value: "9" },
+  { suit: "hearts", value: "10" },
+  { suit: "diamonds", value: "J" },
+  { suit: "diamonds", value: "Q" },
+  { suit: "clubs", value: "K" },
+  { suit: "clubs", value: "A" },
+  { suit: "spades", value: "7" },
+  { suit: "spades", value: "8" },
 ];
+
 
 export const roundFinishMessages: RoundFinishMessage[] = [
   {

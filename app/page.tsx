@@ -1,11 +1,9 @@
-
-import GamePlay from "@/components/game-play";
-import GameScreen from "@/components/game-screen";
+import ModeSelector from "@/components/mode-selector";
 
 export default function Home() {
   return (
     <div>
-      <GameScreen />
+      <ModeSelector />
     </div>
   );
 }

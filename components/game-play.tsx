@@ -354,56 +354,6 @@ export default function Board() {
     resetCards();
   }
 
-  // function setStarterForRound() {
-  //   switch (roundNumber) {
-  //     case 1:
-  //       handleLastWinner(1);
-  //       setRandomSuit();
-  //       setTrumpSetter(2);
-  //       break;
-  //     case 2:
-  //       handleLastWinner(2);
-  //       setRandomSuit();
-  //       setTrumpSetter(1);
-  //       break;
-  //     case 3:
-  //       handleLastWinner(3);
-  //       setRandomSuit();
-  //       setTrumpSetter(2);
-  //       break;
-  //     case 4:
-  //       handleLastWinner(0);
-  //       setRandomSuit();
-  //       setTrumpSetter(1);
-  //       break;
-  //     case 5:
-  //       handleLastWinner(1);
-  //       setRandomSuit();
-  //       setTrumpSetter(2);
-  //       break;
-  //     case 6:
-  //       handleLastWinner(2);
-  //       setRandomSuit();
-  //       setTrumpSetter(1);
-  //       break;
-  //     case 7:
-  //       handleLastWinner(3);
-  //       setRandomSuit();
-  //       setTrumpSetter(2);
-  //       break;
-  //     case 8:
-  //       handleLastWinner(0);
-  //       setRandomSuit();
-  //       setTrumpSetter(1);
-  //       break;
-  //     case 9:
-  //       handleLastWinner(1);
-  //       setRandomSuit();
-  //       setTrumpSetter(2);
-  //       break;
-  //   }
-  // }
-
   function setStarterForRound() {
     const playerCycle = [1, 2, 3, 0]; // player
     const trumpSetterCycle = [2, 1]; // Alternating between team 2 and team 1

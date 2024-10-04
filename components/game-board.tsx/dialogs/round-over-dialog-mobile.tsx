@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { roundFinishMessages } from "@/utils/types";
 import { FinishStateStore } from "@/store/finish-round-state";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
 export function RoundOverDialogMobile() {
   const [isOpen, setIsOpen] = useState(true);
@@ -28,12 +29,14 @@ export function RoundOverDialogMobile() {
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const setRoundOver = FinishStateStore((state) => state.setRoundOver);
+  const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const handleClose = () => {
     setAllFalse(false);
     setDialogOpen(false);
     setRoundOver(false);
+    setNewRound(true);
   };
 
   let message = { title: "", message: "" };

@@ -8,11 +8,12 @@ import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import PublicRooms from "./pool-components/public-rooms";
+const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 
 const PoolUI = () => {
   const [availableRooms, setAvailableRooms] = useState<string[]>([]);
   const userName = MultiplayerStateStore((state) => state.userName);
-  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+
   const noPublicRooms = useQuery(api.rooms.checkIfPublicRoomsEmpty);
 
   // useEffect(() => {

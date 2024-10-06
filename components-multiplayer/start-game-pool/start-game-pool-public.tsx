@@ -60,7 +60,7 @@ const StartGamePoolPublic = (props: Props) => {
     }
   };
 
-  const handleJoinRoom = () => {
+  const handleJoinRoom = async () => {
     getUsername();
     if (roomId && userName) {
       const roomName = roomId;
@@ -73,10 +73,11 @@ const StartGamePoolPublic = (props: Props) => {
         );
         if (!alreadyJoined) {
           // Updating the database
-          joinRoomDB({
+          const playerID = await joinRoomDB({
             userName,
             roomName,
           });
+          console.log("PlayerID", playerID);
         }
         hasJoinedRoom.current = true;
       }

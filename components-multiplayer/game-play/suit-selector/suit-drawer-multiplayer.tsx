@@ -94,7 +94,7 @@ export function SuitDrawerMultiplayer({
             </div>
 
             <div className="">
-              <SuitSelectorMobileMultiplayer roomName={roomName} />
+              <SuitSelectorMobileMultiplayer roomName={roomName} userID ={userID} />
             </div>
           </div>
           <DrawerFooter className="">

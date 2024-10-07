@@ -34,9 +34,6 @@ export const updateTrumpSuit = mutation({
   },
 });
 
-
-
-
 export const removeTrumpSuit = mutation({
   args: {
     roomName: v.string(),
@@ -69,7 +66,6 @@ export const removeTrumpSuit = mutation({
     }
   },
 });
-
 
 export const updatePlayingCards = mutation({
   args: {
@@ -202,9 +198,6 @@ export const getPlayerTurn = query({
   },
 });
 
-
-
-
 export const noOfPlayingCards = query({
   args: {
     roomName: v.string(),
@@ -242,10 +235,10 @@ export const noOfPlayingCards = query({
   },
 });
 
-
 export const updateTrumpSetter = mutation({
   args: {
     roomName: v.string(),
+    userID: v.id("players"),
   },
 
   handler: async (ctx, args) => {
@@ -267,28 +260,12 @@ export const updateTrumpSetter = mutation({
       throw new Error("gameState not found");
     }
 
-    const currentTrumpSetter = gameState.trumpSetter;
-    const players = gameState.players; // Assuming 'players' is an array of player IDs
-
-    if (!currentTrumpSetter || !players || players.length < 2) {
-      throw new Error("Insufficient data to update trump setter");
-    }
-
-    // Determine the other player
-    const otherPlayer = players.find((playerId) => playerId !== currentTrumpSetter);
-
-    if (!otherPlayer) {
-      throw new Error("Other player not found");
-    }
-
-    // Update the trumpSetter with the other player's ID
+    // Update the trumpSetter
     await ctx.db.patch(gameState._id, {
-      trumpSetter: otherPlayer,
+      trumpSetter: args.userID,
     });
   },
 });
-
-
 
 //clearing the playing cards after a turn
 export const clearPlayingCards = mutation({
@@ -673,7 +650,6 @@ export const getPlayersPoints = query({
 
       // Find the points
       const playersPoints = gameState.points;
-
 
       if (!playersPoints) {
         throw new Error("No cards in Play");

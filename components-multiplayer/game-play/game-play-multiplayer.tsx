@@ -78,7 +78,7 @@ const GamePlayMultiplayer = () => {
 
   const createGameInstanceDB = async () => {
     console.log("CreateGameInstance");
-    console.log("isRoomCreator",isRoomCreator);
+    console.log("isRoomCreator", isRoomCreator);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -134,7 +134,7 @@ const GamePlayMultiplayer = () => {
 
     //saving the cards of players in a state
     setDealtHands(hands);
-    console.log("deck created")
+    console.log("deck created");
   }
 
   function handleSuitChange(suit: string | null) {
@@ -212,7 +212,7 @@ const GamePlayMultiplayer = () => {
   }, [roomId, userName]);
 
   function resetAfterRound() {
-    console.log("reset After a round",roomdataFromDB)
+    console.log("reset After a round", roomdataFromDB);
     if (roomdataFromDB) {
       initialSetup();
       updateGameInstanceDB();
@@ -262,13 +262,13 @@ const GamePlayMultiplayer = () => {
     if (newRound) {
       resetAfterRound();
     }
-  }, [newRound,isRoomCreator]);
+  }, [newRound, isRoomCreator]);
 
   useEffect(() => {
     if (roomdataFromDB) {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
-      console.log("currentUserisCreator",roomdataFromDB.creator === userName)
+      console.log("currentUserisCreator", roomdataFromDB.creator === userName);
       if (
         roomdataFromDB.playerUserNames.length > 1 &&
         roomdataFromDB.playerUserNames[0] === userName
@@ -281,23 +281,20 @@ const GamePlayMultiplayer = () => {
       initialSetup();
       createGameInstanceDB();
     }
-  }, [roomdataFromDB,trumpSetter,newRound]);
+  }, [roomdataFromDB, trumpSetter, newRound]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between">
       {
-      // !isTrumpSelected &&
-        !trumpSuit &&
-        isRoomCreator &&
-        userID &&
-        roomId &&
-        isRoomActive && (
+        // !isTrumpSelected &&
+        !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (
           <SuitDrawerMultiplayer
             userID={userID}
             roomName={roomId}
             onClose={handleCloseDrawer}
           />
-        )}
+        )
+      }
 
       {roomId && isRoomActive && userID && (
         <div>

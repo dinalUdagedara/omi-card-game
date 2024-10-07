@@ -170,7 +170,7 @@ export const updateGameStateAfterRound = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    console.log("Updating state");
+    console.log("Updating state",args.playersDecks);
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")

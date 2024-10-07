@@ -53,6 +53,7 @@ const GamePlayMultiplayer = () => {
   const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
   const newRound = MultiplayerStateStore((state) => state.newRound);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
+  const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
 
   const createGameState = useMutation(api.gameStates.createGameState);
   const updateGameStateAfterRound = useMutation(
@@ -77,6 +78,7 @@ const GamePlayMultiplayer = () => {
 
   const createGameInstanceDB = async () => {
     console.log("CreateGameInstance");
+    console.log("isRoomCreator",isRoomCreator);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -132,6 +134,7 @@ const GamePlayMultiplayer = () => {
 
     //saving the cards of players in a state
     setDealtHands(hands);
+    console.log("deck created")
   }
 
   function handleSuitChange(suit: string | null) {
@@ -174,7 +177,7 @@ const GamePlayMultiplayer = () => {
   setTrumpSelected(false);
   useEffect(() => {
     if (roomStatus) {
-      console.log("roomStatus",roomStatus)
+      console.log("roomStatus", roomStatus);
       if (roomStatus === "started") {
         setRoomActive(true);
       } else {
@@ -200,15 +203,16 @@ const GamePlayMultiplayer = () => {
 
   useEffect(() => {
     // if (webSocketURL)
-      // // Connect to socket on mount
-      // SocketManager.connect(webSocketURL);
-      handleJoinRoom();
+    // // Connect to socket on mount
+    // SocketManager.connect(webSocketURL);
+    handleJoinRoom();
     // getRoomInfo();
     // const mySocketID = SocketManager.getMySocket();
     // if (mySocketID) setMySocket(mySocketID);
   }, [roomId, userName]);
 
   function resetAfterRound() {
+    console.log("reset After a round",roomdataFromDB)
     if (roomdataFromDB) {
       initialSetup();
       updateGameInstanceDB();
@@ -258,12 +262,13 @@ const GamePlayMultiplayer = () => {
     if (newRound) {
       resetAfterRound();
     }
-  }, [newRound]);
+  }, [newRound,isRoomCreator]);
 
   useEffect(() => {
     if (roomdataFromDB) {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
+      console.log("currentUserisCreator",roomdataFromDB.creator === userName)
       if (
         roomdataFromDB.playerUserNames.length > 1 &&
         roomdataFromDB.playerUserNames[0] === userName
@@ -276,11 +281,12 @@ const GamePlayMultiplayer = () => {
       initialSetup();
       createGameInstanceDB();
     }
-  }, [roomdataFromDB]);
+  }, [roomdataFromDB,trumpSetter,newRound]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between">
-      {!isTrumpSelected &&
+      {
+      // !isTrumpSelected &&
         !trumpSuit &&
         isRoomCreator &&
         userID &&

@@ -5,6 +5,7 @@ import { FinishStateStore } from "@/store/finish-round-state";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
 import { use, useEffect } from "react";
+import { RoundOverDialogMultiplayer } from "../round-over-dialogs/round-over-dialog";
 
 interface RoundOverMultiplayerProps {
   userID: Id<"players">;
@@ -27,9 +28,7 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
   const setlostWithoutCallingTrumps = FinishStateStore(
     (state) => state.setlostWithoutCallingTrumps
   );
-  const setgameTied = FinishStateStore(
-    (state) => state.setGameTied
-  );
+  const setgameTied = FinishStateStore((state) => state.setGameTied);
   const teamPoints = useQuery(api.gameLogic.getPlayersPoints, {
     roomName: roomName,
   });
@@ -99,7 +98,7 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
 
   return (
     <div>
-      <RoundOverDialogMobile />
+      <RoundOverDialogMultiplayer roomName={roomName} userID={userID} />
     </div>
   );
 };

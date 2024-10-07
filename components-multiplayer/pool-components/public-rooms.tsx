@@ -7,7 +7,7 @@ const PublicRooms = () => {
   const availableRooms = useQuery(api.rooms.getAllActivePublicRooms);
 
   return (
-    <div>
+    <div className="flex gap-5">
       {availableRooms?.map((room, index) => (
         <div key={index} className="h-40 w-40">
           <Link href={`/multiplayer/start/public/${room.roomName}`}>

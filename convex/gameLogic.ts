@@ -165,6 +165,48 @@ export const getPlayerTurn = query({
   },
 });
 
+
+
+
+export const noOfPlayingCards = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // get the number of cards in the playersCards (playing cards)
+      const noOfPlayingCards = gameState.playersCards.length;
+
+      // Return the turnPlayerId
+      return noOfPlayingCards;
+    }
+  },
+});
+
+
+
 //clearing the playing cards after a turn
 export const clearPlayingCards = mutation({
   args: {

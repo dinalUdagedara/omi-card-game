@@ -28,7 +28,7 @@ export function RoundOverDialogMobile() {
   );
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
-  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
+  const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);

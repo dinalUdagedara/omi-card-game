@@ -174,6 +174,7 @@ const GamePlayMultiplayer = () => {
   setTrumpSelected(false);
   useEffect(() => {
     if (roomStatus) {
+      console.log("roomStatus",roomStatus)
       if (roomStatus === "started") {
         setRoomActive(true);
       } else {
@@ -198,7 +199,7 @@ const GamePlayMultiplayer = () => {
   }, [winningCard]);
 
   useEffect(() => {
-    if (webSocketURL)
+    // if (webSocketURL)
       // // Connect to socket on mount
       // SocketManager.connect(webSocketURL);
       handleJoinRoom();

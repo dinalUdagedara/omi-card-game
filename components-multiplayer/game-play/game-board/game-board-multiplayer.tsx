@@ -97,13 +97,13 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
         playingCards &&
         (playersDecks[0].deck.length > 0 || playersDecks[1].deck.length > 0)
       ) {
+        console.log("cards Available")
         setCardsAvailable(true);
       } else {
         setTimeout(() => {
+          console.log("cards NOT Available")
           setCardsAvailable(false);
           setRoundOver(true); // rendering the round over component
-
-          // setwonCallingTrumps(true);
           setDialogOpen(true);
         }, 3000);
       }

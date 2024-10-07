@@ -2,7 +2,6 @@
 import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import SocketManager from "@/services/web-socket-service";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
 import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
@@ -24,14 +23,24 @@ import {
 } from "@/utils/multiplayer/game-logic-multiplayer";
 import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
-
+const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
   const roomId = pathname.split("/").pop(); // Get the last part of the URL, which is the roomId
-  const userName = MultiplayerStateStore((state) => state.userName);
-  const setUserName = MultiplayerStateStore((state) => state.setUsername);
+
+  const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
+  const [roomCreatorID, setRoomCreatorID] = useState<Id<"players"> | null>(
+    null
+  );
+  const [isRoomActive, setRoomActive] = useState(false);
   const [mySocket, setMySocket] = useState<Socket | null>(null);
   const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
+  const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
+  const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
+  const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
+
+  const userName = MultiplayerStateStore((state) => state.userName);
+  const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const isTrumpSelected = useStore((state) => state.trumpSelected);
   const setTrumpSelected = useStore((state) => state.setTrumpSelected);
   const trumpSuit = useStore((state) => state.trumpSuit);
@@ -39,30 +48,18 @@ const GamePlayMultiplayer = () => {
   const setOpponentCard = MultiplayerStateStore(
     (state) => state.setOpponentCard
   );
-  const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
-
-  const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
-  const [roomCreatorID, setRoomCreatorID] = useState<Id<"players"> | null>(
-    null
-  );
-  const [isRoomActive, setRoomActive] = useState(false);
-
-  const roomdataFromDB = useQuery(api.rooms.getRoomData, {
-    roomName: roomId || "",
-  });
-  const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
-  const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
+  const winningCard = MultiplayerStateStore((state) => state.winningCard);
+  const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
+  const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
+  const newRound = MultiplayerStateStore((state) => state.newRound);
+  const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
+  const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
 
   const createGameState = useMutation(api.gameStates.createGameState);
   const updateGameStateAfterRound = useMutation(
     api.gameStates.updateGameStateAfterRound
   );
   const resetStatesinDB = useMutation(api.gameLogic.resetStates);
-  const winningCard = MultiplayerStateStore((state) => state.winningCard);
-  const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
-  const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
-  const newRound = MultiplayerStateStore((state) => state.newRound);
-  const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
 
   // Query to fetch all players' IDs in the room
@@ -72,34 +69,16 @@ const GamePlayMultiplayer = () => {
   const userID = useQuery(api.gameStates.getIdByUserName, {
     userName: userName || "",
   });
-
   const roomStatus = useQuery(api.gameStates.checkRoomStatus, {
     roomName: roomId || "",
   });
-
-  const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
-
-  useEffect(() => {
-    if (playersInRoom) {
-      setPlayersIDs(playersInRoom);
-      console.log("Players in the room: ", playersInRoom);
-      if (isRoomCreator && userID) {
-        setRoomCreatorID(userID);
-      }
-    }
-  }, [playersInRoom]);
-  setTrumpSelected(false);
-  useEffect(() => {
-    if (roomStatus) {
-      if (roomStatus === "started") {
-        setRoomActive(true);
-      } else {
-        setRoomActive(false);
-      }
-    }
-  }, [roomStatus]);
+  const roomdataFromDB = useQuery(api.rooms.getRoomData, {
+    roomName: roomId || "",
+  });
 
   const createGameInstanceDB = async () => {
+    console.log("CreateGameInstance");
+    console.log("isRoomCreator", isRoomCreator);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -155,6 +134,7 @@ const GamePlayMultiplayer = () => {
 
     //saving the cards of players in a state
     setDealtHands(hands);
+    console.log("deck created");
   }
 
   function handleSuitChange(suit: string | null) {
@@ -185,6 +165,27 @@ const GamePlayMultiplayer = () => {
     throw new Error("Function not implemented.");
   }
 
+  useEffect(() => {
+    if (playersInRoom) {
+      setPlayersIDs(playersInRoom);
+      console.log("Players in the room: ", playersInRoom);
+      if (isRoomCreator && userID) {
+        setRoomCreatorID(userID);
+      }
+    }
+  }, [playersInRoom]);
+  setTrumpSelected(false);
+  useEffect(() => {
+    if (roomStatus) {
+      console.log("roomStatus", roomStatus);
+      if (roomStatus === "started") {
+        setRoomActive(true);
+      } else {
+        setRoomActive(false);
+      }
+    }
+  }, [roomStatus]);
+
   //resetting States
   useEffect(() => {
     if (winningCard)
@@ -201,16 +202,17 @@ const GamePlayMultiplayer = () => {
   }, [winningCard]);
 
   useEffect(() => {
-    if (webSocketURL)
-      // // Connect to socket on mount
-      // SocketManager.connect(webSocketURL);
-      handleJoinRoom();
+    // if (webSocketURL)
+    // // Connect to socket on mount
+    // SocketManager.connect(webSocketURL);
+    handleJoinRoom();
     // getRoomInfo();
     // const mySocketID = SocketManager.getMySocket();
     // if (mySocketID) setMySocket(mySocketID);
   }, [roomId, userName]);
 
   function resetAfterRound() {
+    console.log("reset After a round", roomdataFromDB);
     if (roomdataFromDB) {
       initialSetup();
       updateGameInstanceDB();
@@ -260,12 +262,13 @@ const GamePlayMultiplayer = () => {
     if (newRound) {
       resetAfterRound();
     }
-  }, [newRound]);
+  }, [newRound, isRoomCreator]);
 
   useEffect(() => {
     if (roomdataFromDB) {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
+      console.log("currentUserisCreator", roomdataFromDB.creator === userName);
       if (
         roomdataFromDB.playerUserNames.length > 1 &&
         roomdataFromDB.playerUserNames[0] === userName
@@ -278,22 +281,20 @@ const GamePlayMultiplayer = () => {
       initialSetup();
       createGameInstanceDB();
     }
-  }, [roomdataFromDB]);
+  }, [roomdataFromDB, trumpSetter, newRound]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between">
-      {!isTrumpSelected &&
-        !trumpSuit &&
-        isRoomCreator &&
-        userID &&
-        roomId &&
-        isRoomActive && (
+      {
+        // !isTrumpSelected &&
+        !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (
           <SuitDrawerMultiplayer
             userID={userID}
             roomName={roomId}
             onClose={handleCloseDrawer}
           />
-        )}
+        )
+      }
 
       {roomId && isRoomActive && userID && (
         <div>

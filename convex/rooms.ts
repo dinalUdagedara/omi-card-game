@@ -229,6 +229,55 @@ export const updateRoomStatustoJoined = mutation({
   },
 });
 
+export const removeCreator = mutation({
+  args: {
+    roomName: v.string(), // Referencing the room by ID
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+    if (room)
+      // Update the trumpSetter with the other player's username
+      await ctx.db.patch(room._id, {
+        creator: "", // Update with username
+      });
+  },
+});
+
+export const updateCreator = mutation({
+  args: {
+    roomName: v.string(), // Referencing the room by ID
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    const currentTrumpSetter = room?.creator; // Assuming creator is the username
+    const players = room?.playerUserNames; // Assuming 'players' is an array of usernames
+
+    if (!currentTrumpSetter || !players || players.length < 2) {
+      throw new Error("Insufficient data to update trump setter");
+    }
+
+    // Determine the other player
+    const otherPlayer = players.find(
+      (username) => username !== currentTrumpSetter
+    );
+
+    if (!otherPlayer) {
+      throw new Error("Other player not found");
+    }
+
+    // Update the trumpSetter with the other player's username
+    await ctx.db.patch(room._id, {
+      creator: otherPlayer, // Update with username
+    });
+  },
+});
 
 export const isPlayersJoined = query({
   args: {

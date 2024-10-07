@@ -31,17 +31,22 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     roomName: roomName,
   });
 
+  const noOfPlayingcards = useQuery(api.gameLogic.noOfPlayingCards, {
+    roomName: roomName,
+  });
+
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
 
   useEffect(() => {
-    if (turnPlayerID) {
-      if (turnPlayerID === userID) {
+    if (turnPlayerID ) {
+      const num = noOfPlayingcards ?? 0;
+      if (turnPlayerID === userID && num < 2) {
         setUserTurn(true);
       } else {
         setUserTurn(false);
       }
     }
-  }, [turnPlayerID]);
+  }, [turnPlayerID,noOfPlayingcards]);
 
   async function handleCardSelect(card: cardMultiplayer) {
     console.log("Selected Card", card);
@@ -80,7 +85,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                 }}
               >
                 <button
-                  disabled={!trumpSuit || !isUserTurn}
+                  disabled={!trumpSuit || !isUserTurn  }
                   onClick={() => handleCardSelect(card)}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
                 >

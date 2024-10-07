@@ -14,15 +14,21 @@ import Image from "next/image";
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface SuitSelectorProps {
   roomName: string;
+  userID: Id<"players">;
 }
 
-export function SuitSelectorMobileMultiplayer({ roomName }: SuitSelectorProps) {
+export function SuitSelectorMobileMultiplayer({
+  roomName,
+  userID,
+}: SuitSelectorProps) {
   const [selectedSuit, setSelectedSuit] = useState<Suit | null>(null);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
+  const updateTrumpSetter = useMutation(api.gameLogic.updateTrumpSetter);
 
   function handleSuitSelected(suit: Suit) {
     setSelectedSuit(suit);
@@ -32,6 +38,11 @@ export function SuitSelectorMobileMultiplayer({ roomName }: SuitSelectorProps) {
       updateTrump({
         roomName,
         trumpSuit,
+      });
+
+      updateTrumpSetter({
+        roomName,
+        userID,
       });
     }
   }

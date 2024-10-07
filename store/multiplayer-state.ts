@@ -1,14 +1,19 @@
+import { Id } from "@/convex/_generated/dataModel";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
 import { create } from "zustand";
 
 interface MultiplayerState {
   userName: string | null;
+  userID: Id<"players"> | null;
+  trumpSetter: Id<"players"> | null;
   myCard: cardMultiplayer | null;
   opponentsCard: cardMultiplayer | null;
   winningCard: cardMultiplayer | null;
   roundOver: boolean | null;
   newRound: boolean;
   setUsername: (newName: string | null) => void;
+  setUserID: (newUSerID: Id<"players"> | null) => void;
+  setTrumpSetter: (newUSerID: Id<"players"> | null) => void;
   setRoundOver: (newValue: boolean) => void;
   setNewRound: (newValue: boolean) => void;
   setOpponentCard: (newCard: cardMultiplayer | null) => void;
@@ -19,6 +24,8 @@ interface MultiplayerState {
 
 export const MultiplayerStateStore = create<MultiplayerState>((set) => ({
   userName: null,
+  userID: null,
+  trumpSetter: null,
   opponentsCard: null,
   myCard: null,
   winningCard: null,
@@ -26,6 +33,10 @@ export const MultiplayerStateStore = create<MultiplayerState>((set) => ({
   newRound: false,
 
   setUsername: (newName: string | null) => set({ userName: newName }),
+
+  setTrumpSetter: (newUSerID: Id<"players"> | null) => set({ trumpSetter: newUSerID }),
+
+  setUserID: (newUserID: Id<"players"> | null) => set({ userID: newUserID }),
   setRoundOver: (newvalue: boolean) => set({ roundOver: newvalue }),
   setNewRound: (newvalue: boolean) => set({ newRound: newvalue }),
   setOpponentCard: (newCard: cardMultiplayer | null) =>

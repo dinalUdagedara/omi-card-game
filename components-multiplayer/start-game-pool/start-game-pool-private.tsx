@@ -20,19 +20,22 @@ type Props = {
 };
 
 const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
+  const hasJoinedRoom = useRef(false);
+  const router = useRouter();
+  const roomId = props.roomId;
+
   const [roomData, setRoomData] = useState<SocketData[]>([]);
   const [opponentPlayer, setOpponentPlayer] = useState<SocketData | null>(null);
   const [username, setUsername] = useState<string | null>(null);
-  const userName = MultiplayerStateStore((state) => state.userName);
-  const setUserName = MultiplayerStateStore((state) => state.setUsername);
-  const roomId = props.roomId;
   const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
-  const router = useRouter();
   const [isRoomCreator, setIsRoomCreator] = useState<boolean>(true);
   const [roomCreator, setRoomCreator] = useState<SocketData | null>(null);
 
+  const userName = MultiplayerStateStore((state) => state.userName);
+  const setUserName = MultiplayerStateStore((state) => state.setUsername);
+
+  
   const roomdataFromDB = useQuery(api.rooms.getRoomData, { roomName: roomId });
-  const joinRoomDB = useMutation(api.rooms.joinRoom);
   const isOpponentJoinedDB = useQuery(api.rooms.isOpponentJoined, {
     roomName: roomId,
   });
@@ -47,7 +50,65 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
     roomName: roomId || "",
   });
 
-  const hasJoinedRoom = useRef(false);
+  const joinRoomDB = useMutation(api.rooms.joinRoom);
+
+  const handleStartGame = () => {
+    console.log("start");
+    const roomName = roomId;
+    updateRoomStatustoJoined({
+      roomName,
+    });
+    console.log("players joined", PlayersJoined);
+
+    // SocketManager.emitGameStart(roomId); // Emit the event for game start
+  };
+
+  const getUsername = () => {
+    // Ensure the code only runs in the browser
+    const storedUserName = localStorage.getItem("userName");
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+  };
+
+  const handleEnterUserName = () => {
+    if (username?.trim()) {
+      setUserName(username);
+      setUsername("");
+    }
+  };
+
+  const handleJoinRoom = () => {
+    getUsername();
+    if (roomId && userName) {
+      const roomName = roomId;
+      // SocketManager.joinRoom(roomId, isRoomPrivate, userName);
+      // Only update the database if the player hasn't joined before
+      console.log("roomdataFromDB", roomdataFromDB);
+      if (roomdataFromDB) {
+        const alreadyJoined = roomdataFromDB.playerUserNames.some(
+          (player: string) => player === userName
+        );
+        if (!alreadyJoined) {
+          // Updating the database
+          joinRoomDB({
+            userName,
+            roomName,
+          });
+        }
+        hasJoinedRoom.current = true;
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Ensure roomdataFromDB is available and the user hasn't already joined the room
+    if (roomdataFromDB) {
+      handleJoinRoom(); // Call handleJoinRoom once roomdataFromDB is available
+      hasJoinedRoom.current = true; // Set to true to prevent future calls
+    }
+  }, [roomdataFromDB]); // Add roomdataFromDB as a dependency
+
   useEffect(() => {
     if (PlayersJoined) {
       router.push(`/multiplayer/gameplay/public/${roomId}`);
@@ -108,22 +169,6 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   //   );
   // };
 
-  const getUsername = () => {
-    // Ensure the code only runs in the browser
-    const storedUserName = localStorage.getItem("userName");
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
-  };
-
-  useEffect(() => {
-    // Ensure roomdataFromDB is available and the user hasn't already joined the room
-    if (roomdataFromDB) {
-      handleJoinRoom(); // Call handleJoinRoom once roomdataFromDB is available
-      hasJoinedRoom.current = true; // Set to true to prevent future calls
-    }
-  }, [roomdataFromDB]); // Add roomdataFromDB as a dependency
-
   // const handleJoinRoom = () => {
   //   console.log("roomId: ", roomId);
 
@@ -134,36 +179,6 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   //     console.log("Joined to the Room : ", roomId);
   //   }
   // };
-
-  const handleEnterUserName = () => {
-    if (username?.trim()) {
-      setUserName(username);
-      setUsername("");
-    }
-  };
-
-  const handleJoinRoom = () => {
-    getUsername();
-    if (roomId && userName) {
-      const roomName = roomId;
-      // SocketManager.joinRoom(roomId, isRoomPrivate, userName);
-      // Only update the database if the player hasn't joined before
-      console.log("roomdataFromDB", roomdataFromDB);
-      if (roomdataFromDB) {
-        const alreadyJoined = roomdataFromDB.playerUserNames.some(
-          (player: string) => player === userName
-        );
-        if (!alreadyJoined) {
-          // Updating the database
-          joinRoomDB({
-            userName,
-            roomName,
-          });
-        }
-        hasJoinedRoom.current = true;
-      }
-    }
-  };
 
   // useEffect(() => {
   //   if (webSocketURL)
@@ -192,17 +207,6 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   //     SocketManager.disconnect();
   //   };
   // }, [webSocketURL, roomId, userName]);
-
-  const handleStartGame = () => {
-    console.log("start");
-    const roomName = roomId;
-    updateRoomStatustoJoined({
-      roomName,
-    });
-    console.log("players joined", PlayersJoined);
-
-    // SocketManager.emitGameStart(roomId); // Emit the event for game start
-  };
 
   return (
     <div className="flex flex-col h-full min-h-screen">

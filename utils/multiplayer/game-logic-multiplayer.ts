@@ -29,6 +29,7 @@ export function createDeck(): Card[] {
       .fill({ hand: [] })
       .map(() => ({ hand: [] }));
     const deckLength = deck.length / 4;
+    // const deckLength = 2;
     for (let i = 0; i < deckLength; i++) {
       hands.forEach((hand) => hand.hand.push(deck.pop() as Card));
     }

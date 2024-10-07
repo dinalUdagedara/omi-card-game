@@ -102,6 +102,11 @@ export const roundFinishMessages: RoundFinishMessage[] = [
     title: "Lost Calling Trumps",
     message: "Lost 2 tokens",
   },
+  {
+    value: 5,
+    title: "Game Tied",
+    message: "",
+  },
 ];
 
 export interface RoundFinishMessage {

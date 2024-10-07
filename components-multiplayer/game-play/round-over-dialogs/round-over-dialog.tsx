@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,8 +11,20 @@ import {
 import { roundFinishMessages } from "@/utils/types";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useStore } from "@/store/state";
 
-export function RoundOverDialogMobile() {
+interface RoundOverDialogMobileProps {
+  userID: Id<"players">;
+  roomName: string;
+}
+
+export function RoundOverDialogMultiplayer({
+  userID,
+  roomName,
+}: RoundOverDialogMobileProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const wonWithoutCallingTrumps = FinishStateStore(
@@ -20,23 +32,58 @@ export function RoundOverDialogMobile() {
   );
   const wonCallingTrumps = FinishStateStore((state) => state.wonCallingTrumps);
 
+  const userName = MultiplayerStateStore((state) => state.userName);
+
   const lostCallingTrumps = FinishStateStore(
     (state) => state.lostCallingTrumps
   );
   const lostWithoutCallingTrumps = FinishStateStore(
     (state) => state.lostWithoutCallingTrumps
   );
-  const gameTied = FinishStateStore(
-    (state) => state.gameTied
-  );
+  const gameTied = FinishStateStore((state) => state.gameTied);
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
+  const setTrumpSetter = MultiplayerStateStore((state) => state.setTrumpSetter);
+  const setTrumpSuit = useStore((state) => state.setTrumpSuit);
+
+  const trumpSetter = useQuery(api.gameLogic.getTrumpSetter, {
+    roomName: roomName,
+  });
+
+  const roomCreator = useQuery(api.rooms.getRoomCreator, {
+    roomName: roomName,
+  });
+  const roomdataFromDB = useQuery(api.rooms.getRoomData, {
+    roomName: roomName || "",
+  });
+
+  const updateTrumpSetter = useMutation(api.rooms.updateCreator);
+  const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
+
+  useEffect(() => {
+    console.log("trump setter", trumpSetter);
+    if (trumpSetter) {
+      setTrumpSetter(trumpSetter);
+    }
+  }, [trumpSetter]);
+
   const handleClose = () => {
     setAllFalse(false);
+    if (userName === roomdataFromDB?.playerUserNames[0]) {
+      updateTrumpSetter({
+        roomName: roomName,
+      });
+      removeTrumpSuit({
+        roomName:roomName
+      })
+      setTrumpSuit(null)
+    }else{
+      // removeTRumpsetter from here
+    }
     setDialogOpen(false);
     setRoundOver(false);
     setNewRound(true);
@@ -52,7 +99,7 @@ export function RoundOverDialogMobile() {
     message = roundFinishMessages.find((msg) => msg.value === 3) || message;
   } else if (lostCallingTrumps) {
     message = roundFinishMessages.find((msg) => msg.value === 4) || message;
-  } else if(gameTied){
+  } else if (gameTied) {
     message = roundFinishMessages.find((msg) => msg.value === 5) || message;
   }
 

@@ -34,6 +34,39 @@ export const updateTrumpSuit = mutation({
   },
 });
 
+export const removeTrumpSuit = mutation({
+  args: {
+    roomName: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    const id = gameState?._id;
+    if (id) {
+      await ctx.db.patch(id, {
+        trump: null,
+      });
+    }
+  },
+});
+
 export const updatePlayingCards = mutation({
   args: {
     roomName: v.string(),
@@ -162,6 +195,75 @@ export const getPlayerTurn = query({
       // Return the turnPlayerId
       return turnPlayerId;
     }
+  },
+});
+
+export const noOfPlayingCards = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+      // get the number of cards in the playersCards (playing cards)
+      const noOfPlayingCards = gameState.playersCards.length;
+
+      // Return the turnPlayerId
+      return noOfPlayingCards;
+    }
+  },
+});
+
+export const updateTrumpSetter = mutation({
+  args: {
+    roomName: v.string(),
+    userID: v.id("players"),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    // Update the trumpSetter
+    await ctx.db.patch(gameState._id, {
+      trumpSetter: args.userID,
+    });
   },
 });
 
@@ -548,7 +650,6 @@ export const getPlayersPoints = query({
 
       // Find the points
       const playersPoints = gameState.points;
-      console.log("points", playersPoints);
 
       if (!playersPoints) {
         throw new Error("No cards in Play");
@@ -712,7 +813,6 @@ export const incrementPenaltyCards = mutation({
       await ctx.db.patch(id, {
         penaltyCards: updatedPenaltyCards,
       });
-      console.log(ctx.db.get(id));
       return ctx.db.get(id);
     }
   },
@@ -818,7 +918,6 @@ export const updatePlayerTurn = mutation({
       throw new Error("gameState not found");
     }
 
-    console.log("gameState.winner", gameState.winner);
     if (gameState.winner) {
       // Update the player turn in the gameState
       await ctx.db.patch(gameState._id, {

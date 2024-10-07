@@ -83,6 +83,8 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
     roomName: roomName,
   });
 
+  const [dataLoaded, setDataLoaded] = useState(false);
+
   useEffect(() => {
     if (trumpSuitInDB && isValidSuit(trumpSuitInDB)) {
       setSelectedSuit(trumpSuitInDB);
@@ -92,22 +94,25 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   }, [trumpSuitInDB]);
 
   useEffect(() => {
-    if (playersDecks)
+    if (playersDecks && playingCards) {
+      // Ensure both decks have been loaded
+      const hasDecks = playersDecks[0]?.deck && playersDecks[1]?.deck;
       if (
-        playingCards &&
+        hasDecks &&
         (playersDecks[0].deck.length > 0 || playersDecks[1].deck.length > 0)
       ) {
-        console.log("cards Available")
         setCardsAvailable(true);
       } else {
         setTimeout(() => {
-          console.log("cards NOT Available")
-          setCardsAvailable(false);
-          setRoundOver(true); // rendering the round over component
-          setDialogOpen(true);
+          if (playingCards.length > 0) {
+            setCardsAvailable(false);
+            setRoundOver(true); // rendering the round over component
+            // setDialogOpen(true);
+          }
         }, 3000);
       }
-  }, [playingCards]);
+    }
+  }, [playingCards, playersDecks]);
 
   return (
     <div>

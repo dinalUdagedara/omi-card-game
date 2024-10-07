@@ -7,6 +7,7 @@ interface FinishState {
   lostWithoutCallingTrumps: boolean | null;
   isDialogOpen: boolean;
   isRoundOver: boolean;
+  gameTied: boolean;
 
   setwonCallingTrumps: (newValue: boolean | null) => void;
   setwonWithoutCallingTrumps: (newValue: boolean | null) => void;
@@ -15,6 +16,7 @@ interface FinishState {
   setAllFalse: (newvalue: boolean) => void;
   setDialogOpen: (newvalue: boolean) => void;
   setRoundOver: (newvalue: boolean) => void;
+  setGameTied: (newvalue: boolean) => void;
 }
 
 export const FinishStateStore = create<FinishState>((set) => ({
@@ -24,6 +26,7 @@ export const FinishStateStore = create<FinishState>((set) => ({
   lostWithoutCallingTrumps: null,
   isDialogOpen: false,
   isRoundOver:false,
+  gameTied:false,
 
   setwonCallingTrumps: (newValue: boolean | null) =>
     set({ wonCallingTrumps: newValue }),
@@ -42,4 +45,5 @@ export const FinishStateStore = create<FinishState>((set) => ({
     }),
   setDialogOpen: (newValue: boolean) => set({ isDialogOpen: newValue }),
   setRoundOver: (newValue: boolean) => set({ isRoundOver: newValue }),
+  setGameTied: (newValue: boolean) => set({ gameTied: newValue }),
 }));

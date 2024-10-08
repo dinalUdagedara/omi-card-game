@@ -25,7 +25,7 @@ import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
-  const roomId = pathname.split("/").pop(); 
+  const roomId = pathname.split("/").pop();
 
   const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
   const [roomCreatorID, setRoomCreatorID] = useState<Id<"players"> | null>(
@@ -48,9 +48,28 @@ const GamePlayMultiplayer = () => {
   const winningCard = MultiplayerStateStore((state) => state.winningCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
   const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
+  const setTeammateCard = MultiplayerStateStore(
+    (state) => state.setTeammateCard
+  );
+  const setOpponent1Card = MultiplayerStateStore(
+    (state) => state.setOpponent1Card
+  );
+  const setOpponent2Card = MultiplayerStateStore(
+    (state) => state.setOpponent2Card
+  );
   const newRound = MultiplayerStateStore((state) => state.newRound);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
+
+  const setteamMemberID = MultiplayerStateStore(
+    (state) => state.setteamMemberID
+  );
+  const setopponent_1_ID = MultiplayerStateStore(
+    (state) => state.setopponent_1_ID
+  );
+  const setopponent_2_ID = MultiplayerStateStore(
+    (state) => state.setopponent_2_ID
+  );
 
   const createGameState = useMutation(api.gameStates.createGameState);
   const updateGameStateAfterRound = useMutation(
@@ -73,6 +92,10 @@ const GamePlayMultiplayer = () => {
     roomName: roomId || "",
   });
 
+  const [teamMember, setTeamMember] = useState<string>();
+  const [opponent_1, setOpponent_1] = useState<string>();
+  const [opponent_2, setOpponent_2] = useState<string>();
+
   const createGameInstanceDB = async () => {
     console.log("CreateGameInstance");
     console.log("isRoomCreator", isRoomCreator);
@@ -83,10 +106,9 @@ const GamePlayMultiplayer = () => {
         const roomName = roomId;
         const playerTurn = userID;
         const trumpSetter = userID;
-        console.log("dealthands",dealtHands)
+        console.log("dealthands", dealtHands);
         if (dealtHands) {
-          
-             console.log("roomName", roomName);
+          console.log("roomName", roomName);
           console.log("playerTurn", playerTurn);
           console.log("trumpSetter", trumpSetter);
           // Map playersInRoom and dealtHands to match player IDs with their decks
@@ -98,7 +120,7 @@ const GamePlayMultiplayer = () => {
           console.log("playersDecks", playersDecks);
 
           if (roomName && playerTurn && trumpSetter) {
-            console.log("Creating gameState")
+            console.log("Creating gameState");
             await createGameState({
               roomName,
               players,
@@ -145,8 +167,7 @@ const GamePlayMultiplayer = () => {
   }
 
   function handleCloseDrawer() {
-    if (roomId)
-      handleSuitChange(trumpSuit);
+    if (roomId) handleSuitChange(trumpSuit);
     setTrumpSelected(true);
   }
 
@@ -198,6 +219,9 @@ const GamePlayMultiplayer = () => {
           });
         setWinningCard(null);
         setMyCard(null);
+        setTeammateCard(null);
+        setOpponent1Card(null);
+        setOpponent2Card(null);
         setOpponentCard(null);
       }, 3000);
   }, [winningCard]);
@@ -264,27 +288,59 @@ const GamePlayMultiplayer = () => {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
       console.log("currentUserisCreator", roomdataFromDB.creator === userName);
-      if (
-        roomdataFromDB.playerUserNames.length > 1 &&
-        roomdataFromDB.playerUserNames[0] === userName
-      ) {
-        setOpponentPlayerDB(roomdataFromDB.playerUserNames[1]);
-      } else if (roomdataFromDB.players.length > 1) {
-        setOpponentPlayerDB(roomdataFromDB.playerUserNames[0]);
+      if (roomdataFromDB.playerUserNames.length > 3) {
+        if (roomdataFromDB.playerUserNames[0] === userName) {
+          console.log("roomdataFromDB.playerUserNames[0] === userName");
+          setTeamMember(roomdataFromDB.playerUserNames[2]);
+          setteamMemberID(roomdataFromDB.players[2]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[1]);
+          setopponent_1_ID(roomdataFromDB.players[1]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[3]);
+          setopponent_2_ID(roomdataFromDB.players[3]);
+        } else if (roomdataFromDB.playerUserNames[1] === userName) {
+          console.log("roomdataFromDB.playerUserNames[1] === userName");
+          setTeamMember(roomdataFromDB.playerUserNames[3]);
+          setteamMemberID(roomdataFromDB.players[3]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[2]);
+          setopponent_1_ID(roomdataFromDB.players[2]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[0]);
+          setopponent_2_ID(roomdataFromDB.players[0]);
+        } else if (roomdataFromDB.playerUserNames[2] === userName) {
+          console.log("roomdataFromDB.playerUserNames[2] === userName");
+          setTeamMember(roomdataFromDB.playerUserNames[0]);
+          setteamMemberID(roomdataFromDB.players[0]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[3]);
+          setopponent_1_ID(roomdataFromDB.players[3]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[1]);
+          setopponent_2_ID(roomdataFromDB.players[1]);
+        } else if (roomdataFromDB.playerUserNames[3] === userName) {
+          console.log("roomdataFromDB.playerUserNames[3] === userName");
+          setTeamMember(roomdataFromDB.playerUserNames[1]);
+          setteamMemberID(roomdataFromDB.players[1]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[0]);
+          setopponent_1_ID(roomdataFromDB.players[0]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[2]);
+          setopponent_2_ID(roomdataFromDB.players[2]);
+        }
       }
+
       setIsRoomCreator(currentUserIsCreator);
       initialSetup();
       createGameInstanceDB();
     }
   }, [roomdataFromDB, trumpSetter, newRound]);
 
-  useEffect(()=>{
-    if(isRoomCreator)
-    createGameInstanceDB();
-  },[isRoomCreator])
-
-
-  
+  useEffect(() => {
+    if (isRoomCreator) createGameInstanceDB();
+  }, [isRoomCreator]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between">
@@ -334,7 +390,7 @@ const GamePlayMultiplayer = () => {
             </Avatar>
           </motion.div>
 
-          <div>{opponentPlayerDB || "Waiting for opponent..."}</div>
+          <div>{teamMember || "Waiting for opponent..."}</div>
         </div>
       </div>
 
@@ -374,6 +430,7 @@ const GamePlayMultiplayer = () => {
                     userID={userID}
                     roomName={roomId}
                   />
+                  {userName}
                 </div>
               </div>
             ) : (

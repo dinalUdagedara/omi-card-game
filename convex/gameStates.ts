@@ -41,6 +41,12 @@ export const createGameState = mutation({
       };
     }
 
+    // Assign players to teams
+    const playersWithTeams = args.players.map((playerId, index) => ({
+      playerId,
+      teamNumber: index % 2 === 0 ? 1 : 2, // Team 1 for indices 0 and 2, Team 2 for 1 and 3
+    }));
+
     // Initialize penalty cards for each player with 10 cards
     const penaltyCards = args.players.map((playerId) => ({
       playerId,
@@ -49,7 +55,7 @@ export const createGameState = mutation({
 
     const gameStateID = await ctx.db.insert("gameStates", {
       roomId: roomInfo._id, // Use the room ID fetched from the query
-      players: args.players,
+      players: playersWithTeams,
       penaltyCards: penaltyCards,
       playersDecks: args.playersDecks,
       playersCards: [],
@@ -170,7 +176,7 @@ export const updateGameStateAfterRound = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    console.log("Updating state",args.playersDecks);
+    console.log("Updating state", args.playersDecks);
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")
@@ -197,7 +203,10 @@ export const updateGameStateAfterRound = mutation({
       const currentPlayerID = gameState.playerTurn;
       if (currentPlayerID) {
         // Find the index of the current playerTurn
-        const currentPlayerIndex = players.indexOf(currentPlayerID);
+        // const currentPlayerIndex = players.indexOf(currentPlayerID);
+        const currentPlayerIndex = players.findIndex(
+          (p) => p.playerId === currentPlayerID
+        );
 
         // Calculate the next player's index (wrap around if necessary)
         const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
@@ -209,8 +218,8 @@ export const updateGameStateAfterRound = mutation({
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {
           currentRound: nextRound,
-          playerTurn: nextPlayerTurn,
-          trumpSetter: nextTrumpSetter, // Rotate trump setter as well
+          playerTurn: nextPlayerTurn.playerId,
+          trumpSetter: nextTrumpSetter.playerId, // Rotate trump setter as well
           trump: null,
           playersDecks: args.playersDecks,
           points: [], // Reset points for the new round

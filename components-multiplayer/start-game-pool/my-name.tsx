@@ -5,7 +5,7 @@ const MyName = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   return (
     <>
-      <div className="bg-blue-950 rounded-full p-20 ">{userName}</div>
+      <div className="bg-green-800 rounded-full items-center justify-center flex h-40 w-40 ">{userName}</div>
     </>
   );
 };

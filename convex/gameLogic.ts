@@ -115,6 +115,10 @@ export const updatePlayingCards = mutation({
         updatedPlayersCards.push({
           playerId: args.userId,
           card: args.card,
+          teamInfo: {
+            teamNum: 1,
+            index: existingPlayerIndex === -1 ? 0 : updatedPlayersCards.length, // Example indexing logic
+          },
         });
       }
 
@@ -146,14 +150,14 @@ export const updatePlayingCards = mutation({
 
       // Switch the player turn to the next player
       const playerTurnIndex = gameState.players.findIndex(
-        (p) => p === gameState.playerTurn
+        (p) => p.playerId === gameState.playerTurn
       );
       const nextPlayerIndex = (playerTurnIndex + 1) % gameState.players.length;
       const nextPlayerId = gameState.players[nextPlayerIndex];
 
       // Update the player turn in the gameState
       await ctx.db.patch(id, {
-        playerTurn: nextPlayerId,
+        playerTurn: nextPlayerId.playerId,
       });
     }
   },

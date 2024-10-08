@@ -12,12 +12,10 @@ type Props = {
   roomId: string;
 };
 
-
 const StartGamePoolPublic = (props: Props) => {
   const router = useRouter();
   const hasJoinedRoom = useRef(false);
   const roomId = props.roomId;
-
 
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
@@ -28,6 +26,10 @@ const StartGamePoolPublic = (props: Props) => {
   const joinRoomDB = useMutation(api.rooms.joinRoom);
 
   const isOpponentJoinedDB = useQuery(api.rooms.isOpponentJoined, {
+    roomName: roomId,
+  });
+
+  const isAllJoined = useQuery(api.rooms.isAllJoined, {
     roomName: roomId,
   });
   const roomdataFromDB = useQuery(api.rooms.getRoomData, { roomName: roomId });
@@ -87,30 +89,33 @@ const StartGamePoolPublic = (props: Props) => {
   useEffect(() => {
     // Ensure roomdataFromDB is available and the user hasn't already joined the room
     if (roomdataFromDB && !hasJoinedRoom.current) {
-      handleJoinRoom(); // Call handleJoinRoom once roomdataFromDB is available
+      handleJoinRoom();
       hasJoinedRoom.current = true; // Set to true to prevent future calls
     }
-  }, [roomdataFromDB]); 
-
+  }, [roomdataFromDB]);
 
   return (
     <div className="flex flex-col h-full min-h-screen">
-      <div className="flex  justify-center gap-20 p-20 mt-10">
+      <div className=" justify-center items-center gap-20  ">
         {isOpponentJoinedDB && userName ? (
-          <>
-            <MyName />
-            <OpponentsName userName={userName} roomName={roomId} />
-          </>
+          <div className="flex flex-col gap-20 p-10">
+            <div className="flex justify-center gap-10">
+              <OpponentsName userName={userName} roomName={roomId} />
+            </div>
+            <div className="flex justify-center ">
+              <MyName />
+            </div>
+          </div>
         ) : (
-          <>
+          <div className="flex justify-center p-20">
             <MyName />
-          </>
+          </div>
         )}
       </div>
       <div className=" h-full flex justify-center items-center">
         <div className={`p-20 mt-20 ${isRoomCreatorDB ? "flex" : " hidden"}`}>
           <Button
-            disabled={!isOpponentJoinedDB}
+            disabled={!isAllJoined}
             onClick={handleStartGame}
             className="h-20 w-80 rounded-2xl"
           >

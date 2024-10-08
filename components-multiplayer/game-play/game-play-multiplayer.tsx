@@ -76,20 +76,29 @@ const GamePlayMultiplayer = () => {
   const createGameInstanceDB = async () => {
     console.log("CreateGameInstance");
     console.log("isRoomCreator", isRoomCreator);
+    console.log("playersInRoom", playersInRoom);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
         const roomName = roomId;
         const playerTurn = userID;
         const trumpSetter = userID;
+        console.log("dealthands",dealtHands)
         if (dealtHands) {
+          
+             console.log("roomName", roomName);
+          console.log("playerTurn", playerTurn);
+          console.log("trumpSetter", trumpSetter);
           // Map playersInRoom and dealtHands to match player IDs with their decks
           const playersDecks = players.map((playerId, index) => ({
             playerId,
             deck: dealtHands[index].hand,
           }));
 
+          console.log("playersDecks", playersDecks);
+
           if (roomName && playerTurn && trumpSetter) {
+            console.log("Creating gameState")
             await createGameState({
               roomName,
               players,
@@ -123,7 +132,7 @@ const GamePlayMultiplayer = () => {
     const shuffledDeck = shuffleDeck(deck);
 
     //Dividing Deck among 2 players
-    const hands = dealCards(shuffledDeck, 2);
+    const hands = dealCards(shuffledDeck, 4);
 
     //saving the cards of players in a state
     setDealtHands(hands);
@@ -268,6 +277,14 @@ const GamePlayMultiplayer = () => {
       createGameInstanceDB();
     }
   }, [roomdataFromDB, trumpSetter, newRound]);
+
+  useEffect(()=>{
+    if(isRoomCreator)
+    createGameInstanceDB();
+  },[isRoomCreator])
+
+
+  
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between">

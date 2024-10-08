@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import {
-  SocketData,
   StartGamePoolPrivateProps,
 } from "@/utils/types-multiplayer";
 import { useEffect, useRef, useState } from "react";

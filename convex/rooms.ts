@@ -54,6 +54,20 @@ export const isOpponentJoined = query({
   },
 });
 
+export const isAllJoined = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (roomInfo) return roomInfo.players.length > 1;
+  },
+});
+
 export const isRoomCreator = query({
   args: {
     roomName: v.string(),
@@ -75,6 +89,8 @@ export const getOpponentsName = query({
     userName: v.string(),
   },
   handler: async (ctx, args) => {
+    console.log("roomName", args.roomName);
+    console.log("userName", args.userName);
     // Fetch the current user's ID
     const myUserID = await ctx.db
       .query("players")
@@ -134,7 +150,7 @@ export const getAllActivePublicRooms = query({
     const waitingJoinableRooms = activePublicRooms.filter((room) => {
       // Check the length of players; it should be 0 or 1
       const playerCount = room.players.length;
-      return playerCount === 0 || playerCount === 1;
+      return playerCount === 0 || playerCount < 4;
     });
 
     return waitingJoinableRooms;
@@ -191,7 +207,7 @@ export const joinRoom = mutation({
         playerUserNames: [...room.playerUserNames, args.userName],
       });
 
-      return existingPlayer._id; // or return a message indicating the player is already in the room
+      return existingPlayer._id;
     } else {
       const playerID = await ctx.db.insert("players", {
         userName: args.userName,
@@ -366,5 +382,25 @@ export const getAllPlayersIDInTheRoom = query({
       throw new Error("room not found");
     }
     return room?.players;
+  },
+});
+export const getAllPlayersUsernamesInRoom = query({
+  args: {
+    roomName: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    // Check if the room exists
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    // Filter out the userName and return the other players
+    return room.playerUserNames.filter((user) => user !== args.userName);
   },
 });

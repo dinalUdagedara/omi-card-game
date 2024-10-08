@@ -1,5 +1,4 @@
 "use client";
-import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
@@ -23,18 +22,16 @@ import {
 } from "@/utils/multiplayer/game-logic-multiplayer";
 import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
-const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
-  const roomId = pathname.split("/").pop(); // Get the last part of the URL, which is the roomId
+  const roomId = pathname.split("/").pop(); 
 
   const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
   const [roomCreatorID, setRoomCreatorID] = useState<Id<"players"> | null>(
     null
   );
   const [isRoomActive, setRoomActive] = useState(false);
-  const [mySocket, setMySocket] = useState<Socket | null>(null);
-  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
   const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
   const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
   const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
@@ -118,10 +115,6 @@ const GamePlayMultiplayer = () => {
     console.log("roomId: ", roomId);
 
     getUsername();
-    // if (roomId && userName) {
-    //   SocketManager.joinRoom(roomId, isRoomPrivate, userName);
-    //   console.log("Joined to the Room : ", roomId);
-    // }
   };
 
   function initialSetup() {
@@ -144,7 +137,6 @@ const GamePlayMultiplayer = () => {
 
   function handleCloseDrawer() {
     if (roomId)
-      // SocketManager.emitTrump(trumpSuit, roomId);
       handleSuitChange(trumpSuit);
     setTrumpSelected(true);
   }
@@ -202,13 +194,7 @@ const GamePlayMultiplayer = () => {
   }, [winningCard]);
 
   useEffect(() => {
-    // if (webSocketURL)
-    // // Connect to socket on mount
-    // SocketManager.connect(webSocketURL);
     handleJoinRoom();
-    // getRoomInfo();
-    // const mySocketID = SocketManager.getMySocket();
-    // if (mySocketID) setMySocket(mySocketID);
   }, [roomId, userName]);
 
   function resetAfterRound() {

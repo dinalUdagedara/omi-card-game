@@ -1,12 +1,3 @@
-import Winner1Mobile from "@/components/game-board.tsx/collecting-cards/mobile/winner-1-mobile";
-import Winner2Mobile from "@/components/game-board.tsx/collecting-cards/mobile/winner-2-mobile";
-import Winner3Mobile from "@/components/game-board.tsx/collecting-cards/mobile/winner-3-mobile";
-import Winner4Mobile from "@/components/game-board.tsx/collecting-cards/mobile/winner-4-mobile";
-import CardComponentMobile from "@/components/cards/card-mobile";
-import { GameOverDialogLose } from "@/components/game-board.tsx/game-over/game-over-lose";
-import { GameOverDialog } from "@/components/game-board.tsx/game-over/game-over-win";
-import ControllerStart from "@/components/game-board.tsx/controller-start";
-import ControllerNextRound from "@/components/game-board.tsx/controller-next-round";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -53,7 +44,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
     (state) => state.setOpponentCard
   );
   const myCard = MultiplayerStateStore((state) => state.myCard);
-  const opponentCard = MultiplayerStateStore((state) => state.opponentsCard);
   const winningCard = MultiplayerStateStore((state) => state.winningCard);
   const teamMemberID = MultiplayerStateStore((state) => state.teamMemberID);
   const opponent_1_ID = MultiplayerStateStore((state) => state.opponent_1_ID);
@@ -142,7 +132,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           const myCard = playingCards.find(
             (cards) => cards.playerId === userID
           );
-          console.log("myCard", myCard);
           if (myCard) {
             setMyCard(myCard.card);
           }
@@ -153,7 +142,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           const teamMemberCard = playingCards.find(
             (cards) => cards.playerId === teamMemberID
           );
-          console.log("teamMemberCard", teamMemberCard);
           if (teamMemberCard) {
             setTeammateCard(teamMemberCard.card);
           }
@@ -164,7 +152,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           const opponent_1_Card = playingCards.find(
             (cards) => cards.playerId === opponent_1_ID
           );
-          console.log("opponent_1_Card", opponent_1_Card);
           if (opponent_1_Card) {
             setOpponent1Card(opponent_1_Card.card);
           }
@@ -175,7 +162,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           const opponent_2_Card = playingCards.find(
             (cards) => cards.playerId === opponent_2_ID
           );
-          console.log("opponent_2_Card", opponent_2_Card);
           if (opponent_2_Card) {
             setOpponent2Card(opponent_2_Card.card);
           }

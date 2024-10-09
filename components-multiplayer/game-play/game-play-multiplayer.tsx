@@ -287,10 +287,8 @@ const GamePlayMultiplayer = () => {
     if (roomdataFromDB) {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
-      console.log("currentUserisCreator", roomdataFromDB.creator === userName);
       if (roomdataFromDB.playerUserNames.length > 3) {
         if (roomdataFromDB.playerUserNames[0] === userName) {
-          console.log("roomdataFromDB.playerUserNames[0] === userName");
           setTeamMember(roomdataFromDB.playerUserNames[2]);
           setteamMemberID(roomdataFromDB.players[2]);
 
@@ -300,7 +298,6 @@ const GamePlayMultiplayer = () => {
           setOpponent_2(roomdataFromDB.playerUserNames[3]);
           setopponent_2_ID(roomdataFromDB.players[3]);
         } else if (roomdataFromDB.playerUserNames[1] === userName) {
-          console.log("roomdataFromDB.playerUserNames[1] === userName");
           setTeamMember(roomdataFromDB.playerUserNames[3]);
           setteamMemberID(roomdataFromDB.players[3]);
 
@@ -310,7 +307,6 @@ const GamePlayMultiplayer = () => {
           setOpponent_2(roomdataFromDB.playerUserNames[0]);
           setopponent_2_ID(roomdataFromDB.players[0]);
         } else if (roomdataFromDB.playerUserNames[2] === userName) {
-          console.log("roomdataFromDB.playerUserNames[2] === userName");
           setTeamMember(roomdataFromDB.playerUserNames[0]);
           setteamMemberID(roomdataFromDB.players[0]);
 
@@ -320,7 +316,6 @@ const GamePlayMultiplayer = () => {
           setOpponent_2(roomdataFromDB.playerUserNames[1]);
           setopponent_2_ID(roomdataFromDB.players[1]);
         } else if (roomdataFromDB.playerUserNames[3] === userName) {
-          console.log("roomdataFromDB.playerUserNames[3] === userName");
           setTeamMember(roomdataFromDB.playerUserNames[1]);
           setteamMemberID(roomdataFromDB.players[1]);
 

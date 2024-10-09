@@ -606,25 +606,38 @@ export const incrementPlayerPoints = mutation({
       );
 
       if (existingPlayerIndex !== -1) {
-        // Increment the player's points if they exist
         updatedPlayerPoints[existingPlayerIndex].points += incrementValue;
       } else {
-        // Add a new entry for the player if they don't exist, with the increment value
         updatedPlayerPoints.push({
           playerId: args.userId,
-          points: incrementValue, // Initialize with the increment value
+          points: incrementValue,
         });
       }
 
-      // Update the players' points in the database
+      // Identify the team for the userId
+      const player = gameState.players.find((p) => p.playerId === args.userId);
+      if (!player) {
+        throw new Error("Player not found in gameState");
+      }
+
+      // Update the team points based on the player's team
+      const updatedTeamPoints = { ...gameState.teamPoints };
+      if (player.teamNumber === 1) {
+        updatedTeamPoints.team1 += incrementValue;
+      } else if (player.teamNumber === 2) {
+        updatedTeamPoints.team2 += incrementValue;
+      }
+
+      // Update the database with both player points and team points
       await ctx.db.patch(id, {
         points: updatedPlayerPoints,
+        teamPoints: updatedTeamPoints,
       });
     }
   },
 });
 
-export const getPlayersPoints = query({
+export const getTeamPoints = query({
   args: {
     roomName: v.string(),
   },
@@ -653,7 +666,7 @@ export const getPlayersPoints = query({
       }
 
       // Find the points
-      const playersPoints = gameState.points;
+      const playersPoints = gameState.teamPoints;
 
       if (!playersPoints) {
         throw new Error("No cards in Play");
@@ -661,6 +674,45 @@ export const getPlayersPoints = query({
 
       // Return points
       return playersPoints;
+    }
+  },
+});
+
+export const getMyTeam = query({
+  args: {
+    userId: v.id("players"),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the room
+      if (!gameState) {
+        throw new Error("Game state not found for the room");
+      }
+
+   // Find the player's information and get the team number
+   const myInfo = gameState.players.find((player) => player.playerId === args.userId);
+   const myTeam = myInfo?.teamNumber;
+
+      // Return points
+      return myTeam;
     }
   },
 });

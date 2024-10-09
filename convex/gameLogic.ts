@@ -707,9 +707,11 @@ export const getMyTeam = query({
         throw new Error("Game state not found for the room");
       }
 
-   // Find the player's information and get the team number
-   const myInfo = gameState.players.find((player) => player.playerId === args.userId);
-   const myTeam = myInfo?.teamNumber;
+      // Find the player's information and get the team number
+      const myInfo = gameState.players.find(
+        (player) => player.playerId === args.userId
+      );
+      const myTeam = myInfo?.teamNumber;
 
       // Return points
       return myTeam;
@@ -748,12 +750,15 @@ export const getTrumpSetter = query({
       // Find the trump setter
       const trumpSetter = gameState.trumpSetter;
 
-      if (!trumpSetter) {
+      const trumpSetterInfo = gameState.players.find(
+        (player) => player.playerId == trumpSetter
+      );
+      if (!trumpSetterInfo) {
         throw new Error("No cards in Play");
       }
 
       // Return points
-      return trumpSetter;
+      return trumpSetterInfo;
     }
   },
 });
@@ -762,7 +767,7 @@ export const decrementPenaltyCards = mutation({
   args: {
     roomName: v.string(),
     userID: v.id("players"),
-    decrementvalue: v.number(),
+    decrementValue: v.number(),
   },
 
   handler: async (ctx, args) => {
@@ -786,33 +791,95 @@ export const decrementPenaltyCards = mutation({
       throw new Error("GameState not found");
     }
 
-    const id = gameState._id;
+    // Find the player's team
+    const playerTeamInfo = gameState.players.find(
+      (player) => player.playerId === args.userID
+    );
 
-    if (id) {
-      // Update the penalty cards in the gameState
-      const updatedPenaltyCards = gameState.penaltyCards || [];
-      const existingPlayerIndex = updatedPenaltyCards.findIndex(
-        (pc) => pc.playerId === args.userID
-      );
-
-      if (existingPlayerIndex !== -1) {
-        // Increment the player's points if they exist
-        updatedPenaltyCards[existingPlayerIndex].penaltyCards -=
-          args.decrementvalue;
-      } else {
-        // Add a new entry for the player if they don't exist, with the decrement value
-        updatedPenaltyCards.push({
-          playerId: args.userID,
-          penaltyCards: args.decrementvalue, // Initialize with the decrement value
-        });
-      }
-
-      // Update the players' points in the database
-      await ctx.db.patch(id, {
-        penaltyCards: updatedPenaltyCards,
-      });
-      return ctx.db.get(id);
+    if (!playerTeamInfo) {
+      throw new Error("Player not found in game state");
     }
+
+    const teamNumber = playerTeamInfo.teamNumber;
+
+    // Update the penalty cards for the player's team
+    const updatedPenaltyCards = gameState.penaltyCards.map((penaltyCard) => {
+      if (penaltyCard.teamNo === teamNumber) {
+        return {
+          ...penaltyCard,
+          penaltyCards: penaltyCard.penaltyCards - args.decrementValue,
+        };
+      }
+      return penaltyCard;
+    });
+
+    // Update the game state with the new penalty cards value
+    await ctx.db.patch(gameState._id, {
+      penaltyCards: updatedPenaltyCards,
+    });
+
+    // Return the updated game state
+    return ctx.db.get(gameState._id);
+  },
+});
+
+export const decrementFromOpponents = mutation({
+  args: {
+    roomName: v.string(),
+    userID: v.id("players"),
+    decrementValue: v.number(),
+  },
+
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("GameState not found");
+    }
+
+    // Find the player's team
+    const playerTeamInfo = gameState.players.find(
+      (player) => player.playerId === args.userID
+    );
+
+    if (!playerTeamInfo) {
+      throw new Error("Player not found in game state");
+    }
+
+    const teamNumber = playerTeamInfo.teamNumber;
+
+    // Update the penalty cards for the opponents's team
+    const updatedPenaltyCards = gameState.penaltyCards.map((penaltyCard) => {
+      if (penaltyCard.teamNo !== teamNumber) {
+        return {
+          ...penaltyCard,
+          penaltyCards: penaltyCard.penaltyCards - args.decrementValue,
+        };
+      }
+      return penaltyCard;
+    });
+
+    // Update the game state with the new penalty cards value
+    await ctx.db.patch(gameState._id, {
+      penaltyCards: updatedPenaltyCards,
+    });
+
+    // Return the updated game state
+    return ctx.db.get(gameState._id);
   },
 });
 
@@ -844,33 +911,35 @@ export const incrementPenaltyCards = mutation({
       throw new Error("GameState not found");
     }
 
-    const id = gameState._id;
+    // Find the player's team
+    const playerTeamInfo = gameState.players.find(
+      (player) => player.playerId === args.userID
+    );
 
-    if (id) {
-      // Update the penalty cards in the gameState
-      const updatedPenaltyCards = gameState.penaltyCards || [];
-      const existingPlayerIndex = updatedPenaltyCards.findIndex(
-        (pc) => pc.playerId === args.userID
-      );
-
-      if (existingPlayerIndex !== -1) {
-        // Increment the player's points if they exist
-        updatedPenaltyCards[existingPlayerIndex].penaltyCards +=
-          args.incrementValue;
-      } else {
-        // Add a new entry for the player if they don't exist, with the decrement value
-        updatedPenaltyCards.push({
-          playerId: args.userID,
-          penaltyCards: args.incrementValue, // Initialize with the increment value
-        });
-      }
-
-      // Update the penalty cards in the database
-      await ctx.db.patch(id, {
-        penaltyCards: updatedPenaltyCards,
-      });
-      return ctx.db.get(id);
+    if (!playerTeamInfo) {
+      throw new Error("Player not found in game state");
     }
+
+    const teamNumber = playerTeamInfo.teamNumber;
+
+    // Update the penalty cards for the player's team
+    const updatedPenaltyCards = gameState.penaltyCards.map((penaltyCard) => {
+      if (penaltyCard.teamNo === teamNumber) {
+        return {
+          ...penaltyCard,
+          penaltyCards: penaltyCard.penaltyCards + args.incrementValue,
+        };
+      }
+      return penaltyCard;
+    });
+
+    // Update the game state with the new penalty cards value
+    await ctx.db.patch(gameState._id, {
+      penaltyCards: updatedPenaltyCards,
+    });
+
+    // Return the updated game state
+    return ctx.db.get(gameState._id);
   },
 });
 

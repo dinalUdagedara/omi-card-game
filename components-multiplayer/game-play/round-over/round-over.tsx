@@ -46,8 +46,12 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
     api.gameLogic.incrementPenaltyCards
   );
 
-  const decrementPenaltycards = useMutation(
-    api.gameLogic.decrementPenaltyCards
+  const setTrumpSetterWon = MultiplayerStateStore(
+    (state) => state.setTrumpSetterWon
+  );
+
+  const setTrumpSetterLose = MultiplayerStateStore(
+    (state) => state.setTrumpSetterLose
   );
 
   const [myTeamPoints, setmyTeamPoints] = useState<number>(0);
@@ -56,25 +60,7 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
   const team1Points = useStore((state) => state.team1Points);
   const team2Points = useStore((state) => state.team2Points);
 
-  const wonWithoutCallingTrumps = FinishStateStore(
-    (state) => state.wonWithoutCallingTrumps
-  );
-  const wonCallingTrumps = FinishStateStore((state) => state.wonCallingTrumps);
-
-  const lostCallingTrumps = FinishStateStore(
-    (state) => state.lostCallingTrumps
-  );
-  const lostWithoutCallingTrumps = FinishStateStore(
-    (state) => state.lostWithoutCallingTrumps
-  );
-
   function getMyTeam() {
-    // console.log("teamPoints", teamPoints);
-    // console.log("myteeam", myTeam);
-    // console.log("myTeam === 1", myTeam === 1);
-    // console.log("team2Points", team2Points);
-    // console.log("team1Points", team1Points);
-
     const myTeamPoints = team1Points;
     // console.log("myteampoints", myTeamPoints);
     const opponentTeamPoints = team2Points;
@@ -89,33 +75,22 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
     // Find the opponent's points by selecting a player who isn't the current user
     const opponentsPoint = opponentTeamPoints;
 
-    // console.log("myPoints", myPoints);
-    // console.log("opponentsPoint", opponentsPoint);
-    // console.log("roomName", roomName);
-    // console.log("trumpSetter", trumpSetter);
-    // console.log("myTeamPoints", myTeamPoints);
-    // console.log("opponentTeamPoints", opponentTeamPoints);
-
     if (myPoints > opponentsPoint) {
-      if (trumpSetter === userID) {
+      if (trumpSetter?.teamNumber === myTeam) {
         setwonCallingTrumps(true);
+        if (trumpSetter?.playerId === userID) {
+          setTrumpSetterWon(true);
+        }
       } else {
         setwonWithoutCallingTrumps(true);
       }
     } else if (opponentsPoint > myPoints) {
-      if (trumpSetter === userID) {
-        decrementPenaltycards({
-          decrementvalue: 2,
-          roomName,
-          userID,
-        });
+      if (trumpSetter?.teamNumber === myTeam) {
         setlostCallingTrumps(true);
+        if (trumpSetter?.playerId === userID) {
+          setTrumpSetterLose(true);
+        }
       } else {
-        decrementPenaltycards({
-          decrementvalue: 1,
-          roomName,
-          userID,
-        });
         setlostWithoutCallingTrumps(true);
       }
     } else {
@@ -133,9 +108,6 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
   }, [myTeam, teamPoints, trumpSetter]);
 
   useEffect(() => {
-    // console.log("myTeamPoints", myTeamPoints);
-    // console.log("opponentTeamPoints", opponentTeamPoints);
-    // console.log("trumpSetter", trumpSetter);
     if (myTeamPoints && opponentTeamPoints && trumpSetter) {
       checkRoundWinner();
       setDialogOpen(true);

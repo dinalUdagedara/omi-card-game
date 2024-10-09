@@ -6,6 +6,7 @@ export default defineSchema({
     isCreator: v.boolean(),
     roomId: v.id("rooms"),
     userName: v.string(),
+    status:v.string(),
   }),
   rooms: defineTable({
     creator: v.string(),
@@ -26,7 +27,7 @@ export default defineSchema({
     ),
     penaltyCards: v.array(
       v.object({
-        playerId: v.id("players"), // Reference to the player
+        teamNo: v.number(), // Reference to the player
         penaltyCards: v.number(),
       })
     ),

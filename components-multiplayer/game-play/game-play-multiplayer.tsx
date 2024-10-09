@@ -77,6 +77,7 @@ const GamePlayMultiplayer = () => {
   );
   const resetStatesinDB = useMutation(api.gameLogic.resetStates);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
@@ -91,6 +92,17 @@ const GamePlayMultiplayer = () => {
   const roomdataFromDB = useQuery(api.rooms.getRoomData, {
     roomName: roomId || "",
   });
+
+  const isAllWaiting = useQuery(api.rooms.allPlayersWaiting, {
+    roomId: roomId || "",
+  });
+
+  const isAllPlaying = useQuery(api.rooms.allPlayersPlaying, {
+    roomId: roomId || "",
+  });
+
+  const updateTrumpSetter = useMutation(api.rooms.updateCreator);
+  const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
 
   const [teamMember, setTeamMember] = useState<string>();
   const [opponent_1, setOpponent_1] = useState<string>();
@@ -124,6 +136,12 @@ const GamePlayMultiplayer = () => {
         }
       } catch (error) {}
     }
+    if (userID)
+      // update this player status to "playing"
+      updatePlayerStatus({
+        status: "playing",
+        userId: userID,
+      });
   };
 
   const getUsername = () => {
@@ -218,11 +236,23 @@ const GamePlayMultiplayer = () => {
     handleJoinRoom();
   }, [roomId, userName]);
 
-  function resetAfterRound() {
-    console.log("reset After a round", roomdataFromDB);
-    if (roomdataFromDB) {
-      initialSetup();
-      updateGameInstanceDB();
+  async function resetAfterRound() {
+    console.log("reset afer Round");
+    //update the trumpsetter in here
+    if (roomId) {
+      console.log("Updating the trump setter");
+      // await updateTrumpSetter({
+      //   roomName: roomId,
+      // });
+      // removeTrumpSuit({
+      //   roomName: roomId,
+      // });
+      // setTrumpSuit(null);
+      console.log("reset After a round", roomdataFromDB);
+      if (roomdataFromDB) {
+        initialSetup();
+        updateGameInstanceDB();
+      }
     }
   }
 
@@ -239,10 +269,11 @@ const GamePlayMultiplayer = () => {
   }
 
   const updateGameInstanceDB = async () => {
+    console.log("updateGameInstanceDB");
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
-        if (dealtHands) {
+        if (dealtHands && userID) {
           // Map playersInRoom and dealtHands to match player IDs with their decks
           const playersDecks = players.map((playerId, index) => ({
             playerId,
@@ -255,6 +286,11 @@ const GamePlayMultiplayer = () => {
               playersDecks,
             });
           }
+          //update players status to "playing" in here
+          updatePlayerStatus({
+            status: "playing",
+            userId: userID,
+          });
           changeTrumptoNull();
         }
 
@@ -266,10 +302,14 @@ const GamePlayMultiplayer = () => {
   };
 
   useEffect(() => {
-    if (newRound) {
+    //run if this is a  new Round and all the players are "waiting" only
+    console.log("isallwaiting", isAllWaiting);
+    console.log("isAllPlaying", isAllPlaying);
+    if (newRound && isAllWaiting) {
       resetAfterRound();
+      console.log("New Round");
     }
-  }, [newRound, isRoomCreator]);
+  }, [newRound, isAllWaiting, isAllPlaying]);
 
   useEffect(() => {
     if (roomdataFromDB) {
@@ -319,7 +359,7 @@ const GamePlayMultiplayer = () => {
       initialSetup();
       createGameInstanceDB();
     }
-  }, [roomdataFromDB, trumpSetter, newRound]);
+  }, [roomdataFromDB, trumpSetter]);
 
   useEffect(() => {
     if (isRoomCreator) createGameInstanceDB();

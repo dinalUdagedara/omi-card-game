@@ -14,6 +14,8 @@ interface MultiplayerState {
   winningCard: cardMultiplayer | null;
   roundOver: boolean | null;
   newRound: boolean;
+  trumpSetterWon: boolean;
+  trumpSetterLose: boolean;
   teamMemberID: Id<"players"> | null;
   opponent_1_ID: Id<"players"> | null;
   opponent_2_ID: Id<"players"> | null;
@@ -24,6 +26,8 @@ interface MultiplayerState {
   setopponent_2_ID: (newUSerID: Id<"players"> | null) => void;
   setTrumpSetter: (newUSerID: Id<"players"> | null) => void;
   setRoundOver: (newValue: boolean) => void;
+  setTrumpSetterWon: (newValue: boolean) => void;
+  setTrumpSetterLose: (newValue: boolean) => void;
   setNewRound: (newValue: boolean) => void;
   setOpponentCard: (newCard: cardMultiplayer | null) => void;
 
@@ -49,6 +53,11 @@ export const MultiplayerStateStore = create<MultiplayerState>((set) => ({
   winningCard: null,
   roundOver: null,
   newRound: false,
+  trumpSetterWon: false,
+  trumpSetterLose: false,
+
+  setTrumpSetterWon: (newvalue: boolean) => set({ trumpSetterWon: newvalue }),
+  setTrumpSetterLose: (newvalue: boolean) => set({ trumpSetterLose: newvalue }),
 
   setUsername: (newName: string | null) => set({ userName: newName }),
 

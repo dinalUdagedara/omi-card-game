@@ -3,9 +3,9 @@ import { v } from "convex/values";
 
 export const createGameState = mutation({
   args: {
-    roomName: v.string(), // Room name to find the corresponding room ID
+    roomName: v.string(),
     players: v.array(v.id("players")),
-    playerTurn: v.id("players"), // initially set to the creators id
+    playerTurn: v.id("players"),
     playersDecks: v.array(
       v.object({
         playerId: v.id("players"), // Each player's ID
@@ -35,6 +35,7 @@ export const createGameState = mutation({
 
     // If a game state already exists, return an error or the existing game state ID
     if (existingGameState) {
+      console.log("existing gamestate");
       return {
         error: "Game state already exists for this room",
         gameStateID: existingGameState._id,
@@ -47,11 +48,11 @@ export const createGameState = mutation({
       teamNumber: index % 2 === 0 ? 1 : 2, // Team 1 for indices 0 and 2, Team 2 for 1 and 3
     }));
 
-    // Initialize penalty cards for each player with 10 cards
-    const penaltyCards = args.players.map((playerId) => ({
-      playerId,
-      penaltyCards: 10, // Default initial penalty card count
-    }));
+    // Initialize penalty cards for each team with default value
+    const penaltyCards = [
+      { teamNo: 1, penaltyCards: 10 }, // Team 1
+      { teamNo: 2, penaltyCards: 10 }, // Team 2
+    ];
 
     const gameStateID = await ctx.db.insert("gameStates", {
       roomId: roomInfo._id, // Use the room ID fetched from the query
@@ -176,7 +177,6 @@ export const updateGameStateAfterRound = mutation({
     ),
   },
   handler: async (ctx, args) => {
-
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")

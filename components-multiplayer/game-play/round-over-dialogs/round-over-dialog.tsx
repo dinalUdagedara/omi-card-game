@@ -59,37 +59,126 @@ export function RoundOverDialogMultiplayer({
     roomName: roomName || "",
   });
 
+  const decrementPenaltycards = useMutation(
+    api.gameLogic.decrementPenaltyCards
+  );
+
+  const decrementPenaltycardsFromOponent = useMutation(
+    api.gameLogic.decrementFromOpponents
+  );
+
+  const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
+    roomName: roomName || "",
+  });
   const updateTrumpSetter = useMutation(api.rooms.updateCreator);
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
+
+  const trumpSetterWon = MultiplayerStateStore((state) => state.trumpSetterWon);
+
+  const trumpSetterLose = MultiplayerStateStore(
+    (state) => state.trumpSetterLose
+  );
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
 
-  useEffect(() => {
-    // console.log("wonWithoutCallingTrumps", wonWithoutCallingTrumps);
-    // console.log("wonCallingTrumps", wonCallingTrumps);
-    // console.log("lostWithoutCallingTrumps", lostWithoutCallingTrumps);
-    // console.log("lostCallingTrumps", lostCallingTrumps);
-    // console.log("trump setter", trumpSetter);
-    if (trumpSetter) {
-      setTrumpSetter(trumpSetter);
+  function decrementValues() {
+    if (lostCallingTrumps) {
+      if (trumpSetter?.playerId === userID) {
+        console.log("Decrementing lost calling");
+        decrementPenaltycards({
+          decrementValue: 2,
+          roomName,
+          userID,
+        });
+      }
     }
-  }, [trumpSetter,wonWithoutCallingTrumps,wonCallingTrumps,lostCallingTrumps,lostWithoutCallingTrumps]);
+    if (lostWithoutCallingTrumps) {
+      if (playersInRoom) {
+        if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
+          console.log("Decrementing lostwithout calling");
+          decrementPenaltycards({
+            decrementValue: 1,
+            roomName,
+            userID,
+          });
+        }
+      }
+    }
+
+    if (wonCallingTrumps) {
+      if (trumpSetter?.playerId === userID) {
+        console.log("Decrementing lost calling");
+        decrementPenaltycardsFromOponent({
+          decrementValue: 1,
+          roomName,
+          userID,
+        });
+      }
+    }
+    if (wonWithoutCallingTrumps) {
+      if (playersInRoom) {
+        console.log("Decrementing lostwithout calling");
+        decrementPenaltycardsFromOponent({
+          decrementValue: 2,
+          roomName,
+          userID,
+        });
+      }
+    }
+  }
+
+  // function decrementValues() {
+  //   console.log("trumpSetter");
+  //   if (trumpSetterWon) {
+  //     // -2 from the opponents
+  //     decrementPenaltycardsFromOponent({
+  //       decrementValue: 1,
+  //       roomName,
+  //       userID,
+  //     });
+  //   }
+  //   if (trumpSetterLose) {
+  //     // -2 from the us
+  //     decrementPenaltycards({
+  //       decrementValue: 2,
+  //       roomName,
+  //       userID,
+  //     });
+  //   }
+  // }
 
   const handleClose = () => {
+    // if (playersInRoom) {
+    //   if (playersInRoom[0] === userID || ) {
+    //     decrementValues();
+    //   }
+    // }
+
     setAllFalse(false);
     if (userName === roomdataFromDB?.playerUserNames[0]) {
+      decrementValues();
       updateTrumpSetter({
         roomName: roomName,
       });
       removeTrumpSuit({
-        roomName:roomName
-      })
-      setTrumpSuit(null)
-    }else{
+        roomName: roomName,
+      });
+      setTrumpSuit(null);
+    } else {
       // removeTRumpsetter from here
     }
     setDialogOpen(false);
     setRoundOver(false);
+
+    //set the player status to "waiting"
+
+    updatePlayerStatus({
+      status: "waiting",
+      userId: userID,
+    });
+
+    // this triggers a new round
     setNewRound(true);
   };
 

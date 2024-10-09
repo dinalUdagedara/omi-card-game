@@ -64,7 +64,7 @@ export const isAllJoined = query({
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
       .first();
 
-    if (roomInfo) return roomInfo.players.length > 1;
+    if (roomInfo) return roomInfo.players.length > 3;
   },
 });
 

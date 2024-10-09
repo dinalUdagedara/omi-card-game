@@ -1,10 +1,10 @@
 "use client";
+import { CardStore } from "@/store/player-card-state";
+import { motion } from "framer-motion";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-
-import { motion } from "framer-motion";
 import { useEffect } from "react";
-const Winner2Multiplayer = () => {
+const Winner4Multiplayer = () => {
   const myCard = MultiplayerStateStore((state) => state.myCard);
   const opponentCard = MultiplayerStateStore((state) => state.opponentsCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
@@ -22,23 +22,36 @@ const Winner2Multiplayer = () => {
   return (
     <div>
       {opponent2Card && (
-        <div className="flex flex-row w-full h-full justify-center items-center">
-          {opponent2Card && (
+        <div className="flex flex-row w-full h-full justify-center items-center ">
+          <motion.div
+            className="flex justify-center items-center w-24 h-36"
+            animate={{
+              scale: [1, 1.5, 1.5, 1, 1],
+              rotate: [0, 0, 180, 180, 0],
+              borderRadius: ["0%", "0%", "50%", "50%", "0%"],
+            }}
+            transition={{
+              duration: 2,
+              ease: "easeInOut",
+              times: [0, 0.2, 0.5, 0.8, 1],
+              repeatDelay: 1,
+            }}
+          >
             <motion.div
               initial={{ opacity: 1, x: 0 }}
-              animate={{ opacity: 0, x: 400 }}
+              animate={{ opacity: 0, x: -200 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
               <CardComponentMultiplayer card={opponent2Card} />
             </motion.div>
-          )}
+          </motion.div>
 
           <div className="flex flex-col justify-between h-full gap-10 w-full">
             {teammateCard && (
               <motion.div
                 initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 0, x: 200 }}
-                transition={{ duration: 0.8, delay: 2.0 }}
+                animate={{ opacity: 0, x: -200 }}
+                transition={{ duration: 0.8, delay: 2.0 }} // Adding delay for sequential animation
               >
                 <CardComponentMultiplayer card={teammateCard} />
               </motion.div>
@@ -47,7 +60,7 @@ const Winner2Multiplayer = () => {
             {myCard && (
               <motion.div
                 initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 0, x: 200 }}
+                animate={{ opacity: 0, x: -200 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
                 <CardComponentMultiplayer card={myCard} />
@@ -55,30 +68,13 @@ const Winner2Multiplayer = () => {
             )}
           </div>
           {opponent1Card && (
-            <>
-              <motion.div
-                className="flex justify-center items-center w-24 h-36"
-                animate={{
-                  scale: [1, 1.5, 1.5, 1, 1],
-                  rotate: [0, 0, 180, 180, 0],
-                  borderRadius: ["0%", "0%", "50%", "50%", "0%"],
-                }}
-                transition={{
-                  duration: 2,
-                  ease: "easeInOut",
-                  times: [0, 0.2, 0.5, 0.8, 1],
-                  repeatDelay: 1,
-                }}
-              >
-                <motion.div
-                  initial={{ opacity: 1, x: 0 }}
-                  animate={{ opacity: 0, x: 100 }}
-                  transition={{ duration: 0.8, delay: 2.0 }}
-                >
-                  <CardComponentMultiplayer card={opponent1Card} />
-                </motion.div>
-              </motion.div>
-            </>
+            <motion.div
+              initial={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 0, x: -200 }}
+              transition={{ duration: 0.8, delay: 2.0 }}
+            >
+              <CardComponentMultiplayer card={opponent1Card} />
+            </motion.div>
           )}
         </div>
       )}
@@ -86,4 +82,4 @@ const Winner2Multiplayer = () => {
   );
 };
 
-export default Winner2Multiplayer;
+export default Winner4Multiplayer;

@@ -20,6 +20,8 @@ import { motion } from "framer-motion";
 import { use, useEffect, useState } from "react";
 import Winner1Multiplayer from "./collecting-cards/winner-1-multiplayer";
 import Winner2Multiplayer from "./collecting-cards/winner-2-multiplayer";
+import Winner3Multiplayer from "./collecting-cards/winner-3-multiplayer";
+import Winner4Multiplayer from "./collecting-cards/winner-4-multiplayer";
 
 interface PlayingCardsProps {
   playingCards: {
@@ -44,7 +46,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   userID,
   trumps,
 }) => {
-  const [isCardsGone, setIsCardsGone] = useState<boolean>(false);
   const [cardSet, setCardSet] = useState<cardMultiplayer[] | null>(null);
 
   const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
@@ -57,21 +58,13 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   const teamMemberID = MultiplayerStateStore((state) => state.teamMemberID);
   const opponent_1_ID = MultiplayerStateStore((state) => state.opponent_1_ID);
   const opponent_2_ID = MultiplayerStateStore((state) => state.opponent_2_ID);
-
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
   const incrementPoints = useMutation(api.gameLogic.incrementPlayerPoints);
   const updateTurnWinner = useMutation(api.gameLogic.updateTurnWinner);
   const updatePlayerTurn = useMutation(api.gameLogic.updatePlayerTurn);
-
-  // Query to fetch all players' IDs in the room
-  const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
-    roomName: roomName || "",
-  });
-
   const teammateCard = MultiplayerStateStore((state) => state.teamMateCard);
   const opponent1Card = MultiplayerStateStore((state) => state.opponent1Card);
   const opponent2Card = MultiplayerStateStore((state) => state.opponent2Card);
-
   const setTeammateCard = MultiplayerStateStore(
     (state) => state.setTeammateCard
   );
@@ -81,6 +74,11 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   const setOpponent2Card = MultiplayerStateStore(
     (state) => state.setOpponent2Card
   );
+
+  // Query to fetch all players' IDs in the room
+  const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
+    roomName: roomName || "",
+  });
 
   useEffect(() => {
     if (playingCards) {
@@ -128,7 +126,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
       if (winningCard)
         setTimeout(() => {
           setWinningCard(winningCard);
-        }, 1000);
+        }, 2000);
     }
   }, [cardSet]);
 
@@ -194,127 +192,67 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   ]);
 
   return (
-    // <div className="flex flex-col w-full h-full justify-between items-center gap-10 ">
-    //   {winningCard ? (
-    //     <div>
-    //       <div className="flex flex-col">
-    //         {winningCard === myCard && <Winner1Multiplayer />}
-    //         {winningCard === opponentCard && <Winner2Multiplayer />}
-    //       </div>
-    //     </div>
-    //   ) : (
-    //     <>
-    //       <div>
-    //         {opponentCard && !winningCard && (
-    //           <motion.div
-    //             className="flex justify-center items-center"
-    //             initial={{ opacity: 0, y: -100 }} // Start  values
-    //             animate={{ opacity: 1, y: 0 }} // end to these values
-    //             transition={{ duration: 0.8 }} // Animation duration
-    //           >
-    //             <CardComponentMultiplayer card={opponentCard} />
-    //           </motion.div>
-    //         )}
-    //       </div>
-    //       <div>
-    //         {myCard && !winningCard && (
-    //           <motion.div
-    //             className="flex justify-center items-center"
-    //             initial={{ opacity: 0, y: 100 }}
-    //             animate={{ opacity: 1, y: 0 }}
-    //             transition={{ duration: 0.5 }}
-    //           >
-    //             <CardComponentMultiplayer card={myCard} />
-    //           </motion.div>
-    //         )}
-    //       </div>
-    //     </>
-    //   )}
-    // </div>
-
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* Teammate Card (Top) */}
-      {/* {teammateCard && (
-        <motion.div
-          className="absolute top-0 flex justify-center"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <CardComponentMultiplayer card={teammateCard} /> teamMate
-        </motion.div>
-      )} */}
+      {winningCard ? (
+        <>
+          <div>
+            <div className="flex flex-col">
+              {winningCard === myCard && <Winner1Multiplayer />}
+              {winningCard === opponent1Card && <Winner2Multiplayer />}
+              {winningCard === teammateCard && <Winner3Multiplayer />}
+              {winningCard === opponent2Card && <Winner4Multiplayer />}
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="min-h-80 min-w-60 flex justify-center">
+            {teammateCard && !winningCard && (
+              <motion.div
+                className="flex justify-center items-center"
+                initial={{ opacity: 0, y: -120 }} // Start  values
+                animate={{ opacity: 1, y: -60 }} // end to these values
+                transition={{ duration: 0.8 }} // Animation duration
+              >
+                <CardComponentMultiplayer card={teammateCard} />
+              </motion.div>
+            )}
+          </div>
 
-      <div className="min-h-80 min-w-60 flex justify-center">
-        {teammateCard && !winningCard && (
-          <motion.div
-            className="flex justify-center items-center"
-            initial={{ opacity: 0, y: -120 }} // Start  values
-            animate={{ opacity: 1, y: -60 }} // end to these values
-            transition={{ duration: 0.8 }} // Animation duration
-          >
-            <CardComponentMultiplayer card={teammateCard} />
-          </motion.div>
-        )}
-      </div>
+          {opponent1Card && !winningCard && (
+            <motion.div
+              className="absolute right-0 flex items-center"
+              initial={{ opacity: 0, x: 50 }} // Start  values
+              animate={{ opacity: 1, x: 0 }} // end to these values
+              transition={{ duration: 0.8 }} // Animation duration
+            >
+              <CardComponentMultiplayer card={opponent1Card} />
+            </motion.div>
+          )}
 
-      {/* Opponent 1 Card (Right) */}
-      {/* {opponent1Card && (
-        <motion.div
-          className="absolute right-0 flex items-center"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <CardComponentMultiplayer card={opponent1Card} /> opponent1
-        </motion.div>
-      )} */}
+          {/* Opponent 2 Card (Left) */}
+          {opponent2Card && !winningCard && (
+            <motion.div
+              className="absolute left-0 flex items-center"
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <CardComponentMultiplayer card={opponent2Card} />
+            </motion.div>
+          )}
 
-      {opponent1Card && !winningCard && (
-        <motion.div
-          className="absolute right-0 flex items-center"
-          initial={{ opacity: 0, x: 50 }} // Start  values
-          animate={{ opacity: 1, x: 0 }} // end to these values
-          transition={{ duration: 0.8 }} // Animation duration
-        >
-          <CardComponentMultiplayer card={opponent1Card} />
-        </motion.div>
-      )}
-
-      {/* Opponent 2 Card (Left) */}
-      {opponent2Card && !winningCard && (
-        <motion.div
-          className="absolute left-0 flex items-center"
-          initial={{ opacity: 0, x: -100 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <CardComponentMultiplayer card={opponent2Card} />
-        </motion.div>
-      )}
-
-      {/* My Card (Bottom) */}
-      {/* {myCard && (
-        <motion.div
-          className="absolute bottom-0 flex justify-center"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <CardComponentMultiplayer card={myCard} /> my card
-        </motion.div>
-      )} */}
-
-      {/* {myCard && !winningCard && ( */}
-      {myCard && !winningCard && (
-        <motion.div
-          className="absolute bottom-0 flex justify-center"
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <CardComponentMultiplayer card={myCard} />
-        </motion.div>
+          {myCard && !winningCard && (
+            <motion.div
+              className="absolute bottom-0 flex justify-center"
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <CardComponentMultiplayer card={myCard} />
+            </motion.div>
+          )}
+        </>
       )}
     </div>
   );

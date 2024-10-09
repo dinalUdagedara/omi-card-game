@@ -65,11 +65,15 @@ export function RoundOverDialogMultiplayer({
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
 
   useEffect(() => {
-    console.log("trump setter", trumpSetter);
+    // console.log("wonWithoutCallingTrumps", wonWithoutCallingTrumps);
+    // console.log("wonCallingTrumps", wonCallingTrumps);
+    // console.log("lostWithoutCallingTrumps", lostWithoutCallingTrumps);
+    // console.log("lostCallingTrumps", lostCallingTrumps);
+    // console.log("trump setter", trumpSetter);
     if (trumpSetter) {
       setTrumpSetter(trumpSetter);
     }
-  }, [trumpSetter]);
+  }, [trumpSetter,wonWithoutCallingTrumps,wonCallingTrumps,lostCallingTrumps,lostWithoutCallingTrumps]);
 
   const handleClose = () => {
     setAllFalse(false);

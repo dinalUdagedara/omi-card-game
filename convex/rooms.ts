@@ -272,28 +272,30 @@ export const updateCreator = mutation({
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
       .first();
 
-    const currentTrumpSetter = room?.creator; // Assuming creator is the username
-    const players = room?.playerUserNames; // Assuming 'players' is an array of usernames
-
-    if (!currentTrumpSetter || !players || players.length < 2) {
-      throw new Error("Insufficient data to update trump setter");
+    if (!room || !room.creator || !room.playerUserNames || room.playerUserNames.length < 4) {
+      throw new Error("Room data is insufficient to update creator");
     }
 
-    // Determine the other player
-    const otherPlayer = players.find(
-      (username) => username !== currentTrumpSetter
+    const players = room.playerUserNames; // Array of all player usernames
+    const currentCreatorIndex = players.findIndex(
+      (username) => username === room.creator
     );
 
-    if (!otherPlayer) {
-      throw new Error("Other player not found");
+    if (currentCreatorIndex === -1) {
+      throw new Error("Current creator not found in players list");
     }
 
-    // Update the trumpSetter with the other player's username
+    // Calculate the index of the next player, cycling back to 0 after the last player
+    const nextCreatorIndex = (currentCreatorIndex + 1) % players.length;
+    const nextCreator = players[nextCreatorIndex];
+
+    // Update the creator with the next player in the sequence
     await ctx.db.patch(room._id, {
-      creator: otherPlayer, // Update with username
+      creator: nextCreator, // Update with the next player's username
     });
   },
 });
+
 
 export const isPlayersJoined = query({
   args: {

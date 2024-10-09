@@ -10,6 +10,7 @@ import { isValidSuit, Suit } from "@/utils/types";
 
 import PlayingCards from "./playing-cards";
 import RoundOverMultiplayer from "../round-over/round-over";
+import { FinishStateStore } from "@/store/finish-round-state";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -36,6 +37,7 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
 
   const isRoundOver = MultiplayerStateStore((state) => state.roundOver);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
+  const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
 
   const playingCards = useQuery(api.gameLogic.getPlayingCards, {
     roomName: roomName,
@@ -59,11 +61,18 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
 
   useEffect(() => {
     if (playersDecks && playingCards) {
-      // Ensure both decks have been loaded
-      const hasDecks = playersDecks[0]?.deck && playersDecks[1]?.deck;
+      // Ensure all decks have been loaded
+      const hasDecks =
+        playersDecks[0]?.deck &&
+        playersDecks[1]?.deck &&
+        playersDecks[2]?.deck &&
+        playersDecks[3]?.deck;
       if (
         hasDecks &&
-        (playersDecks[0].deck.length > 0 || playersDecks[1].deck.length > 0)
+        (playersDecks[0].deck.length > 0 ||
+          playersDecks[1].deck.length > 0 ||
+          playersDecks[2].deck.length > 0 ||
+          playersDecks[3].deck.length > 0)
       ) {
         setCardsAvailable(true);
       } else {
@@ -71,7 +80,7 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
           if (playingCards.length > 0) {
             setCardsAvailable(false);
             setRoundOver(true); // rendering the round over component
-            // setDialogOpen(true);
+            setDialogOpen(true);
           }
         }, 3000);
       }

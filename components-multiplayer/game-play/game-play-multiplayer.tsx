@@ -97,27 +97,19 @@ const GamePlayMultiplayer = () => {
   const [opponent_2, setOpponent_2] = useState<string>();
 
   const createGameInstanceDB = async () => {
-    console.log("CreateGameInstance");
-    console.log("isRoomCreator", isRoomCreator);
-    console.log("playersInRoom", playersInRoom);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
         const roomName = roomId;
         const playerTurn = userID;
         const trumpSetter = userID;
-        console.log("dealthands", dealtHands);
+
         if (dealtHands) {
-          console.log("roomName", roomName);
-          console.log("playerTurn", playerTurn);
-          console.log("trumpSetter", trumpSetter);
           // Map playersInRoom and dealtHands to match player IDs with their decks
           const playersDecks = players.map((playerId, index) => ({
             playerId,
             deck: dealtHands[index].hand,
           }));
-
-          console.log("playersDecks", playersDecks);
 
           if (roomName && playerTurn && trumpSetter) {
             console.log("Creating gameState");
@@ -143,8 +135,6 @@ const GamePlayMultiplayer = () => {
   };
 
   const handleJoinRoom = () => {
-    console.log("roomId: ", roomId);
-
     getUsername();
   };
 
@@ -158,7 +148,6 @@ const GamePlayMultiplayer = () => {
 
     //saving the cards of players in a state
     setDealtHands(hands);
-    console.log("deck created");
   }
 
   function handleSuitChange(suit: string | null) {
@@ -190,7 +179,6 @@ const GamePlayMultiplayer = () => {
   useEffect(() => {
     if (playersInRoom) {
       setPlayersIDs(playersInRoom);
-      console.log("Players in the room: ", playersInRoom);
       if (isRoomCreator && userID) {
         setRoomCreatorID(userID);
       }
@@ -389,28 +377,82 @@ const GamePlayMultiplayer = () => {
         </div>
       </div>
 
-      <div className=" flex justify-center items-center">
-        <div
-          className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
-          style={{
-            backgroundImage: `url('/assets/background.png')`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="w-full h-full justify-center  items-center  ">
-            {roomId && userID && isRoomActive && (
-              <GameBoardMobileMultiplayer
-                onRestart={restartGame}
-                onStart={handleSelectOtherHands}
-                onNextStart={handleNextTurn}
-                onShuffleAgain={handleNextTurnofShuffling}
-                onTrumpSelected={handleCloseDrawer}
-                roomName={roomId}
-                userID={userID}
-              />
-            )}
+      <div className="flex justify-center gap-4">
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col justify-center items-center  min-w-[70px]">
+            <motion.div
+              className=" rounded-full"
+              initial={{ boxShadow: "none" }}
+              // animate={{
+              //   boxShadow:
+              //     lastWinner === 3
+              //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+              //       : "none", // No shadow when it's not players's turn
+              // }}
+              transition={{
+                duration: 0.8,
+              }}
+            >
+              <div>{opponent_2 || "Waiting for opponent..."}</div>
+              <Avatar className="w-14 h-14 shadow-md">
+                <AvatarImage src={`/assets/player4.png`} />
+                <AvatarFallback>Dp</AvatarFallback>
+              </Avatar>
+            </motion.div>
+
+            <OtherDecksMobile userHand={exampleCardSet} />
+          </div>
+        </div>{" "}
+        <div className=" flex justify-center items-center">
+          <div
+            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+            style={{
+              backgroundImage: `url('/assets/background.png')`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="w-full h-full justify-center  items-center  ">
+              {roomId && userID && isRoomActive && (
+                <GameBoardMobileMultiplayer
+                  onRestart={restartGame}
+                  onStart={handleSelectOtherHands}
+                  onNextStart={handleNextTurn}
+                  onShuffleAgain={handleNextTurnofShuffling}
+                  onTrumpSelected={handleCloseDrawer}
+                  roomName={roomId}
+                  userID={userID}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+        <div className=" flex justify-center items-center   ">
+          <div className="">
+            <div className="flex flex-col justify-center items-center  min-w-[70px]">
+              <OtherDecksMobile userHand={exampleCardSet} />
+
+              <motion.div
+                className=" rounded-full"
+                initial={{ boxShadow: "none" }}
+                // animate={{
+                //   boxShadow:
+                //     lastWinner === 1
+                //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                //       : "none", // No shadow when it's not players's turn
+                // }}
+                transition={{
+                  duration: 0.8,
+                }}
+              >
+                <Avatar className="w-14 h-14 shadow-md">
+                  <AvatarImage src={`/assets/player2.png`} />
+                  <AvatarFallback>Dp</AvatarFallback>
+                </Avatar>
+                <div>{opponent_1 || "Waiting for opponent..."}</div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>
@@ -425,7 +467,6 @@ const GamePlayMultiplayer = () => {
                     userID={userID}
                     roomName={roomId}
                   />
-                  {userName}
                 </div>
               </div>
             ) : (

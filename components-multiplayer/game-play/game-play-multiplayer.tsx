@@ -22,6 +22,7 @@ import {
 } from "@/utils/multiplayer/game-logic-multiplayer";
 import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
+import { allPlayersWaiting } from "@/convex/rooms";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -136,12 +137,12 @@ const GamePlayMultiplayer = () => {
         }
       } catch (error) {}
     }
-    if (userID)
-      // update this player status to "playing"
-      updatePlayerStatus({
-        status: "playing",
-        userId: userID,
-      });
+    // if (userID && isAllWaiting)
+    //   // update this player status to "playing"
+    //   updatePlayerStatus({
+    //     status: "playing",
+    //     userId: userID,
+    //   });
   };
 
   const getUsername = () => {
@@ -286,11 +287,7 @@ const GamePlayMultiplayer = () => {
               playersDecks,
             });
           }
-          //update players status to "playing" in here
-          updatePlayerStatus({
-            status: "playing",
-            userId: userID,
-          });
+
           changeTrumptoNull();
         }
 
@@ -299,6 +296,12 @@ const GamePlayMultiplayer = () => {
         console.log("error", error);
       }
     }
+    if (userID)
+      // update players status to "playing" in here
+      updatePlayerStatus({
+        status: "playing",
+        userId: userID,
+      });
   };
 
   useEffect(() => {

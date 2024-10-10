@@ -36,6 +36,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   });
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
   useEffect(() => {
     if (turnPlayerID) {
@@ -49,6 +50,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }, [turnPlayerID, noOfPlayingcards]);
 
   async function handleCardSelect(card: cardMultiplayer) {
+    // update this player status to "playing"
+    updatePlayerStatus({
+      status: "playing",
+      userId: userID,
+    });
     console.log("Selected Card", card);
     const userId = userID;
     await selectCard({

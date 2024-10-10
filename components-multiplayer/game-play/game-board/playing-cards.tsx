@@ -191,54 +191,65 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           </div>
         </>
       ) : (
-        <>
-          <div className="min-h-80 min-w-60 flex justify-center">
-            {teammateCard && !winningCard && (
-              <motion.div
-                className="flex justify-center items-center"
-                initial={{ opacity: 0, y: -120 }} // Start  values
-                animate={{ opacity: 1, y: -60 }} // end to these values
-                transition={{ duration: 0.8 }} // Animation duration
-              >
-                <CardComponentMultiplayer card={teammateCard} />
-              </motion.div>
+        <div className="flex flex-row w-full h-full justify-center items-center min-h-72  gap-2">
+          <div className=" min-h-72 justify-center items-center flex w-full">
+            {opponent2Card && !winningCard && (
+              <div className="">
+                <motion.div
+                  className="flex items-center"
+                  initial={{ opacity: 0, x: -100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <CardComponentMultiplayer card={opponent2Card} />
+                </motion.div>
+              </div>
             )}
           </div>
 
-          {opponent1Card && !winningCard && (
-            <motion.div
-              className="absolute right-0 flex items-center"
-              initial={{ opacity: 0, x: 50 }} // Start  values
-              animate={{ opacity: 1, x: 0 }} // end to these values
-              transition={{ duration: 0.8 }} // Animation duration
-            >
-              <CardComponentMultiplayer card={opponent1Card} />
-            </motion.div>
-          )}
+          <div className="flex flex-col justify-between h-full gap-10 w-full  min-h-72">
+            <div>
+              {teammateCard && !winningCard && (
+                <motion.div
+                  className="flex justify-center items-center"
+                  initial={{ opacity: 0, y: -120 }} // Start  values
+                  animate={{ opacity: 1, y: 0 }} // end to these values
+                  transition={{ duration: 0.8 }} // Animation duration
+                >
+                  <CardComponentMultiplayer card={teammateCard} />
+                </motion.div>
+              )}
+            </div>
 
-          {/* Opponent 2 Card (Left) */}
-          {opponent2Card && !winningCard && (
-            <motion.div
-              className="absolute left-0 flex items-center"
-              initial={{ opacity: 0, x: -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <CardComponentMultiplayer card={opponent2Card} />
-            </motion.div>
-          )}
+            <div>
+              {myCard && !winningCard && (
+                <motion.div
+                  className=" flex justify-center"
+                  initial={{ opacity: 0, y: 100 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <CardComponentMultiplayer card={myCard} />
+                </motion.div>
+              )}
+            </div>
+          </div>
 
-          {myCard && !winningCard && (
-            <motion.div
-              className="absolute bottom-0 flex justify-center"
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <CardComponentMultiplayer card={myCard} />
-            </motion.div>
-          )}
-        </>
+          <div className=" min-h-72 justify-center items-center flex w-full">
+            {opponent1Card && !winningCard && (
+              <>
+                <motion.div
+                  className=" flex items-center"
+                  initial={{ opacity: 0, x: 50 }} // Start  values
+                  animate={{ opacity: 1, x: 0 }} // end to these values
+                  transition={{ duration: 0.8 }} // Animation duration
+                >
+                  <CardComponentMultiplayer card={opponent1Card} />
+                </motion.div>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

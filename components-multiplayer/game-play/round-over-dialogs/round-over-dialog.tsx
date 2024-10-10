@@ -83,8 +83,8 @@ export function RoundOverDialogMultiplayer({
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
 
   function decrementValues() {
-    if (lostCallingTrumps) {
-      if (trumpSetter?.playerId === userID) {
+    if (lostCallingTrumps && playersInRoom) {
+      if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
         decrementPenaltycards({
           decrementValue: 2,
@@ -106,8 +106,8 @@ export function RoundOverDialogMultiplayer({
       }
     }
 
-    if (wonCallingTrumps) {
-      if (trumpSetter?.playerId === userID) {
+    if (wonCallingTrumps && playersInRoom) {
+      if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
         decrementPenaltycardsFromOponent({
           decrementValue: 1,

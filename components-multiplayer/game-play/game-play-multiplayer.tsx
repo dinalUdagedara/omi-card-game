@@ -77,6 +77,8 @@ const GamePlayMultiplayer = () => {
     api.gameStates.updateGameStateAfterRound
   );
   const resetStatesinDB = useMutation(api.gameLogic.resetStates);
+  const resetTeamPoints = useMutation(api.gameLogic.resetTeamPoints);
+
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
@@ -241,15 +243,11 @@ const GamePlayMultiplayer = () => {
     console.log("reset afer Round");
     //update the trumpsetter in here
     if (roomId) {
-      console.log("Updating the trump setter");
-      // await updateTrumpSetter({
-      //   roomName: roomId,
-      // });
-      // removeTrumpSuit({
-      //   roomName: roomId,
-      // });
-      // setTrumpSuit(null);
-      console.log("reset After a round", roomdataFromDB);
+      //make score board zero for teams
+      resetTeamPoints({
+        roomName: roomId,
+      });
+
       if (roomdataFromDB) {
         initialSetup();
         updateGameInstanceDB();

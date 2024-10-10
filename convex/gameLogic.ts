@@ -1052,6 +1052,39 @@ export const updatePlayerTurn = mutation({
   },
 });
 
+export const resetTeamPoints = mutation({
+  args: {
+    roomName: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    if (gameState.teamPoints) {
+      // Update the player turn in the gameState
+      await ctx.db.patch(gameState._id, {
+        teamPoints: { team1: 0, team2: 0 },
+      });
+    }
+  },
+});
+
 export const getTurnWinner = query({
   args: {
     roomName: v.string(),

@@ -36,19 +36,25 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   });
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
   useEffect(() => {
-    if (turnPlayerID ) {
+    if (turnPlayerID) {
       const num = noOfPlayingcards ?? 0;
-      if (turnPlayerID === userID && num < 2) {
+      if (turnPlayerID === userID && num < 4) {
         setUserTurn(true);
       } else {
         setUserTurn(false);
       }
     }
-  }, [turnPlayerID,noOfPlayingcards]);
+  }, [turnPlayerID, noOfPlayingcards]);
 
   async function handleCardSelect(card: cardMultiplayer) {
+    // update this player status to "playing"
+    updatePlayerStatus({
+      status: "playing",
+      userId: userID,
+    });
     console.log("Selected Card", card);
     const userId = userID;
     await selectCard({
@@ -85,7 +91,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                 }}
               >
                 <button
-                  disabled={!trumpSuit || !isUserTurn  }
+                  disabled={!trumpSuit || !isUserTurn}
                   onClick={() => handleCardSelect(card)}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
                 >

@@ -54,6 +54,20 @@ export const isOpponentJoined = query({
   },
 });
 
+export const isAllJoined = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (roomInfo) return roomInfo.players.length > 3;
+  },
+});
+
 export const isRoomCreator = query({
   args: {
     roomName: v.string(),
@@ -75,6 +89,8 @@ export const getOpponentsName = query({
     userName: v.string(),
   },
   handler: async (ctx, args) => {
+    console.log("roomName", args.roomName);
+    console.log("userName", args.userName);
     // Fetch the current user's ID
     const myUserID = await ctx.db
       .query("players")
@@ -134,7 +150,7 @@ export const getAllActivePublicRooms = query({
     const waitingJoinableRooms = activePublicRooms.filter((room) => {
       // Check the length of players; it should be 0 or 1
       const playerCount = room.players.length;
-      return playerCount === 0 || playerCount === 1;
+      return playerCount === 0 || playerCount < 4;
     });
 
     return waitingJoinableRooms;
@@ -191,12 +207,13 @@ export const joinRoom = mutation({
         playerUserNames: [...room.playerUserNames, args.userName],
       });
 
-      return existingPlayer._id; // or return a message indicating the player is already in the room
+      return existingPlayer._id;
     } else {
       const playerID = await ctx.db.insert("players", {
         userName: args.userName,
         roomId: room._id, // Reference the room by ID
         isCreator: false,
+        status: "waiting",
       });
 
       // Update the room's players array by adding the new player's ID
@@ -256,25 +273,31 @@ export const updateCreator = mutation({
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
       .first();
 
-    const currentTrumpSetter = room?.creator; // Assuming creator is the username
-    const players = room?.playerUserNames; // Assuming 'players' is an array of usernames
-
-    if (!currentTrumpSetter || !players || players.length < 2) {
-      throw new Error("Insufficient data to update trump setter");
+    if (
+      !room ||
+      !room.creator ||
+      !room.playerUserNames ||
+      room.playerUserNames.length < 4
+    ) {
+      throw new Error("Room data is insufficient to update creator");
     }
 
-    // Determine the other player
-    const otherPlayer = players.find(
-      (username) => username !== currentTrumpSetter
+    const players = room.playerUserNames; // Array of all player usernames
+    const currentCreatorIndex = players.findIndex(
+      (username) => username === room.creator
     );
 
-    if (!otherPlayer) {
-      throw new Error("Other player not found");
+    if (currentCreatorIndex === -1) {
+      throw new Error("Current creator not found in players list");
     }
 
-    // Update the trumpSetter with the other player's username
+    // Calculate the index of the next player, cycling back to 0 after the last player
+    const nextCreatorIndex = (currentCreatorIndex + 1) % players.length;
+    const nextCreator = players[nextCreatorIndex];
+
+    // Update the creator with the next player in the sequence
     await ctx.db.patch(room._id, {
-      creator: otherPlayer, // Update with username
+      creator: nextCreator, // Update with the next player's username
     });
   },
 });
@@ -305,8 +328,109 @@ export const addPlayer = mutation({
       userName: args.userName,
       roomId: args.roomId,
       isCreator: args.isCreator,
+      status: "waiting",
     });
     return playerID;
+  },
+});
+
+export const updatePlayerStatus = mutation({
+  args: {
+    userId: v.id("players"),
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.userId, {
+      status: args.status,
+    });
+  },
+});
+
+export const getPlayerStatus = mutation({
+  args: {
+    userId: v.id("players"),
+  },
+  handler: async (ctx, args) => {
+    const player = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("_id"), args.userId))
+      .first();
+
+    return player?.status;
+  },
+});
+
+export const allPlayersWaiting = query({
+  args: {
+    roomId: v.string(), // Expect roomId as an argument
+  },
+  handler: async (ctx, args) => {
+    try {
+      console.log("Fetching players for room:", args.roomId);
+
+      const room = await ctx.db
+        .query("rooms")
+        .filter((q) => q.eq(q.field("roomName"), args.roomId))
+        .first();
+
+      const players = await ctx.db
+        .query("players")
+        .filter((q) => q.eq(q.field("roomId"), room?._id))
+        .collect();
+
+      console.log(`Found ${players.length} players in room ${args.roomId}`);
+
+      // Return false if no players are found
+      if (players.length === 0) {
+        console.log("No players found in the room.");
+        return false;
+      }
+
+      const allStarted = players.every((player) => player.status === "waiting");
+      console.log("All players started:", allStarted);
+
+      return allStarted;
+    } catch (error) {
+      console.error("Error fetching players or processing status:", error);
+      return false;
+    }
+  },
+});
+
+export const allPlayersPlaying = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      console.log("Fetching players for room:", args.roomId);
+
+      const room = await ctx.db
+        .query("rooms")
+        .filter((q) => q.eq(q.field("roomName"), args.roomId))
+        .first();
+
+      const players = await ctx.db
+        .query("players")
+        .filter((q) => q.eq(q.field("roomId"), room?._id))
+        .collect();
+
+      console.log(`Found ${players.length} players in room ${args.roomId}`);
+
+      // Return false if no players are found
+      if (players.length === 0) {
+        console.log("No players found in the room.");
+        return false;
+      }
+
+      const allStarted = players.every((player) => player.status === "playing");
+      console.log("All players started:", allStarted);
+
+      return allStarted;
+    } catch (error) {
+      console.error("Error fetching players or processing status:", error);
+      return false;
+    }
   },
 });
 
@@ -366,5 +490,25 @@ export const getAllPlayersIDInTheRoom = query({
       throw new Error("room not found");
     }
     return room?.players;
+  },
+});
+export const getAllPlayersUsernamesInRoom = query({
+  args: {
+    roomName: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    // Check if the room exists
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    // Filter out the userName and return the other players
+    return room.playerUserNames.filter((user) => user !== args.userName);
   },
 });

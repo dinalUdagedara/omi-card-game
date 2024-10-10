@@ -1,5 +1,4 @@
 "use client";
-import { Socket } from "socket.io-client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
@@ -23,18 +22,17 @@ import {
 } from "@/utils/multiplayer/game-logic-multiplayer";
 import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
-const webSocketURL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+import { allPlayersWaiting } from "@/convex/rooms";
+
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
-  const roomId = pathname.split("/").pop(); // Get the last part of the URL, which is the roomId
+  const roomId = pathname.split("/").pop();
 
   const [isRoomCreator, setIsRoomCreator] = useState<boolean>(false);
   const [roomCreatorID, setRoomCreatorID] = useState<Id<"players"> | null>(
     null
   );
   const [isRoomActive, setRoomActive] = useState(false);
-  const [mySocket, setMySocket] = useState<Socket | null>(null);
-  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
   const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
   const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
   const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
@@ -51,16 +49,38 @@ const GamePlayMultiplayer = () => {
   const winningCard = MultiplayerStateStore((state) => state.winningCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
   const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
+  const setTeammateCard = MultiplayerStateStore(
+    (state) => state.setTeammateCard
+  );
+  const setOpponent1Card = MultiplayerStateStore(
+    (state) => state.setOpponent1Card
+  );
+  const setOpponent2Card = MultiplayerStateStore(
+    (state) => state.setOpponent2Card
+  );
   const newRound = MultiplayerStateStore((state) => state.newRound);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
+
+  const setteamMemberID = MultiplayerStateStore(
+    (state) => state.setteamMemberID
+  );
+  const setopponent_1_ID = MultiplayerStateStore(
+    (state) => state.setopponent_1_ID
+  );
+  const setopponent_2_ID = MultiplayerStateStore(
+    (state) => state.setopponent_2_ID
+  );
 
   const createGameState = useMutation(api.gameStates.createGameState);
   const updateGameStateAfterRound = useMutation(
     api.gameStates.updateGameStateAfterRound
   );
   const resetStatesinDB = useMutation(api.gameLogic.resetStates);
+  const resetTeamPoints = useMutation(api.gameLogic.resetTeamPoints);
+
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
@@ -76,15 +96,29 @@ const GamePlayMultiplayer = () => {
     roomName: roomId || "",
   });
 
+  const isAllWaiting = useQuery(api.rooms.allPlayersWaiting, {
+    roomId: roomId || "",
+  });
+
+  const isAllPlaying = useQuery(api.rooms.allPlayersPlaying, {
+    roomId: roomId || "",
+  });
+
+  const updateTrumpSetter = useMutation(api.rooms.updateCreator);
+  const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
+
+  const [teamMember, setTeamMember] = useState<string>();
+  const [opponent_1, setOpponent_1] = useState<string>();
+  const [opponent_2, setOpponent_2] = useState<string>();
+
   const createGameInstanceDB = async () => {
-    console.log("CreateGameInstance");
-    console.log("isRoomCreator", isRoomCreator);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
         const roomName = roomId;
         const playerTurn = userID;
         const trumpSetter = userID;
+
         if (dealtHands) {
           // Map playersInRoom and dealtHands to match player IDs with their decks
           const playersDecks = players.map((playerId, index) => ({
@@ -93,6 +127,7 @@ const GamePlayMultiplayer = () => {
           }));
 
           if (roomName && playerTurn && trumpSetter) {
+            console.log("Creating gameState");
             await createGameState({
               roomName,
               players,
@@ -104,24 +139,23 @@ const GamePlayMultiplayer = () => {
         }
       } catch (error) {}
     }
+    // if (userID && isAllWaiting)
+    //   // update this player status to "playing"
+    //   updatePlayerStatus({
+    //     status: "playing",
+    //     userId: userID,
+    //   });
   };
 
   const getUsername = () => {
     const storedUserName = localStorage.getItem("userName");
-    initialSetup;
     if (storedUserName) {
       setUserName(storedUserName);
     }
   };
 
   const handleJoinRoom = () => {
-    console.log("roomId: ", roomId);
-
     getUsername();
-    // if (roomId && userName) {
-    //   SocketManager.joinRoom(roomId, isRoomPrivate, userName);
-    //   console.log("Joined to the Room : ", roomId);
-    // }
   };
 
   function initialSetup() {
@@ -130,11 +164,10 @@ const GamePlayMultiplayer = () => {
     const shuffledDeck = shuffleDeck(deck);
 
     //Dividing Deck among 2 players
-    const hands = dealCards(shuffledDeck, 2);
+    const hands = dealCards(shuffledDeck, 4);
 
     //saving the cards of players in a state
     setDealtHands(hands);
-    console.log("deck created");
   }
 
   function handleSuitChange(suit: string | null) {
@@ -143,9 +176,7 @@ const GamePlayMultiplayer = () => {
   }
 
   function handleCloseDrawer() {
-    if (roomId)
-      // SocketManager.emitTrump(trumpSuit, roomId);
-      handleSuitChange(trumpSuit);
+    if (roomId) handleSuitChange(trumpSuit);
     setTrumpSelected(true);
   }
 
@@ -168,7 +199,6 @@ const GamePlayMultiplayer = () => {
   useEffect(() => {
     if (playersInRoom) {
       setPlayersIDs(playersInRoom);
-      console.log("Players in the room: ", playersInRoom);
       if (isRoomCreator && userID) {
         setRoomCreatorID(userID);
       }
@@ -197,25 +227,30 @@ const GamePlayMultiplayer = () => {
           });
         setWinningCard(null);
         setMyCard(null);
+        setTeammateCard(null);
+        setOpponent1Card(null);
+        setOpponent2Card(null);
         setOpponentCard(null);
       }, 3000);
   }, [winningCard]);
 
   useEffect(() => {
-    // if (webSocketURL)
-    // // Connect to socket on mount
-    // SocketManager.connect(webSocketURL);
     handleJoinRoom();
-    // getRoomInfo();
-    // const mySocketID = SocketManager.getMySocket();
-    // if (mySocketID) setMySocket(mySocketID);
   }, [roomId, userName]);
 
-  function resetAfterRound() {
-    console.log("reset After a round", roomdataFromDB);
-    if (roomdataFromDB) {
-      initialSetup();
-      updateGameInstanceDB();
+  async function resetAfterRound() {
+    console.log("reset afer Round");
+    //update the trumpsetter in here
+    if (roomId) {
+      //make score board zero for teams
+      resetTeamPoints({
+        roomName: roomId,
+      });
+
+      if (roomdataFromDB) {
+        initialSetup();
+        updateGameInstanceDB();
+      }
     }
   }
 
@@ -232,10 +267,11 @@ const GamePlayMultiplayer = () => {
   }
 
   const updateGameInstanceDB = async () => {
+    console.log("updateGameInstanceDB");
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
-        if (dealtHands) {
+        if (dealtHands && userID) {
           // Map playersInRoom and dealtHands to match player IDs with their decks
           const playersDecks = players.map((playerId, index) => ({
             playerId,
@@ -248,6 +284,7 @@ const GamePlayMultiplayer = () => {
               playersDecks,
             });
           }
+
           changeTrumptoNull();
         }
 
@@ -256,32 +293,77 @@ const GamePlayMultiplayer = () => {
         console.log("error", error);
       }
     }
+    // if (userID)
+    //   // update players status to "playing" in here
+    //   updatePlayerStatus({
+    //     status: "playing",
+    //     userId: userID,
+    //   });
   };
 
   useEffect(() => {
-    if (newRound) {
+    //run if this is a  new Round and all the players are "waiting" only
+    console.log("isallwaiting", isAllWaiting);
+    console.log("isAllPlaying", isAllPlaying);
+    if (newRound && isAllWaiting) {
       resetAfterRound();
+      console.log("New Round");
     }
-  }, [newRound, isRoomCreator]);
+  }, [newRound, isAllWaiting, isAllPlaying]);
 
   useEffect(() => {
     if (roomdataFromDB) {
       // Update isRoomCreator based on the creator username
       const currentUserIsCreator = roomdataFromDB.creator === userName;
-      console.log("currentUserisCreator", roomdataFromDB.creator === userName);
-      if (
-        roomdataFromDB.playerUserNames.length > 1 &&
-        roomdataFromDB.playerUserNames[0] === userName
-      ) {
-        setOpponentPlayerDB(roomdataFromDB.playerUserNames[1]);
-      } else if (roomdataFromDB.players.length > 1) {
-        setOpponentPlayerDB(roomdataFromDB.playerUserNames[0]);
+      if (roomdataFromDB.playerUserNames.length > 3) {
+        if (roomdataFromDB.playerUserNames[0] === userName) {
+          setTeamMember(roomdataFromDB.playerUserNames[2]);
+          setteamMemberID(roomdataFromDB.players[2]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[1]);
+          setopponent_1_ID(roomdataFromDB.players[1]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[3]);
+          setopponent_2_ID(roomdataFromDB.players[3]);
+        } else if (roomdataFromDB.playerUserNames[1] === userName) {
+          setTeamMember(roomdataFromDB.playerUserNames[3]);
+          setteamMemberID(roomdataFromDB.players[3]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[2]);
+          setopponent_1_ID(roomdataFromDB.players[2]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[0]);
+          setopponent_2_ID(roomdataFromDB.players[0]);
+        } else if (roomdataFromDB.playerUserNames[2] === userName) {
+          setTeamMember(roomdataFromDB.playerUserNames[0]);
+          setteamMemberID(roomdataFromDB.players[0]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[3]);
+          setopponent_1_ID(roomdataFromDB.players[3]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[1]);
+          setopponent_2_ID(roomdataFromDB.players[1]);
+        } else if (roomdataFromDB.playerUserNames[3] === userName) {
+          setTeamMember(roomdataFromDB.playerUserNames[1]);
+          setteamMemberID(roomdataFromDB.players[1]);
+
+          setOpponent_1(roomdataFromDB.playerUserNames[0]);
+          setopponent_1_ID(roomdataFromDB.players[0]);
+
+          setOpponent_2(roomdataFromDB.playerUserNames[2]);
+          setopponent_2_ID(roomdataFromDB.players[2]);
+        }
       }
+
       setIsRoomCreator(currentUserIsCreator);
       initialSetup();
       createGameInstanceDB();
     }
-  }, [roomdataFromDB, trumpSetter, newRound]);
+  }, [roomdataFromDB, trumpSetter]);
+
+  useEffect(() => {
+    if (isRoomCreator) createGameInstanceDB();
+  }, [isRoomCreator]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between">
@@ -331,32 +413,86 @@ const GamePlayMultiplayer = () => {
             </Avatar>
           </motion.div>
 
-          <div>{opponentPlayerDB || "Waiting for opponent..."}</div>
+          <div>{teamMember || "Waiting for opponent..."}</div>
         </div>
       </div>
 
-      <div className=" flex justify-center items-center">
-        <div
-          className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
-          style={{
-            backgroundImage: `url('/assets/background.png')`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="w-full h-full justify-center  items-center  ">
-            {roomId && userID && isRoomActive && (
-              <GameBoardMobileMultiplayer
-                onRestart={restartGame}
-                onStart={handleSelectOtherHands}
-                onNextStart={handleNextTurn}
-                onShuffleAgain={handleNextTurnofShuffling}
-                onTrumpSelected={handleCloseDrawer}
-                roomName={roomId}
-                userID={userID}
-              />
-            )}
+      <div className="flex justify-center gap-4">
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col justify-center items-center  min-w-[70px]">
+            <motion.div
+              className=" rounded-full"
+              initial={{ boxShadow: "none" }}
+              // animate={{
+              //   boxShadow:
+              //     lastWinner === 3
+              //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+              //       : "none", // No shadow when it's not players's turn
+              // }}
+              transition={{
+                duration: 0.8,
+              }}
+            >
+              <div>{opponent_2 || "Waiting for opponent..."}</div>
+              <Avatar className="w-14 h-14 shadow-md">
+                <AvatarImage src={`/assets/player4.png`} />
+                <AvatarFallback>Dp</AvatarFallback>
+              </Avatar>
+            </motion.div>
+
+            <OtherDecksMobile userHand={exampleCardSet} />
+          </div>
+        </div>{" "}
+        <div className=" flex justify-center items-center">
+          <div
+            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+            style={{
+              backgroundImage: `url('/assets/background.png')`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="w-full h-full justify-center  items-center  ">
+              {roomId && userID && isRoomActive && (
+                <GameBoardMobileMultiplayer
+                  onRestart={restartGame}
+                  onStart={handleSelectOtherHands}
+                  onNextStart={handleNextTurn}
+                  onShuffleAgain={handleNextTurnofShuffling}
+                  onTrumpSelected={handleCloseDrawer}
+                  roomName={roomId}
+                  userID={userID}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+        <div className=" flex justify-center items-center   ">
+          <div className="">
+            <div className="flex flex-col justify-center items-center  min-w-[70px]">
+              <OtherDecksMobile userHand={exampleCardSet} />
+
+              <motion.div
+                className=" rounded-full"
+                initial={{ boxShadow: "none" }}
+                // animate={{
+                //   boxShadow:
+                //     lastWinner === 1
+                //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                //       : "none", // No shadow when it's not players's turn
+                // }}
+                transition={{
+                  duration: 0.8,
+                }}
+              >
+                <Avatar className="w-14 h-14 shadow-md">
+                  <AvatarImage src={`/assets/player2.png`} />
+                  <AvatarFallback>Dp</AvatarFallback>
+                </Avatar>
+                <div>{opponent_1 || "Waiting for opponent..."}</div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>

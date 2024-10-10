@@ -3,9 +3,9 @@ import { v } from "convex/values";
 
 export const createGameState = mutation({
   args: {
-    roomName: v.string(), // Room name to find the corresponding room ID
+    roomName: v.string(),
     players: v.array(v.id("players")),
-    playerTurn: v.id("players"), // initially set to the creators id
+    playerTurn: v.id("players"),
     playersDecks: v.array(
       v.object({
         playerId: v.id("players"), // Each player's ID
@@ -35,21 +35,28 @@ export const createGameState = mutation({
 
     // If a game state already exists, return an error or the existing game state ID
     if (existingGameState) {
+      console.log("existing gamestate");
       return {
         error: "Game state already exists for this room",
         gameStateID: existingGameState._id,
       };
     }
 
-    // Initialize penalty cards for each player with 10 cards
-    const penaltyCards = args.players.map((playerId) => ({
+    // Assign players to teams
+    const playersWithTeams = args.players.map((playerId, index) => ({
       playerId,
-      penaltyCards: 10, // Default initial penalty card count
+      teamNumber: index % 2 === 0 ? 1 : 2, // Team 1 for indices 0 and 2, Team 2 for 1 and 3
     }));
+
+    // Initialize penalty cards for each team with default value
+    const penaltyCards = [
+      { teamNo: 1, penaltyCards: 10 }, // Team 1
+      { teamNo: 2, penaltyCards: 10 }, // Team 2
+    ];
 
     const gameStateID = await ctx.db.insert("gameStates", {
       roomId: roomInfo._id, // Use the room ID fetched from the query
-      players: args.players,
+      players: playersWithTeams,
       penaltyCards: penaltyCards,
       playersDecks: args.playersDecks,
       playersCards: [],
@@ -170,7 +177,6 @@ export const updateGameStateAfterRound = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    console.log("Updating state",args.playersDecks);
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")
@@ -197,7 +203,10 @@ export const updateGameStateAfterRound = mutation({
       const currentPlayerID = gameState.playerTurn;
       if (currentPlayerID) {
         // Find the index of the current playerTurn
-        const currentPlayerIndex = players.indexOf(currentPlayerID);
+        // const currentPlayerIndex = players.indexOf(currentPlayerID);
+        const currentPlayerIndex = players.findIndex(
+          (p) => p.playerId === currentPlayerID
+        );
 
         // Calculate the next player's index (wrap around if necessary)
         const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
@@ -209,8 +218,8 @@ export const updateGameStateAfterRound = mutation({
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {
           currentRound: nextRound,
-          playerTurn: nextPlayerTurn,
-          trumpSetter: nextTrumpSetter, // Rotate trump setter as well
+          playerTurn: nextPlayerTurn.playerId,
+          trumpSetter: nextTrumpSetter.playerId, // Rotate trump setter as well
           trump: null,
           playersDecks: args.playersDecks,
           points: [], // Reset points for the new round

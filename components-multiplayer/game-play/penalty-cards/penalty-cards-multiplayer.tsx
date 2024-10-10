@@ -2,7 +2,7 @@
 import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useStore } from "@/store/state";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 
@@ -15,35 +15,52 @@ const PenaltycardsMultiplayer = ({
   roomName,
   userID,
 }: PenaltycardsMultiplayerProps) => {
-  const playersInRoom = useQuery(api.gameLogic.getPenaltyCards, {
+  const myTeam = useQuery(api.gameLogic.getMyTeam, {
+    userId: userID,
     roomName: roomName,
   });
-  const [myPenaltyCards, setMyPenaltyCards] = useState<number>(0);
+
+  const penaltyCards = useQuery(api.gameLogic.getPenaltyCards, {
+    roomName: roomName,
+  });
+  const [myTeamPenaltyCards, setMyTeamPenaltyCards] = useState<number>(0);
   const [opponentPenaltyCards, setOpponentPenaltyCards] = useState<number>(0);
+
+  const setGameOver = MultiplayerStateStore((state) => state.setGameOver);
+  const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+
   useEffect(() => {
-    if (playersInRoom) {
-      const myInfo = playersInRoom.find((player) => player.playerId === userID);
-      if (myInfo) {
-        setMyPenaltyCards(myInfo.penaltyCards);
+    if (penaltyCards) {
+      const myCards = penaltyCards.find((player) => player.teamNo === myTeam);
+      if (myCards) {
+        setMyTeamPenaltyCards(myCards.penaltyCards);
       }
 
-      const opponentInfo = playersInRoom.find(
-        (player) => player.playerId !== userID
+      const opponentInfo = penaltyCards.find(
+        (player) => player.teamNo !== myTeam
       );
       if (opponentInfo) {
         setOpponentPenaltyCards(opponentInfo.penaltyCards);
       }
+
+      if (myCards?.penaltyCards === 0) {
+        console.log("I lost");
+        setGameWon(false);
+        setGameOver(true);
+      }
+      if (opponentInfo?.penaltyCards === 0) {
+        console.log("I Won");
+        setGameWon(true);
+        setGameOver(true);
+      }
     }
-  }, [playersInRoom, userID]); // Run effect when playersInRoom or userID changes
+  }, [penaltyCards, userID]); // Run effect when playersInRoom or userID changes
 
   return (
     <div>
       <div className="flex gap-5 mx-5">
-        <PenaltyDeckMobile penaltyCardNumber={myPenaltyCards} />
+        <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
         <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
-        {/* {playersInRoom?.map((player) => (
-          <PenaltyDeckMobile penaltyCardNumber={player.penaltyCards} />
-        ))} */}
       </div>
     </div>
   );

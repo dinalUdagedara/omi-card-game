@@ -1,10 +1,10 @@
 "use client";
+import { CardStore } from "@/store/player-card-state";
+import { motion } from "framer-motion";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-
-import { motion } from "framer-motion";
 import { useEffect } from "react";
-const Winner2Multiplayer = () => {
+const Winner3Multiplayer = () => {
   const myCard = MultiplayerStateStore((state) => state.myCard);
   const opponentCard = MultiplayerStateStore((state) => state.opponentsCard);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
@@ -22,11 +22,11 @@ const Winner2Multiplayer = () => {
   return (
     <div>
       {opponent2Card && (
-        <div className="flex flex-row w-full h-full justify-center items-center">
+        <div className="flex flex-row w-full h-full justify-center items-center ">
           {opponent2Card && (
             <motion.div
-              initial={{ opacity: 1, x: 0 }}
-              animate={{ opacity: 0, x: 400 }}
+              initial={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 0, y: -200 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
               <CardComponentMultiplayer card={opponent2Card} />
@@ -36,31 +36,10 @@ const Winner2Multiplayer = () => {
           <div className="flex flex-col justify-between h-full gap-10 w-full">
             {teammateCard && (
               <motion.div
-                initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 0, x: 200 }}
-                transition={{ duration: 0.8, delay: 2.0 }}
-              >
-                <CardComponentMultiplayer card={teammateCard} />
-              </motion.div>
-            )}
-
-            {myCard && (
-              <motion.div
-                initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 0, x: 200 }}
-                transition={{ duration: 0.8, delay: 2.0 }}
-              >
-                <CardComponentMultiplayer card={myCard} />
-              </motion.div>
-            )}
-          </div>
-          {opponent1Card && (
-            <>
-              <motion.div
-                className="flex justify-center items-center w-24 h-36"
+                className="flex justify-center items-center"
                 animate={{
                   scale: [1, 1.5, 1.5, 1, 1],
-                  rotate: [0, 0, 180, 180, 0],
+                  // rotate: [0, 0, 180, 180, 0],
                   borderRadius: ["0%", "0%", "50%", "50%", "0%"],
                 }}
                 transition={{
@@ -71,14 +50,33 @@ const Winner2Multiplayer = () => {
                 }}
               >
                 <motion.div
-                  initial={{ opacity: 1, x: 0 }}
-                  animate={{ opacity: 0, x: 100 }}
+                  initial={{ opacity: 1, y: 0 }}
+                  animate={{ opacity: 0, y: -100 }}
                   transition={{ duration: 0.8, delay: 2.0 }}
                 >
-                  <CardComponentMultiplayer card={opponent1Card} />
+                  <CardComponentMultiplayer card={teammateCard} />
                 </motion.div>
               </motion.div>
-            </>
+            )}
+
+            {myCard && (
+              <motion.div
+                initial={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 0, y: -200 }}
+                transition={{ duration: 0.8, delay: 2.0 }}
+              >
+                <CardComponentMultiplayer card={myCard} />
+              </motion.div>
+            )}
+          </div>
+          {opponent1Card && (
+            <motion.div
+              initial={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 0, y: -200 }}
+              transition={{ duration: 0.8, delay: 2.0 }}
+            >
+              <CardComponentMultiplayer card={opponent1Card} />
+            </motion.div>
           )}
         </div>
       )}
@@ -86,4 +84,4 @@ const Winner2Multiplayer = () => {
   );
 };
 
-export default Winner2Multiplayer;
+export default Winner3Multiplayer;

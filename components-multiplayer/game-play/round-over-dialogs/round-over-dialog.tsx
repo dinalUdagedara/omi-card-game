@@ -45,16 +45,8 @@ export function RoundOverDialogMultiplayer({
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
-  const setTrumpSetter = MultiplayerStateStore((state) => state.setTrumpSetter);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
 
-  const trumpSetter = useQuery(api.gameLogic.getTrumpSetter, {
-    roomName: roomName,
-  });
-
-  const roomCreator = useQuery(api.rooms.getRoomCreator, {
-    roomName: roomName,
-  });
   const roomdataFromDB = useQuery(api.rooms.getRoomData, {
     roomName: roomName || "",
   });
@@ -70,15 +62,20 @@ export function RoundOverDialogMultiplayer({
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
     roomName: roomName || "",
   });
+  const myTeam = useQuery(api.gameLogic.getMyTeam, {
+    userId: userID,
+    roomName: roomName,
+  });
+
+  const violations = useQuery(api.gameStates.getViolations, {
+    roomName: roomName || "",
+    teamNumber: myTeam || 0,
+  });
+
   const updateTrumpSetter = useMutation(api.rooms.updateCreator);
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
-
-  const trumpSetterWon = MultiplayerStateStore((state) => state.trumpSetterWon);
-
-  const trumpSetterLose = MultiplayerStateStore(
-    (state) => state.trumpSetterLose
-  );
+  const resetViolation = useMutation(api.gameStates.resetViolations);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
 
@@ -91,6 +88,19 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
+
+        // Check If Violation Done and decrement  in here
+        if (violations) {
+          console.log("violations caught");
+          decrementPenaltycards({
+            decrementValue: 1,
+            roomName,
+            userID,
+          });
+          resetViolation({
+            roomName: roomName,
+          });
+        }
       }
     }
     if (lostWithoutCallingTrumps) {
@@ -102,6 +112,19 @@ export function RoundOverDialogMultiplayer({
             roomName,
             userID,
           });
+
+          // Check If Violation Done and decrement  in here
+          if (violations) {
+            console.log("violations caught");
+            decrementPenaltycards({
+              decrementValue: 1,
+              roomName,
+              userID,
+            });
+            resetViolation({
+              roomName: roomName,
+            });
+          }
         }
       }
     }
@@ -114,6 +137,19 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
+
+        // Check If Violation Done and decrement  in here
+        if (violations) {
+          console.log("violations caught");
+          decrementPenaltycards({
+            decrementValue: 1,
+            roomName,
+            userID,
+          });
+          resetViolation({
+            roomName: roomName,
+          });
+        }
       }
     }
     if (wonWithoutCallingTrumps) {
@@ -124,37 +160,24 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
+
+        // Check If Violation Done and decrement  in here
+        if (violations) {
+          console.log("violations caught");
+          decrementPenaltycards({
+            decrementValue: 1,
+            roomName,
+            userID,
+          });
+          resetViolation({
+            roomName: roomName,
+          });
+        }
       }
     }
   }
 
-  // function decrementValues() {
-  //   console.log("trumpSetter");
-  //   if (trumpSetterWon) {
-  //     // -2 from the opponents
-  //     decrementPenaltycardsFromOponent({
-  //       decrementValue: 1,
-  //       roomName,
-  //       userID,
-  //     });
-  //   }
-  //   if (trumpSetterLose) {
-  //     // -2 from the us
-  //     decrementPenaltycards({
-  //       decrementValue: 2,
-  //       roomName,
-  //       userID,
-  //     });
-  //   }
-  // }
-
   const handleClose = () => {
-    // if (playersInRoom) {
-    //   if (playersInRoom[0] === userID || ) {
-    //     decrementValues();
-    //   }
-    // }
-
     setAllFalse(false);
     if (userName === roomdataFromDB?.playerUserNames[0]) {
       decrementValues();
@@ -165,14 +188,11 @@ export function RoundOverDialogMultiplayer({
         roomName: roomName,
       });
       setTrumpSuit(null);
-    } else {
-      // removeTRumpsetter from here
     }
     setDialogOpen(false);
     setRoundOver(false);
 
     //set the player status to "waiting"
-
     updatePlayerStatus({
       status: "waiting",
       userId: userID,
@@ -221,6 +241,37 @@ export function RoundOverDialogMultiplayer({
           </div>
         </DialogContent>
       </Dialog>
+
+      {violations && (
+        <>
+          {violations?.length > 0 && (
+            <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
+              <DialogContent className="w-[300px] sm:w-[310px] p-6 border-none rounded-3xl bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl text-white">
+                <div className="text-center">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-semibold tracking-wider text-center">
+                      {message.title}
+                    </DialogTitle>
+                    <DialogDescription className="text-md mt-2 font-light text-center">
+                      {message.message} but Violations caught penalty cards will
+                      deduct
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="mt-6">
+                    <Button
+                      className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
+                      type="button"
+                      onClick={handleClose}
+                    >
+                      Ok
+                    </Button>
+                  </DialogFooter>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+        </>
+      )}
     </div>
   );
 }

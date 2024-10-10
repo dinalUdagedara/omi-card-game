@@ -7,6 +7,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
 import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
+import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
 interface UserDeckProps {
   userID: Id<"players">;
@@ -17,6 +19,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const trumpSuit = useStore((state) => state.trumpSuit);
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setUserTurn = useStore((state) => state.setIsUserTurn);
+  const userName = MultiplayerStateStore((state) => state.userName);
 
   const [myCardDeck, setMyCardDeck] = useState<
     { suit: string; value: string }[] | null
@@ -36,7 +39,15 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   });
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+  const updateViolation = useMutation(api.gameStates.updateViolationOccured);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
+  const turnsuit = useQuery(api.gameLogic.getTurnSuit, {
+    roomName: roomName,
+  });
+  const myTeam = useQuery(api.gameLogic.getMyTeam, {
+    userId: userID,
+    roomName: roomName,
+  });
 
   useEffect(() => {
     if (turnPlayerID) {
@@ -55,7 +66,21 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
       status: "playing",
       userId: userID,
     });
-    console.log("Selected Card", card);
+    if (myCardSet && turnsuit) {
+      const validationOccured = checkIfViolationOccured(
+        card,
+        myCardSet,
+        turnsuit
+      );
+      if (validationOccured && userName && myTeam) {
+        updateViolation({
+          roomName: roomName,
+          teamNumber: myTeam,
+          userName: userName,
+          violation: "Played a Diffferent Card from the Turn Suit",
+        });
+      }
+    }
     const userId = userID;
     await selectCard({
       card,

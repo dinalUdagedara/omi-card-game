@@ -69,6 +69,7 @@ export const createGameState = mutation({
       trump: null,
       trumpSetter: args.trumpSetter,
       turnSuit: null,
+      violationOccured: [],
     });
 
     if (gameStateID) {
@@ -227,6 +228,129 @@ export const updateGameStateAfterRound = mutation({
 
         return gameState._id; // Return the updated game state ID
       }
+    }
+  },
+});
+
+export const updateViolationOccured = mutation({
+  args: {
+    roomName: v.string(),
+    userName: v.string(),
+    teamNumber: v.number(),
+    violation: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    const newViolation = {
+      userName: args.userName,
+      teamNumber: args.teamNumber,
+      violation: args.violation,
+    };
+
+    // Append the new violation to the existing violations array
+    const updatedViolations = [...gameState.violationOccured, newViolation];
+
+    const id = gameState?._id;
+    if (id) {
+      await ctx.db.patch(id, {
+        violationOccured: updatedViolations,
+      });
+    }
+  },
+});
+
+export const resetViolations = mutation({
+  args: {
+    roomName: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    if (!gameState) {
+      throw new Error("gameState not found");
+    }
+
+    const id = gameState?._id;
+    if (id) {
+      await ctx.db.patch(id, {
+        violationOccured: [],
+      });
+    }
+  },
+});
+
+export const getViolations = query({
+  args: {
+    teamNumber: v.number(),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch  game states where the roomID equals
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      // Check if a game state exists for the player
+      if (!gameState) {
+        throw new Error("Game state not found for the player");
+      }
+
+      // Find the violation from violations
+      const violationInfo = gameState.violationOccured.filter(
+        (violation) => violation.teamNumber === args.teamNumber
+      );
+
+      // Check if the team has any violations
+      if (!violationInfo) {
+        return null;
+      }
+
+      // Return the violation
+      return violationInfo;
     }
   },
 });

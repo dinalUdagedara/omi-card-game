@@ -12,6 +12,7 @@ import Link from "next/link";
 export const GameOverDialogMultiplayer = () => {
   const [isOpen, setIsOpen] = useState(true);
   const gameWon = MultiplayerStateStore((state) => state.gameWon);
+  const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
   return (
     <>
       {gameWon ? (
@@ -49,7 +50,12 @@ export const GameOverDialogMultiplayer = () => {
               <DialogFooter>
                 <div className="flex justify-center items-center w-full">
                   <DialogClose asChild>
-                    <Button className="bg-gray-800 text-white hover:bg-gray-700 px-6 py-2 rounded-full transition duration-300">
+                    <Button
+                      onClick={() => {
+                        setGameWon(false);
+                      }}
+                      className="bg-gray-800 text-white hover:bg-gray-700 px-6 py-2 rounded-full transition duration-300"
+                    >
                       <Link href={"/multiplayer"}>Back to Lobby</Link>
                     </Button>
                   </DialogClose>

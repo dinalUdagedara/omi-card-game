@@ -6,7 +6,7 @@ export default defineSchema({
     isCreator: v.boolean(),
     roomId: v.id("rooms"),
     userName: v.string(),
-    status:v.string(),
+    status: v.string(),
   }),
   rooms: defineTable({
     creator: v.string(),
@@ -67,5 +67,12 @@ export default defineSchema({
     trump: v.optional(v.union(v.string(), v.null())),
     trumpSetter: v.union(v.id("players"), v.null()),
     turnSuit: v.optional(v.union(v.string(), v.null())),
+    violationOccured: v.array(
+      v.object({
+        userName: v.string(), // Reference to the player
+        violation: v.string(),
+        teamNumber: v.number(),
+      })
+    ),
   }),
 });

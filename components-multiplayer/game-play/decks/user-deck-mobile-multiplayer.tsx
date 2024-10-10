@@ -41,7 +41,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   useEffect(() => {
     if (turnPlayerID) {
       const num = noOfPlayingcards ?? 0;
-      if (turnPlayerID === userID) {
+      if (turnPlayerID === userID && num < 4) {
         setUserTurn(true);
       } else {
         setUserTurn(false);

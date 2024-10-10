@@ -11,6 +11,7 @@ import { isValidSuit, Suit } from "@/utils/types";
 import PlayingCards from "./playing-cards";
 import RoundOverMultiplayer from "../round-over/round-over";
 import { FinishStateStore } from "@/store/finish-round-state";
+import { GameOverDialogMultiplayer } from "../game-over/game-over-multiplayer";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -38,6 +39,8 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   const isRoundOver = MultiplayerStateStore((state) => state.roundOver);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const gameOver = MultiplayerStateStore((state) => state.gameOver);
+  const gameWon = MultiplayerStateStore((state) => state.gameWon);
 
   const playingCards = useQuery(api.gameLogic.getPlayingCards, {
     roomName: roomName,
@@ -89,20 +92,28 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
 
   return (
     <div>
-      {isRoundOver ? (
+      {gameOver ? (
         <>
-          {isRoundOver}
-          <RoundOverMultiplayer userID={userID} roomName={roomName} />
+          <GameOverDialogMultiplayer />
         </>
       ) : (
         <>
-          {isCardsAvailable && playingCards && trumpSuitInDB && (
-            <PlayingCards
-              trumps={trumpSuitInDB}
-              playingCards={playingCards}
-              roomName={roomName}
-              userID={userID}
-            />
+          {isRoundOver ? (
+            <>
+              {isRoundOver}
+              <RoundOverMultiplayer userID={userID} roomName={roomName} />
+            </>
+          ) : (
+            <>
+              {isCardsAvailable && playingCards && trumpSuitInDB && (
+                <PlayingCards
+                  trumps={trumpSuitInDB}
+                  playingCards={playingCards}
+                  roomName={roomName}
+                  userID={userID}
+                />
+              )}
+            </>
           )}
         </>
       )}

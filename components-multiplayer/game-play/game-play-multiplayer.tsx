@@ -149,7 +149,6 @@ const GamePlayMultiplayer = () => {
 
   const getUsername = () => {
     const storedUserName = localStorage.getItem("userName");
-    initialSetup;
     if (storedUserName) {
       setUserName(storedUserName);
     }
@@ -294,12 +293,12 @@ const GamePlayMultiplayer = () => {
         console.log("error", error);
       }
     }
-    if (userID)
-      // update players status to "playing" in here
-      updatePlayerStatus({
-        status: "playing",
-        userId: userID,
-      });
+    // if (userID)
+    //   // update players status to "playing" in here
+    //   updatePlayerStatus({
+    //     status: "playing",
+    //     userId: userID,
+    //   });
   };
 
   useEffect(() => {

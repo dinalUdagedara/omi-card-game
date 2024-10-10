@@ -2,6 +2,7 @@
 import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 
@@ -24,6 +25,10 @@ const PenaltycardsMultiplayer = ({
   });
   const [myTeamPenaltyCards, setMyTeamPenaltyCards] = useState<number>(0);
   const [opponentPenaltyCards, setOpponentPenaltyCards] = useState<number>(0);
+
+  const setGameOver = MultiplayerStateStore((state) => state.setGameOver);
+  const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+
   useEffect(() => {
     if (penaltyCards) {
       const myCards = penaltyCards.find((player) => player.teamNo === myTeam);
@@ -36,6 +41,17 @@ const PenaltycardsMultiplayer = ({
       );
       if (opponentInfo) {
         setOpponentPenaltyCards(opponentInfo.penaltyCards);
+      }
+
+      if (myCards?.penaltyCards === 0) {
+        console.log("I lost");
+        setGameWon(false);
+        setGameOver(true);
+      }
+      if (opponentInfo?.penaltyCards === 0) {
+        console.log("I Won");
+        setGameWon(true);
+        setGameOver(true);
       }
     }
   }, [penaltyCards, userID]); // Run effect when playersInRoom or userID changes

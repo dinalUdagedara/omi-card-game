@@ -1,7 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// import { Button } from "@/components/ui/button";
+import { Input } from "@nextui-org/react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
+import { Button } from "@nextui-org/react";
 import { useState } from "react";
 const UserNameInput = () => {
   const [username, setUsername] = useState<string | null>(null);

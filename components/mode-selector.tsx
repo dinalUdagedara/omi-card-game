@@ -3,13 +3,13 @@ import { Card, CardFooter, Image, Button, CardHeader } from "@nextui-org/react";
 
 const ModeSelector = () => {
   return (
-    <div className="flex flex- h-full min-h-screen  justify-center gap-20 items-center">
+    <div className="flex flex-col lg:flex-row h-full min-h-screen  justify-center gap-20 items-center">
       <Link href={"/practise"}>
         <Button className="w-full h-full bg-inherit hover:bg-inherit">
           <Card
             isFooterBlurred
             radius="lg"
-            className="col-span-12 sm:col-span-4 h-[300px] w-[500px] hover:scale-105 "
+            className="col-span-12 sm:col-span-4 md:h-[300px] md:w-[500px] hover:scale-105 "
           >
             <CardHeader className="absolute z-10 top-1 flex-col !items-start bg-slate-500 bg-opacity-30 rounded-lg">
               <p className="text-tiny text-white/60 uppercase font-bold">
@@ -42,7 +42,7 @@ const ModeSelector = () => {
           <Card
             isFooterBlurred
             radius="lg"
-            className="col-span-12 sm:col-span-4 h-[300px] w-[500px] hover:scale-105 "
+            className="col-span-12 sm:col-span-4 md:h-[300px] mdw-[500px] hover:scale-105 "
           >
             <CardHeader className="absolute z-10 top-1 flex-col !items-start bg-slate-500 bg-opacity-30 rounded-lg">
               <p className="text-tiny text-white/60 uppercase font-bold">

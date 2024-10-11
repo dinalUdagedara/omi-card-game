@@ -73,10 +73,10 @@ const CreateRoomComponent = () => {
 
 
   return (
-    <div className="flex justify-center items-center h-full min-h-[700px] ">
+    <div className="flex justify-center items-center h-full min-h-screen">
       <Tabs
         defaultValue="private"
-        className="w-[400px]"
+        className="w-[350px]  lg:w-[400px]"
         onValueChange={handleTabChange}
       >
         <TabsList className="grid w-full grid-cols-2">

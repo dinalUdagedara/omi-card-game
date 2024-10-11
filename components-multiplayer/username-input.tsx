@@ -9,8 +9,9 @@ const UserNameInput = () => {
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
 
   function handleSelectUserName() {
+    console.log("enter username",username)
     if (username) {
-      setUserName(username);
+       setUserName(username);
       localStorage.setItem("userName", username);
     }
   }

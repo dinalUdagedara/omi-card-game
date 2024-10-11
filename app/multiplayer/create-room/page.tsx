@@ -2,7 +2,7 @@ import CreateRoomComponent from "@/components-multiplayer/create-room/create-roo
 
 const Page = () => {
   return (
-    <div>
+    <div className=" h-full min-h-screen">
       <CreateRoomComponent />
     </div>
   );

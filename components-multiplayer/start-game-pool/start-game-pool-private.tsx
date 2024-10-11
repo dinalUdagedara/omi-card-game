@@ -1,30 +1,28 @@
 "use client";
 import { Button } from "@/components/ui/button";
-
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import {
-  StartGamePoolPrivateProps,
-} from "@/utils/types-multiplayer";
+import { StartGamePoolPrivateProps } from "@/utils/types-multiplayer";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import MyName from "./my-name";
 import OpponentsName from "./opponents-name";
+import waiting from "@/public/assets/lottie-animations/waiting-to-people.json";
+import Lottie from "lottie-react";
+import ProfileAnimation from "@/public/assets/lottie-animations/enter-name.json";
+import UserNameInput from "../username-input";
 
 const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   const hasJoinedRoom = useRef(false);
   const router = useRouter();
   const roomId = props.roomId;
 
-
   const [username, setUsername] = useState<string | null>(null);
 
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
 
-  
   const roomdataFromDB = useQuery(api.rooms.getRoomData, { roomName: roomId });
   const isOpponentJoinedDB = useQuery(api.rooms.isOpponentJoined, {
     roomName: roomId,
@@ -94,7 +92,7 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
       handleJoinRoom(); // Call handleJoinRoom once roomdataFromDB is available
       hasJoinedRoom.current = true; // Set to true to prevent future calls
     }
-  }, [roomdataFromDB]); 
+  }, [roomdataFromDB]);
 
   useEffect(() => {
     if (PlayersJoined) {
@@ -102,54 +100,51 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
     }
   }, [PlayersJoined]);
 
+  useEffect(() => {
+    getUsername();
+  }, [roomdataFromDB]);
 
   return (
-    <div className="flex flex-col h-full min-h-screen">
+    <div className="flex flex-col h-full min-h-screen w-full">
       {userName ? (
         <div>
           <div className="flex  justify-center gap-20 p-20 mt-10">
-            <div className="flex  justify-center gap-20 p-20 mt-10">
-              {isOpponentJoinedDB && userName ? (
-                <>
-                  <MyName />
+            {isOpponentJoinedDB && userName ? (
+              <div className="flex flex-col gap- lg:gap-20 p-10">
+                <div className="flex justify-center gap-10">
                   <OpponentsName userName={userName} roomName={roomId} />
-                </>
-              ) : (
-                <>
+                </div>
+                <div className="flex justify-center items-center">
                   <MyName />
-                </>
-              )}
-            </div>
-          </div>
-          <div className=" h-full flex justify-center items-center">
-            <div
-              className={`p-20 mt-20 ${isRoomCreatorDB ? "flex" : " hidden"}`}
-            >
-              <Button
-                disabled={!isOpponentJoinedDB}
-                className="h-20 w-80 rounded-2xl"
-                onClick={handleStartGame}
-              >
-                Start Private Game
-              </Button>
-            </div>
+                  <div
+                    className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}
+                  >
+                    <Button
+                      disabled={!isOpponentJoinedDB}
+                      className="h-20 w-80 rounded-2xl"
+                      onClick={handleStartGame}
+                    >
+                      Start Private Game
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col lg:flex-row justify-center h-full items-center bg- mt-20">
+                <div className="w-1/2">
+                  <Lottie animationData={waiting} loop={true} />
+                </div>
+                <div>
+                  <MyName />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : (
-        <div className="flex w-full max-w-sm items-center space-x-2">
-          <Input
-            type="text"
-            placeholder="Enter Your Name"
-            value={username || ""}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Button
-            onClick={() => {
-              handleEnterUserName();
-            }}
-          >
-            Enter
-          </Button>
+        <div className="h-full min-h-screen flex flex-col lg:flex-row  gap-20 lg:gap-40 justify-center items-center">
+          <Lottie animationData={ProfileAnimation} loop={true} />
+          <UserNameInput />
         </div>
       )}
     </div>

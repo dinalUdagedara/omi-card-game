@@ -2,6 +2,8 @@
 import { api } from "@/convex/_generated/api";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
+import Lottie from "lottie-react";
+import userAnimation from "@/public/assets/lottie-animations/user.json";
 
 type Props = {
   roomName: string;
@@ -19,19 +21,22 @@ const OpponentsName = (props: Props) => {
 
   const otherUsers = useQuery(api.rooms.getAllPlayersUsernamesInRoom, {
     roomName: roomName,
-    userName:userName
+    userName: userName,
   });
   console.log("other users", otherUsers);
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-16 justify-items-center max-w-md mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:gap-28 justify-items-center max-w-md mx-auto">
         {otherUsers?.map((user) => (
           <div
             key={user}
-            className="flex justify-center items-center bg-blue-950 text-white h-40 w-40 rounded-full px-6 py-3 text-center shadow-lg"
+            className="flex flex-col justify-center items-center bg-muted/40 w-32 h-32 lg:h-40 lg:w-40 rounded-full px-6 py-3 text-center gap-2"
           >
-            {user}
+            <div>
+              <Lottie animationData={userAnimation} loop={false} />
+            </div>
+            <span className="font-semibold font-sans">{user}</span>
           </div>
         ))}
       </div>

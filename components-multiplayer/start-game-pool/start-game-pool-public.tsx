@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import { api } from "@/convex/_generated/api";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
@@ -7,6 +7,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import MyName from "./my-name";
 import OpponentsName from "./opponents-name";
+import { Button } from "@nextui-org/react";
+import Lottie from "lottie-react";
+import waiting from "@/public/assets/lottie-animations/waiting-to-people.json";
 
 type Props = {
   roomId: string;
@@ -55,10 +58,9 @@ const StartGamePoolPublic = (props: Props) => {
   };
 
   const handleJoinRoom = async () => {
-
     await getUsername();
-    console.log("handleJoin Room: username", userName)
-    console.log("handleJoin Room: roomid", roomId)
+    console.log("handleJoin Room: username", userName);
+    console.log("handleJoin Room: roomid", roomId);
     if (roomId && userName) {
       const roomName = roomId;
       // Only update the database if the player hasn't joined before
@@ -90,36 +92,50 @@ const StartGamePoolPublic = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log("Room Data",roomdataFromDB && !hasJoinedRoom.current)
+    console.log("Room Data", roomdataFromDB && !hasJoinedRoom.current);
     // Ensure roomdataFromDB is available and the user hasn't already joined the room
     if (roomdataFromDB && !hasJoinedRoom.current && userName) {
       handleJoinRoom();
       hasJoinedRoom.current = true; // Set to true to prevent future calls
     }
-  }, [roomdataFromDB,userName]);
+  }, [roomdataFromDB, userName]);
 
-  useEffect (()=>{
+  useEffect(() => {
     getUsername();
-  },[roomdataFromDB])
+  }, [roomdataFromDB]);
   return (
     <div className="flex flex-col h-full min-h-screen">
-      <div className=" justify-center items-center gap-20  ">
+      <div className=" justify-center items-center">
         {isOpponentJoinedDB && userName ? (
-          <div className="flex flex-col gap-20 p-10">
+          <div className="flex flex-col gap- lg:gap-20 p-10">
             <div className="flex justify-center gap-10">
               <OpponentsName userName={userName} roomName={roomId} />
             </div>
-            <div className="flex justify-center ">
+            <div className="flex justify-center items-center">
               <MyName />
+              <div className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}>
+                <Button
+                  disabled={!isAllJoined}
+                  onClick={handleStartGame}
+                  className="h-20 w-80 rounded-2xl"
+                >
+                  Start Game
+                </Button>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="flex justify-center p-20">
-            <MyName />
+          <div className="flex flex-col lg:flex-row justify-center h-full min-h-screen items-center">
+            <div className="w-1/2">
+              <Lottie animationData={waiting} loop={false} />
+            </div>
+            <div>
+              <MyName />
+            </div>
           </div>
         )}
       </div>
-      <div className=" h-full flex justify-center items-center">
+      {/* <div className=" h-full flex justify-center items-center">
         <div className={`p-20 mt-20 ${isRoomCreatorDB ? "flex" : " hidden"}`}>
           <Button
             disabled={!isAllJoined}
@@ -129,7 +145,7 @@ const StartGamePoolPublic = (props: Props) => {
             Start Game
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

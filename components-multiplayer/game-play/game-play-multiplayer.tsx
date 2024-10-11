@@ -366,7 +366,7 @@ const GamePlayMultiplayer = () => {
   }, [isRoomCreator]);
 
   return (
-    <div className="flex flex-col h-full min-h-screen justify-between">
+    <div className="flex flex-col h-full min-h-screen justify-between ">
       {
         // !isTrumpSelected &&
         !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (
@@ -389,8 +389,8 @@ const GamePlayMultiplayer = () => {
         </div>
       )}
 
-      <div className=" flex justify-center ">
-        <div className=" flex  gap-4 justify-center items-center ">
+      <div className="flex justify-center ">
+        <div className=" flex  gap-4 justify-center items-center mb-4">
           <div className="">
             <OtherDecksMobile userHand={exampleCardSet} />
           </div>
@@ -417,8 +417,8 @@ const GamePlayMultiplayer = () => {
         </div>
       </div>
 
-      <div className="flex justify-center gap-4">
-        <div className="flex justify-center items-center">
+      <div className="flex justify-center gap-4 ">
+        <div className="flex justify-center items-center ">
           <div className="flex flex-col justify-center items-center  min-w-[70px]">
             <motion.div
               className=" rounded-full"
@@ -443,9 +443,9 @@ const GamePlayMultiplayer = () => {
             <OtherDecksMobile userHand={exampleCardSet} />
           </div>
         </div>{" "}
-        <div className=" flex justify-center items-center">
+        <div className=" flex justify-center items-center ">
           <div
-            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+            className="h-full max-h-[400px] flex max-w-20  min-w-60 lg:min-w-80 min-h-96 lg:min-h-92 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 "
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",

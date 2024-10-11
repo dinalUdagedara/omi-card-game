@@ -1,5 +1,5 @@
 "use client";
-import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks";
+import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks-multiplayer";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";

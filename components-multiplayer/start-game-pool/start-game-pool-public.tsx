@@ -110,7 +110,7 @@ const StartGamePoolPublic = (props: Props) => {
             <div className="flex justify-center gap-10">
               <OpponentsName userName={userName} roomName={roomId} />
             </div>
-            <div className="flex justify-center items-center">
+            <div className="flex flex-col lg:flex-row justify-center items-center">
               <MyName />
               <div className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}>
                 <Button
@@ -134,17 +134,6 @@ const StartGamePoolPublic = (props: Props) => {
           </div>
         )}
       </div>
-      {/* <div className=" h-full flex justify-center items-center">
-        <div className={`p-20 mt-20 ${isRoomCreatorDB ? "flex" : " hidden"}`}>
-          <Button
-            disabled={!isAllJoined}
-            onClick={handleStartGame}
-            className="h-20 w-80 rounded-2xl"
-          >
-            Start Game
-          </Button>
-        </div>
-      </div> */}
     </div>
   );
 };

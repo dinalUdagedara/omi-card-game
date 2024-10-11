@@ -114,7 +114,7 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
                 <div className="flex justify-center gap-10">
                   <OpponentsName userName={userName} roomName={roomId} />
                 </div>
-                <div className="flex justify-center items-center">
+                <div className="flex flex-col lg:flex-row justify-center items-center">
                   <MyName />
                   <div
                     className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}

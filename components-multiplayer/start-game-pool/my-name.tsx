@@ -7,9 +7,9 @@ const MyName = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   return (
     <>
-      <div className="rounded-full items-center justify-center flex flex-col h-96 w-96 px-6 py-3 gap-5">
+      <div className="rounded-full items-center justify-center flex flex-col h-60 w-60  lg:h-96 lg:w-96 px-6 py-3 gap-5">
         <div>
-          <Lottie animationData={person} loop={false} />
+          <Lottie animationData={person} loop={true} />
         </div>
         <span className="font-semibold font-sans">{userName}</span>
       </div>

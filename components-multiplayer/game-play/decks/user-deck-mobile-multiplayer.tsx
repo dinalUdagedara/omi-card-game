@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
 import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
+import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
@@ -90,8 +91,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }
 
   return (
-    <div className="h-16 w-60 flex justify-center mr-5">
-      <div className="bg-black flex justify-center">
+    <div className="h-16 w-96 flex justify-center mr-5">
+      <div className="flex justify-center">
         {myCardSet?.map((card, index) => {
           const angle = (index - (myCardSet.length - 1) / 2) * 10;
 
@@ -100,7 +101,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               key={index}
               className="absolute"
               style={{
-                transform: `rotate(${angle}deg) translateY(-40px)`,
+                transform: `rotate(${angle}deg) translateY(-70px)`,
                 transformOrigin: "bottom center",
               }}
             >
@@ -120,7 +121,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                   onClick={() => handleCardSelect(card)}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
                 >
-                  {" "}
                   <motion.div
                     initial={{ boxShadow: "none" }}
                     animate={{
@@ -135,7 +135,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                       repeatType: "reverse",
                     }}
                   >
-                    <CardComponentMobileMultiplayer card={card} />{" "}
+                    <CardComponentMultiplayer card={card} />
                   </motion.div>
                 </button>
               </motion.div>

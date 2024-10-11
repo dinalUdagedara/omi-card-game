@@ -366,7 +366,7 @@ const GamePlayMultiplayer = () => {
   }, [isRoomCreator]);
 
   return (
-    <div className="flex flex-col h-full min-h-screen justify-between ">
+    <div className="flex flex-col h-full min-h-screen justify-between w-full">
       {
         // !isTrumpSelected &&
         !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (

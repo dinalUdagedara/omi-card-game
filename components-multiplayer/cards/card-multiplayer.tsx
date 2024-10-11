@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
-import { Card } from "@/utils/types";
 import Image from "next/image";
 
-const CardComponentMultiplayer = ({ card }: { card: { suit: string; value: string; } }) => {
+const CardComponentMultiplayer = ({
+  card,
+}: {
+  card: { suit: string; value: string };
+}) => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
   const imgUrl = `/assets/cards/${card.value}_of_${card.suit}.png`;
 
@@ -28,8 +31,8 @@ const CardComponentMultiplayer = ({ card }: { card: { suit: string; value: strin
     >
       <Image
         src={imgUrl}
-        width={80}
-        height={80}
+        width={100}
+        height={100}
         alt="card"
         placeholder={blurHash ? "blur" : "empty"}
         blurDataURL={blurHash}

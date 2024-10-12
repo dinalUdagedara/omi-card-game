@@ -27,6 +27,9 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
   const isOpponentJoinedDB = useQuery(api.rooms.isOpponentJoined, {
     roomName: roomId,
   });
+  const isAllJoined = useQuery(api.rooms.isAllJoined, {
+    roomName: roomId,
+  });
   const isRoomCreatorDB = useQuery(api.rooms.isRoomCreator, {
     roomName: roomId,
     userName: userName || "",
@@ -120,7 +123,7 @@ const StartGamePoolPrivate = (props: StartGamePoolPrivateProps) => {
                     className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}
                   >
                     <Button
-                      disabled={!isOpponentJoinedDB}
+                      disabled={!isAllJoined}
                       className="h-20 w-80 rounded-2xl"
                       onClick={handleStartGame}
                     >

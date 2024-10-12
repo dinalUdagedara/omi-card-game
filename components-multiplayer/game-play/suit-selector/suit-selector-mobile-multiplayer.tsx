@@ -29,6 +29,7 @@ export function SuitSelectorMobileMultiplayer({
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
   const updateTrumpSetter = useMutation(api.gameLogic.updateTrumpSetter);
+  const replacePlayerTurn = useMutation(api.gameLogic.replacePlayerTurn);
 
   function handleSuitSelected(suit: Suit) {
     setSelectedSuit(suit);
@@ -44,6 +45,10 @@ export function SuitSelectorMobileMultiplayer({
         roomName,
         userID,
       });
+      replacePlayerTurn({
+        roomName:roomName,
+        userId:userID
+      })
     }
   }
   return (

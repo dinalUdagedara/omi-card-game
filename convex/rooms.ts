@@ -366,8 +366,6 @@ export const allPlayersWaiting = query({
   },
   handler: async (ctx, args) => {
     try {
-      console.log("Fetching players for room:", args.roomId);
-
       const room = await ctx.db
         .query("rooms")
         .filter((q) => q.eq(q.field("roomName"), args.roomId))
@@ -378,7 +376,7 @@ export const allPlayersWaiting = query({
         .filter((q) => q.eq(q.field("roomId"), room?._id))
         .collect();
 
-      console.log(`Found ${players.length} players in room ${args.roomId}`);
+
 
       // Return false if no players are found
       if (players.length === 0) {
@@ -387,7 +385,7 @@ export const allPlayersWaiting = query({
       }
 
       const allStarted = players.every((player) => player.status === "waiting");
-      console.log("All players started:", allStarted);
+
 
       return allStarted;
     } catch (error) {
@@ -403,8 +401,6 @@ export const allPlayersPlaying = query({
   },
   handler: async (ctx, args) => {
     try {
-      console.log("Fetching players for room:", args.roomId);
-
       const room = await ctx.db
         .query("rooms")
         .filter((q) => q.eq(q.field("roomName"), args.roomId))
@@ -415,8 +411,6 @@ export const allPlayersPlaying = query({
         .filter((q) => q.eq(q.field("roomId"), room?._id))
         .collect();
 
-      console.log(`Found ${players.length} players in room ${args.roomId}`);
-
       // Return false if no players are found
       if (players.length === 0) {
         console.log("No players found in the room.");
@@ -424,7 +418,6 @@ export const allPlayersPlaying = query({
       }
 
       const allStarted = players.every((player) => player.status === "playing");
-      console.log("All players started:", allStarted);
 
       return allStarted;
     } catch (error) {

@@ -79,25 +79,25 @@ export function RoundOverDialogMultiplayer({
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
 
-  function decrementValues() {
+  async function decrementValues() {
     if (lostCallingTrumps && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
-        decrementPenaltycards({
+        await decrementPenaltycards({
           decrementValue: 2,
           roomName,
           userID,
         });
 
+        console.log("violations ", violations);
         // Check If Violation Done and decrement  in here
-        if (violations) {
-          console.log("violations caught");
-          decrementPenaltycards({
+        if (violations && violations?.length > 0) {
+          await decrementPenaltycards({
             decrementValue: 1,
             roomName,
             userID,
           });
-          resetViolation({
+          await resetViolation({
             roomName: roomName,
           });
         }
@@ -106,17 +106,17 @@ export function RoundOverDialogMultiplayer({
     if (lostWithoutCallingTrumps) {
       if (playersInRoom) {
         if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
-          console.log("Decrementing lostwithout calling");
-          decrementPenaltycards({
+          console.log("Decrementing lostwithout calling", violations);
+          await decrementPenaltycards({
             decrementValue: 1,
             roomName,
             userID,
           });
 
           // Check If Violation Done and decrement  in here
-          if (violations) {
+          if (violations && violations?.length > 0) {
             console.log("violations caught");
-            decrementPenaltycards({
+            await decrementPenaltycards({
               decrementValue: 1,
               roomName,
               userID,
@@ -131,17 +131,17 @@ export function RoundOverDialogMultiplayer({
 
     if (wonCallingTrumps && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
-        console.log("Decrementing lost calling");
-        decrementPenaltycardsFromOponent({
+        console.log("wonCallingTrumps", violations);
+        await decrementPenaltycardsFromOponent({
           decrementValue: 1,
           roomName,
           userID,
         });
 
         // Check If Violation Done and decrement  in here
-        if (violations) {
+        if (violations && violations?.length > 0) {
           console.log("violations caught");
-          decrementPenaltycards({
+          await decrementPenaltycards({
             decrementValue: 1,
             roomName,
             userID,
@@ -155,21 +155,21 @@ export function RoundOverDialogMultiplayer({
     if (wonWithoutCallingTrumps) {
       if (playersInRoom) {
         console.log("Decrementing lostwithout calling");
-        decrementPenaltycardsFromOponent({
+        await decrementPenaltycardsFromOponent({
           decrementValue: 2,
           roomName,
           userID,
         });
 
         // Check If Violation Done and decrement  in here
-        if (violations) {
-          console.log("violations caught");
-          decrementPenaltycards({
+        if (violations && violations?.length > 0) {
+          console.log("violations caught", violations);
+          await decrementPenaltycards({
             decrementValue: 1,
             roomName,
             userID,
           });
-          resetViolation({
+          await resetViolation({
             roomName: roomName,
           });
         }
@@ -177,14 +177,14 @@ export function RoundOverDialogMultiplayer({
     }
   }
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setAllFalse(false);
     if (userName === roomdataFromDB?.playerUserNames[0]) {
-      decrementValues();
-      updateTrumpSetter({
+      await decrementValues();
+      await updateTrumpSetter({
         roomName: roomName,
       });
-      removeTrumpSuit({
+      await removeTrumpSuit({
         roomName: roomName,
       });
       setTrumpSuit(null);

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import {Cormorant} from "next/font/google"
+import { Cormorant } from "next/font/google";
+import { Spicy_Rice } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,6 +11,10 @@ import NextProvider from "./next-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const cormorant = Cormorant({ subsets: ["latin"] });
+const spicy_rice = Spicy_Rice({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,9 +36,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ConvexClientProvider>
-            <NextProvider>
-              {children}
-              </NextProvider>
+            <NextProvider>{children}</NextProvider>
           </ConvexClientProvider>
           <Toaster />
         </ThemeProvider>

@@ -88,7 +88,7 @@ const ModeSelector = () => {
               <GameModeCard
                 topic="Warm Up Before the Challenge"
                 contentHeader="Ready to Test your Limits"
-                title="Practise Mode"
+                title="Practice Mode"
                 content="Test Your Limits Before Challenging"
                 nextMessage="Jump In"
               />

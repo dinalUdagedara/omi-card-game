@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import {Cormorant} from "next/font/google"
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -8,6 +9,7 @@ import { ConvexClientProvider } from "@/components-multiplayer/ConvexClientProvi
 import NextProvider from "./next-provider";
 
 const inter = Inter({ subsets: ["latin"] });
+const cormorant = Cormorant({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={cormorant.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

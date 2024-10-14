@@ -5,9 +5,10 @@ import NextImage from "next/image";
 import background from "@/public/assets/images/background.png";
 import ReactAudioPlayer from "react-audio-player";
 import { useState } from "react";
+import GameModeCard from "./mode-selector/game-mode-card";
 
 const ModeSelector = () => {
-  const [playMusic, setPlayMusic] = useState(true);
+  const [playMusic, setPlayMusic] = useState(false);
 
   const handlePlayMusic = () => {
     setPlayMusic(!playMusic);
@@ -48,68 +49,24 @@ const ModeSelector = () => {
         />
       )}
 
-      {/* Practise Mode Link */}
       <Link href={"/practise"}>
-        <Button className="w-full h-full bg-inherit hover:bg-inherit">
-          <Card
-            isFooterBlurred
-            radius="lg"
-            className="col-span-12 sm:col-span-4 md:h-[300px] md:w-[500px] hover:scale-105"
-          >
-            <CardHeader className="absolute z-10 top-1 flex-col !items-start bg-slate-500 bg-opacity-30 rounded-lg">
-              <p className="text-tiny text-white/60 uppercase font-bold">
-                Practise Mode
-              </p>
-              <h4 className="text-white font-medium text-large">
-                Warm Up Before the Challenge
-              </h4>
-            </CardHeader>
-            <Image
-              removeWrapper
-              alt="Card background"
-              className="z-0 w-full h-full object-cover"
-              src={`/assets/images/practise.png`}
-            />
-            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 mb-2 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-              <p className="text-sm text-white/80">Ready to Test your Limits</p>
-              <p className="text-sm text-white bg-black/20 p-2 rounded-lg">
-                Jump In
-              </p>
-            </CardFooter>
-          </Card>
-        </Button>
+        <GameModeCard
+          topic="Warm Up Before the Challenge"
+          contentHeader="Ready to Test your Limits"
+          title="Practise Mode"
+          content="Test Your Limits Before Challenging"
+          nextMessage="Jump In"
+        />
       </Link>
 
-      {/* Multiplayer Mode Link */}
       <Link href={"/multiplayer"}>
-        <Button className="w-full h-full bg-inherit hover:bg-inherit">
-          <Card
-            isFooterBlurred
-            radius="lg"
-            className="col-span-12 sm:col-span-4 md:h-[300px] md:w-[500px] hover:scale-105"
-          >
-            <CardHeader className="absolute z-10 top-1 flex-col !items-start bg-slate-500 bg-opacity-30 rounded-lg">
-              <p className="text-tiny text-white/60 uppercase font-bold">
-                Multiplayer Mode
-              </p>
-              <h4 className="text-white font-medium text-large">
-                Compete with Players Worldwide
-              </h4>
-            </CardHeader>
-            <Image
-              removeWrapper
-              alt="Card background"
-              className="z-0 w-full h-full object-cover"
-              src={`/assets/images/multiplayer.png`}
-            />
-            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 mb-2 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-              <p className="text-sm text-white/80">Rooms Await..</p>
-              <p className="text-sm text-white bg-black/20 p-2 rounded-lg">
-                Dive in
-              </p>
-            </CardFooter>
-          </Card>
-        </Button>
+        <GameModeCard
+          topic=" Compete with Players Worldwide"
+          contentHeader="Rooms Await.."
+          title="Multiplayer Mode"
+          content="Play With Complete Strangers or Create Private Rooms to Play with Your Friends"
+          nextMessage=" Dive in"
+        />
       </Link>
     </div>
   );

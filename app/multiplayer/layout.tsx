@@ -20,7 +20,7 @@ export default function MultiplayerLayout({
             objectFit: "cover",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-60" />
       </div>
       {children}
     </section>

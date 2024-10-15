@@ -11,11 +11,11 @@ import wizardImage from "@/public/assets/images/wizard-character.png";
 
 const Multiplayer = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
-  const [isAnimationLoaded, setIsAnimationLoaded] = useState<boolean>(false);
+  // const [isAnimationLoaded, setIsAnimationLoaded] = useState<boolean>(false);
 
-  const handleAnimationComplete = () => {
-    setIsAnimationLoaded(true);
-  };
+  // const handleAnimationComplete = () => {
+  //   setIsAnimationLoaded(true);
+  // };
 
   return (
     <div>

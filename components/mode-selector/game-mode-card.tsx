@@ -22,7 +22,6 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
   content,
   nextMessage,
 }) => {
-  console.log("title", title);
   return (
     <div>
       <Button className="w-full h-full bg-inherit hover:bg-inherit">

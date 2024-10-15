@@ -3,12 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import background from "@/public/assets/images/background.png";
 import ReactAudioPlayer from "react-audio-player";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import GameModeCard from "./mode-selector/game-mode-card";
 import { Spicy_Rice } from "next/font/google";
 import textArea from "@/public/assets/images/text-area.png";
 import { IoVolumeMuteOutline } from "react-icons/io5";
 import { VscUnmute } from "react-icons/vsc";
+import { ParticlesComponent } from "./particles/particles";
 const spicy_rice = Spicy_Rice({
   subsets: ["latin"],
   weight: "400",
@@ -17,12 +18,29 @@ const spicy_rice = Spicy_Rice({
 const ModeSelector = () => {
   const [playMusic, setPlayMusic] = useState(false);
 
+  const hoverAudioRef = useRef<HTMLAudioElement | null>(null);
+  const clickAudioRef = useRef<HTMLAudioElement | null>(null);
+
   const handlePlayMusic = () => {
     setPlayMusic(!playMusic);
   };
 
+  const handleHover = () => {
+    // Play the hover sound
+    if (hoverAudioRef.current && playMusic) {
+      hoverAudioRef.current.play();
+    }
+  };
+
+  const handleClick = () => {
+    //play click sound
+    if (clickAudioRef.current && playMusic) {
+      clickAudioRef.current.play();
+    }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen justify-start gap-[8vh] pt-10">
+    <div className="flex flex-col min-h-screen justify-start gap-[8vh] pt-10 z-10">
       <div className="absolute inset-0">
         <Image
           alt="Mountains"
@@ -52,7 +70,9 @@ const ModeSelector = () => {
           loop
         />
       )}
-
+      <audio ref={hoverAudioRef} src="/assets/audio-files/select.mp3" />
+      <audio ref={clickAudioRef} src="/assets/audio-files/click.mp3" />
+      {/* Audio for hover effect */}
       <div className="flex flex-col items-center justify-center z-20 gap-2 w-full">
         <div className={`h-full font ${spicy_rice.className} text-7xl t-10 `}>
           Omi
@@ -78,11 +98,13 @@ const ModeSelector = () => {
           </div>
         </span>
       </div>
-
       <div className="flex flex-col lg:flex-row h-full  justify-start  items-center">
-        {/* Background Image */}
-
-        <div className="flex flex-col md:flex-row ml-20">
+        <div
+          onMouseEnter={handleHover}
+          onMouseLeave={handleHover}
+          onClick={handleClick}
+          className="flex flex-col md:flex-row ml-20"
+        >
           <div className="lg:-rotate-6">
             <Link href={"/practise"}>
               <GameModeCard
@@ -95,7 +117,13 @@ const ModeSelector = () => {
             </Link>
           </div>
 
-          <div className="md:rotate-6 md:-ml-8">
+          <div
+            // Sound Effects
+            onMouseEnter={handleHover}
+            onMouseLeave={handleHover}
+            onClick={handleClick}
+            className="md:rotate-6 md:-ml-8"
+          >
             <Link href={"/multiplayer"}>
               <GameModeCard
                 topic=" Compete with Players Worldwide"
@@ -108,6 +136,7 @@ const ModeSelector = () => {
           </div>
         </div>
       </div>
+      <ParticlesComponent />
     </div>
   );
 };

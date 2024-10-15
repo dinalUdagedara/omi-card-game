@@ -445,7 +445,7 @@ const GamePlayMultiplayer = () => {
         </div>{" "}
         <div className=" flex justify-center items-center ">
           <div
-            className="h-full max-h-[400px] flex max-w-20  min-w-60 lg:min-w-80 min-h-96 lg:min-h-92 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 "
+            className="h-full max-h-[400px] flex max-w-20  z-20 min-w-60 lg:min-w-80 min-h-96 lg:min-h-92 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 "
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -453,7 +453,7 @@ const GamePlayMultiplayer = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full h-full justify-center  items-center  ">
+            <div className="w-full h-full justify-center  items-center  z-20 ">
               {roomId && userID && isRoomActive && (
                 <GameBoardMobileMultiplayer
                   onRestart={restartGame}

@@ -1,9 +1,10 @@
 "use client";
 import { api } from "@/convex/_generated/api";
-import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
-import Lottie from "lottie-react";
-import userAnimation from "@/public/assets/lottie-animations/user.json";
+import Image from "next/image";
+import user2Avatar from "@/public/assets/images/user-avatars/person4.png";
+import user3Avatar from "@/public/assets/images/user-avatars/person7.png";
+import user4Avatar from "@/public/assets/images/user-avatars/person8.png";
 
 type Props = {
   roomName: string;
@@ -13,12 +14,6 @@ type Props = {
 const OpponentsName = (props: Props) => {
   const roomName = props.roomName;
   const userName = props.userName;
-
-  // const opoonentsName = useQuery(api.rooms.getOpponentsName, {
-  //   roomName: roomName,
-  //   userName: userName,
-  // });
-
   const otherUsers = useQuery(api.rooms.getAllPlayersUsernamesInRoom, {
     roomName: roomName,
     userName: userName,
@@ -27,21 +22,24 @@ const OpponentsName = (props: Props) => {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:gap-28 justify-items-center max-w-md mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:gap-28 justify-items-center max-w-md mx-auto pt-4">
         {otherUsers?.map((user) => (
           <div
             key={user}
-            className="flex flex-col justify-center items-center bg-muted/40 w-32 h-32 lg:h-40 lg:w-40 rounded-full px-6 py-3 text-center gap-2"
+            className="flex flex-col justify-center items-center w-32 h-32  rounded-full  text-center gap-2"
           >
             <div>
-              <Lottie animationData={userAnimation} loop={false} />
+              <Image
+                src={user4Avatar}
+                alt="Picture of the author"
+                width={400}
+                height={400}
+              />
             </div>
-            <span className="font-semibold font-sans">{user}</span>
+            <span className="font-semibold ">{user}</span>
           </div>
         ))}
       </div>
-
-      {/* <div className="bg-blue-950 rounded-full p-20 ">{opoonentsName}</div> */}
     </>
   );
 };

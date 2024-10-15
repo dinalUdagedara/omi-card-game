@@ -48,7 +48,7 @@ const NotificationCard = () => {
 
             <div className="mt-20">
               <Link href={"/multiplayer/create-room"}>
-                <Button className="bg-amber-950 text-white rounded-2xl hover:bg-amber-800 p-5 text-md">
+                <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
                   Create a Room
                 </Button>
               </Link>

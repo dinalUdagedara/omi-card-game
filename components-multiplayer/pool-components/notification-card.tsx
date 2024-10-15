@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const NotificationCard = () => {
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative w-[400px] h-[600px]  p- rounded-lg  shadow-lg inv-rad inv-rad-8 ">
+      <div className="relative w-[400px] h-[400px]  p- rounded-lg  shadow-lg inv-rad inv-rad-8 ">
         <Image
           alt="Mountains"
           src={modeCardBackground}
@@ -42,11 +42,11 @@ const NotificationCard = () => {
             <div className="mt-5">
               <h1 className="text-3xl font-bold">No Rooms Yet ...</h1>
             </div>
-            <div className="mt-10">
+            <div className="mt-5">
               <p className="">Create one Using the button Below</p>
             </div>
 
-            <div className="mt-20">
+            <div className="mt-8">
               <Link href={"/multiplayer/create-room"}>
                 <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
                   Create a Room

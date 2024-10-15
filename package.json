@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@butterfail/tailwindcss-inverted-radius": "^0.1.2",
     "@hookform/resolvers": "^3.9.0",
     "@nextui-org/react": "^2.4.8",
     "@radix-ui/react-avatar": "^1.1.0",

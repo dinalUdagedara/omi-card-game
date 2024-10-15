@@ -19,8 +19,6 @@ import { generateRandomName } from "@/utils/types-multiplayer";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-
-
 const CreateRoomComponent = () => {
   const [roomName, setRoomName] = useState<string>(generateRandomName());
   const [isRoomCreated, setIsRoomCreated] = useState<boolean>(false);
@@ -32,7 +30,6 @@ const CreateRoomComponent = () => {
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const createRoomsDB = useMutation(api.rooms.createRoom);
   const handleCreateRoom = () => {
-
     if (userName)
       createRoomsDB({
         roomName,
@@ -71,12 +68,11 @@ const CreateRoomComponent = () => {
     }
   }, []);
 
-
   return (
     <div className="flex justify-center items-center h-full min-h-screen">
       <Tabs
         defaultValue="private"
-        className="w-[350px]  lg:w-[400px]"
+        className="w-[350px]  lg:w-[400px] z-20"
         onValueChange={handleTabChange}
       >
         <TabsList className="grid w-full grid-cols-2">

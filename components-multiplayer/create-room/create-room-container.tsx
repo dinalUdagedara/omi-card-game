@@ -154,6 +154,7 @@ const CreateRoomContainer = () => {
                         />
                         <Button
                           size={"icon"}
+                          disabled={!isRoomCreated}
                           className="ml-2 bg-amber-950 hover:bg-amber-900"
                           onClick={() =>
                             navigator.clipboard.writeText(privateLinkUrl)
@@ -164,11 +165,14 @@ const CreateRoomContainer = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-end">
-                      <Link href={`/multiplayer/start/private/${roomName}`}>
-                        <Button className="bg-amber-950 text-white hover:bg-amber-900">
+                      <Button
+                        disabled={!isRoomCreated}
+                        className="bg-amber-950 text-white hover:bg-amber-900"
+                      >
+                        <Link href={`/multiplayer/start/private/${roomName}`}>
                           Next
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </CardFooter>
                   </Card>
                 </TabsContent>
@@ -195,11 +199,14 @@ const CreateRoomContainer = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-end">
-                      <Link href={`/multiplayer/start/public/${roomName}`}>
-                        <Button className="bg-amber-950 text-white hover:bg-amber-900">
+                      <Button
+                        disabled={!isRoomCreated}
+                        className="bg-amber-950 text-white hover:bg-amber-900"
+                      >
+                        <Link href={`/multiplayer/start/public/${roomName}`}>
                           Next
-                        </Button>
-                      </Link>
+                        </Link>{" "}
+                      </Button>
                     </CardFooter>
                   </Card>
                 </TabsContent>

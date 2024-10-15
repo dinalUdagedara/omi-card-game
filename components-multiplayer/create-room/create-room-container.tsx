@@ -1,5 +1,4 @@
 "use client";
-
 import { FaRegCopy } from "react-icons/fa6";
 import {
   Card,
@@ -27,7 +26,7 @@ import { Button } from "@/components/ui/button";
 const CreateRoomContainer = () => {
   const [roomName, setRoomName] = useState<string>(generateRandomName());
   const [isRoomCreated, setIsRoomCreated] = useState<boolean>(false);
-  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(true);
+  const [isRoomPrivate, setIsRoomPrivate] = useState<boolean>(false);
   const [privateLinkUrl, setPrivateLinkUrl] = useState<string>(
     "Link Will Appear Here"
   );
@@ -181,7 +180,7 @@ const CreateRoomContainer = () => {
                         Create a Public Room
                       </CardTitle>
                       <CardDescription className="text-black text-md text-center font-semibold pt-3">
-                        Create a Public Room Play With Complete Strangers
+                        Create a Public Room to Play With Complete Strangers
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

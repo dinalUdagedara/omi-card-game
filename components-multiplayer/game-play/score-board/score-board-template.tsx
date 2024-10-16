@@ -1,15 +1,64 @@
 "use client";
+import { useStore } from "@/store/state";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import Image from "next/image";
+import ScoreBoardCover from "@/public/assets/images/backgrounds/file.png";
+import { useEffect } from "react";
+import NotificationCardTemplate from "@/components-multiplayer/game-play/game-board/game-board-template";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import logoIcon from "@/public/assets/images/logo-icon.png";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const NotificationCard = () => {
+interface ScoreBoardTemplateProps {
+  userID: Id<"players">;
+  roomName: string;
+}
+
+const ScoreBoardTemplate = ({ userID, roomName }: ScoreBoardTemplateProps) => {
+  const team1Points = useStore((state) => state.team1Points);
+  const team2Points = useStore((state) => state.team2Points);
+  const setTeam1Points = useStore((state) => state.setTeam1Points);
+  const setTeam2Points = useStore((state) => state.setTeam2Points);
+  const trumpSuit = useStore((state) => state.trumpSuit);
+  const teamPoints = useQuery(api.gameLogic.getTeamPoints, {
+    roomName: roomName,
+  });
+  const myTeam = useQuery(api.gameLogic.getMyTeam, {
+    userId: userID,
+    roomName: roomName,
+  });
+
+  function setPoints() {
+    console.log("myteam", myTeam);
+    if (myTeam === 1) {
+      const myTeamPoints = teamPoints?.team1;
+      const opponentTeamPoints = teamPoints?.team2;
+      setTeam1Points(myTeamPoints ?? 0);
+      setTeam2Points(opponentTeamPoints ?? 0);
+    }
+    if (myTeam === 2) {
+      const myTeamPoints = teamPoints?.team2;
+      const opponentTeamPoints = teamPoints?.team1;
+      setTeam1Points(myTeamPoints ?? 0);
+      setTeam2Points(opponentTeamPoints ?? 0);
+    }
+  }
+
+  useEffect(() => {
+    console.log("teamPoints", teamPoints);
+    if (teamPoints) {
+      setPoints();
+    }
+  }, [teamPoints, trumpSuit]);
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative w-[400px] h-[400px]  rounded-lg  shadow-lg inv-rad inv-rad-8 ">
+      <div className="relative h-[80px] w-[200px] lg:w-[400px] lg:h-[100px]  rounded-lg  shadow-lg inv-rad inv-rad-12">
         <Image
           alt="Mountains"
           src={modeCardBackground}
@@ -19,7 +68,7 @@ const NotificationCard = () => {
             objectFit: "fill",
           }}
         />
-        <div className="absolute inset-0 text-black m-2 inv-rad inv-rad-8  flex  border-2">
+        <div className="absolute inset-0 text-black m-2 inv-rad inv-rad-12  flex  border-2">
           <Image
             alt="Mountains"
             src={notificaitonBackGround}
@@ -30,29 +79,35 @@ const NotificationCard = () => {
             }}
           />
           {/* Card Header */}
-          <div className="flex flex-col  justify-start z-20 w-full items-center p-5">
-            <div>
-              <Image
-                src={logoIcon}
-                width={100}
-                height={100}
-                alt="Picture of the author"
-              />
-            </div>
-            <div className="mt-5">
-              <h1 className="text-3xl font-bold">No Rooms Yet ...</h1>
-            </div>
-            <div className="mt-5">
-              <p className="">Create one Using the button Below</p>
+          <div className="flex   justify-center z-20 w-full items-center gap-5 p-5">
+            {/* <div className="z-20 flex  justify-center gap-10 items-center bg-gradient-to-t from-amber-800 via-amber-900 to-amber-950 text-white w-[450px] py-3 rounded-b-full shadow-lg  hover:scale-105  duration-300 ease-in-out"> */}
+            <div className="z-20 flex flex-col justify-center items-center space-y-2">
+              <div className="text-4xl font-bold">{team1Points}</div>
+              <div className="text-sm uppercase tracking-wide">Ours</div>
             </div>
 
-            <div className="mt-8">
-              <Link href={"/multiplayer/create-room"}>
-                <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
-                  Create a Room
-                </Button>
-              </Link>
+            <div>
+              {trumpSuit ? (
+                <Avatar className=" w-16 h-16 p bg-white rounded-full shadow-lg  border-indigo-300">
+                  <AvatarImage
+                    src={`/assets/suits/${trumpSuit}.png`}
+                    className="rounded-full"
+                  />
+                  <AvatarFallback className="text-lg font-semibold">
+                    Trump
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <div className="flex flex-row justify-between w-full items-center z-20">
+                  <Skeleton className="h-14 w-14 rounded-full bg-blue-300" />
+                </div>
+              )}
             </div>
+            <div className="z-20 flex flex-col justify-center items-center space-y-2">
+              <div className="text-4xl font-bold">{team2Points}</div>
+              <div className="text-sm uppercase tracking-wide">Theirs</div>
+            </div>
+            {/* </div>{" "} */}
           </div>
         </div>
       </div>
@@ -60,4 +115,4 @@ const NotificationCard = () => {
   );
 };
 
-export default NotificationCard;
+export default ScoreBoardTemplate;

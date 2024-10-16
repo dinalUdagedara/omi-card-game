@@ -76,12 +76,12 @@ export function SuitSelectorMobileMultiplayer({
                       }}
                     >
                       {/* <span className="text-2xl font-semibold">{suit.suit}</span> */}
-                      <span className="flex justify-center items-center rounded-3xl">
+                      <span className="flex justify-center items-center rounded-3xl bg-black ">
                         <Image
                           src={suit.logoUrl}
                           alt="Suit Image"
-                          height={60}
-                          width={60}
+                          height={80}
+                          width={80}
                           className="rounded-full"
                         />
                       </span>

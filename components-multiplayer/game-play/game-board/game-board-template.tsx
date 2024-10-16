@@ -16,7 +16,7 @@ interface NotificationCardTemplateProps {
     
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative w-[400px] min-h-[430px] h-full shadow-lg">
+      <div className="relative w-[200px] lg:w-[400px] lg:min-h-[430px] h-[250px] md:h-full shadow-lg">
         <Image
           alt="Mountains"
           src={modeCardBackground}

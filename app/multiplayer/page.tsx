@@ -2,7 +2,7 @@
 import PoolUI from "@/components-multiplayer/pool-ui";
 import Lottie from "lottie-react";
 import ProfileAnimation from "@/public/assets/lottie-animations/enter-name.json";
-import UserNameInput from "@/components-multiplayer/username-input";
+import UserNameInput from "@/components-multiplayer/user-name-input/user-name-input";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -3,18 +3,20 @@ import { api } from "@/convex/_generated/api";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import MyName from "./my-name";
 import OpponentsName from "./opponents-name";
-import { Button } from "@nextui-org/react";
-import Lottie from "lottie-react";
-import waiting from "@/public/assets/lottie-animations/waiting-to-people.json";
+import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import logoIcon from "@/public/assets/images/logo-icon.png";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   roomId: string;
 };
 
-const StartGamePoolPublic = (props: Props) => {
+const StartGamePoolPublicNew = (props: Props) => {
   const router = useRouter();
   const hasJoinedRoom = useRef(false);
   const roomId = props.roomId;
@@ -102,40 +104,100 @@ const StartGamePoolPublic = (props: Props) => {
   useEffect(() => {
     getUsername();
   }, [roomdataFromDB]);
+
+  useEffect(() => {
+    // Ensure the code only runs in the browser
+    if (typeof window !== "undefined") {
+      const storedUserName = localStorage.getItem("userName");
+      if (storedUserName) {
+        setUserName(storedUserName);
+      }
+    }
+  }, []);
   return (
-    <div className="flex flex-col h-full min-h-screen">
-      <div className=" justify-center items-center">
-        {isOpponentJoinedDB && userName ? (
-          <div className="flex flex-col gap- lg:gap-20 p-10">
-            <div className="flex justify-center gap-10">
-              <OpponentsName userName={userName} roomName={roomId} />
+    <div className="flex justify-center w-full items-center min-h-screen">
+      <div className=" relative w-[1000px] min-h-[650px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8">
+        <Image
+          alt="Mountains"
+          src={modeCardBackground}
+          fill
+          sizes="(min-width: 808px) 50vw, 100vw"
+          style={{
+            objectFit: "fill",
+          }}
+        />
+        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  border-2">
+          <Image
+            alt="Mountains"
+            src={notificaitonBackGround}
+            fill
+            sizes="(min-width: 808px) 50vw, 100vw"
+            style={{
+              objectFit: "fill",
+            }}
+          />
+          {/* Card Header */}
+          <div className="flex flex-col  justify-start z-20 w-full items-center p-5">
+            <div>
+              <Image
+                src={logoIcon}
+                width={100}
+                height={100}
+                alt="Picture of the author"
+              />
             </div>
-            <div className="flex flex-col lg:flex-row justify-center items-center">
-              <MyName />
-              <div className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}>
-                <Button
-                  disabled={!isAllJoined}
-                  onClick={handleStartGame}
-                  className="h-20 w-80 rounded-2xl"
-                >
-                  Start Game
-                </Button>
+
+            <div className="mt-5 flex flex-col justify-center items-center w-full">
+              <div>
+                <h1 className="text-3xl font-bold underline">Waiting Room</h1>
+              </div>
+              <div>
+                {isOpponentJoinedDB && userName ? (
+                  <div>
+                    {!isAllJoined && (
+                      <div className="pt-2 text-center text-lg">
+                        "We're just waiting for all players to join! Hang
+                        tight."
+                      </div>
+                    )}
+
+                    <div className="flex justify-center">
+                      <OpponentsName userName={userName} roomName={roomId} />
+                    </div>
+                    <div className="flex flex-row justify-center items-center pt-2">
+                      <MyName />
+                      <div
+                        className={`${isRoomCreatorDB ? "flex" : " hidden"}`}
+                      >
+                        <Button
+                          disabled={!isAllJoined}
+                          onClick={handleStartGame}
+                          className=" h-20 w-80 inv-rad-10 inv-rad bg-amber-950 text-white hover:bg-amber-900 text-lg"
+                        >
+                          Start Game
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col justify-center h-full items-center">
+                    <div className="pt-6 text-center text-lg">
+                      {/* // ? "We're just waiting for all players to join! Hang tight." */}
+                      "No players have joined yet. Waiting for others to
+                      join..."
+                    </div>
+                    <div>
+                      <MyName />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col lg:flex-row justify-center h-full min-h-screen items-center">
-            <div className="w-1/2">
-              <Lottie animationData={waiting} loop={false} />
-            </div>
-            <div>
-              <MyName />
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default StartGamePoolPublic;
+export default StartGamePoolPublicNew;

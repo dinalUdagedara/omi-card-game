@@ -5,6 +5,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
+import ScoreBoardMobileMultiplayer from "../score-board/score-board-mobile";
 
 interface PenaltycardsMultiplayerProps {
   roomName: string;
@@ -58,8 +59,9 @@ const PenaltycardsMultiplayer = ({
 
   return (
     <div>
-      <div className="flex gap-5 mx-5">
+      <div className="flex mx-5">
         <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
+        <ScoreBoardMobileMultiplayer userID={userID} roomName={roomName} />
         <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
       </div>
     </div>

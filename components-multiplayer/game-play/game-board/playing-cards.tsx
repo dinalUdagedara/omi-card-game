@@ -178,7 +178,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   ]);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center mt-10">
+    <div className="relative min-w-[400px] h-full flex items-center justify-center py-16 px-20 pr-24 ">
       {winningCard ? (
         <>
           <div>

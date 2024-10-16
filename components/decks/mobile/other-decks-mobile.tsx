@@ -10,7 +10,7 @@ interface UserDeckProps {
 
 export function OtherDecksMobile({ userHand }: UserDeckProps) {
   return (
-    <div className="h-full w-full flex justify-center items-center  p-4 rounded-lg ">
+    <div className="h-full w-full flex justify-center items-center  p-2 rounded-lg ">
       <div className="relative flex justify-center items-center">
         {userHand.map((card, index) => (
           <div

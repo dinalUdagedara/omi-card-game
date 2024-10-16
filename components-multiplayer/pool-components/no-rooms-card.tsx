@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const NotificationCard = () => {
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative w-[400px] h-[400px]  p- rounded-lg  shadow-lg inv-rad inv-rad-8 ">
+      <div className="relative w-[400px] h-[400px]  rounded-lg  shadow-lg inv-rad inv-rad-8 ">
         <Image
           alt="Mountains"
           src={modeCardBackground}
@@ -19,7 +19,7 @@ const NotificationCard = () => {
             objectFit: "fill",
           }}
         />
-        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  border-2">
+        <div className="absolute inset-0 text-black m-2 inv-rad inv-rad-8  flex  border-2">
           <Image
             alt="Mountains"
             src={notificaitonBackGround}

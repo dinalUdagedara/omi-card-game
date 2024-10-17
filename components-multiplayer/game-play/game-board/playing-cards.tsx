@@ -13,6 +13,7 @@ import Winner1Multiplayer from "./collecting-cards/winner-1-multiplayer";
 import Winner2Multiplayer from "./collecting-cards/winner-2-multiplayer";
 import Winner3Multiplayer from "./collecting-cards/winner-3-multiplayer";
 import Winner4Multiplayer from "./collecting-cards/winner-4-multiplayer";
+import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
 
 interface PlayingCardsProps {
   playingCards: {
@@ -178,10 +179,10 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   ]);
 
   return (
-    <div className="relative min-w-[400px] h-full flex items-center justify-center py-16 px-20 pr-24 ">
+    <div className="flex bg- w-full py-12 px-28">
       {winningCard ? (
         <>
-          <div>
+          <div className="w-full h-ful">
             <div className="flex flex-col">
               {winningCard === myCard && <Winner1Multiplayer />}
               {winningCard === opponent1Card && <Winner2Multiplayer />}
@@ -191,8 +192,8 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           </div>
         </>
       ) : (
-        <div className="flex flex-row w-full h-full justify-center items-center min-h-72  gap-2">
-          <div className=" min-h-72 justify-center items-center flex w-full">
+        <div className="flex flex-row w-full h-full justify-center items-center gap-2">
+          <div className=" justify-center items-center flex w-full ">
             {opponent2Card && !winningCard && (
               <div className="">
                 <motion.div
@@ -201,13 +202,13 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8 }}
                 >
-                  <CardComponentMultiplayer card={opponent2Card} />
+                  <CardComponentMobileMultiplayer card={opponent2Card} />
                 </motion.div>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col justify-between h-full gap-10 w-full  min-h-72">
+          <div className="flex flex-col justify-between gap-5 w-full lg:min-h-[250px]">
             <div>
               {teammateCard && !winningCard && (
                 <motion.div
@@ -216,7 +217,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
                   animate={{ opacity: 1, y: 0 }} // end to these values
                   transition={{ duration: 0.8 }} // Animation duration
                 >
-                  <CardComponentMultiplayer card={teammateCard} />
+                  <CardComponentMobileMultiplayer card={teammateCard} />
                 </motion.div>
               )}
             </div>
@@ -224,27 +225,27 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
             <div>
               {myCard && !winningCard && (
                 <motion.div
-                  className=" flex justify-center"
+                  className="flex justify-center"
                   initial={{ opacity: 0, y: 100 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <CardComponentMultiplayer card={myCard} />
+                  <CardComponentMobileMultiplayer card={myCard} />
                 </motion.div>
               )}
             </div>
           </div>
 
-          <div className=" min-h-72 justify-center items-center flex w-full">
+          <div className="justify-center items-center flex w-full">
             {opponent1Card && !winningCard && (
               <>
                 <motion.div
-                  className=" flex items-center"
+                  className="flex items-center"
                   initial={{ opacity: 0, x: 50 }} // Start  values
                   animate={{ opacity: 1, x: 0 }} // end to these values
                   transition={{ duration: 0.8 }} // Animation duration
                 >
-                  <CardComponentMultiplayer card={opponent1Card} />
+                  <CardComponentMobileMultiplayer card={opponent1Card} />
                 </motion.div>
               </>
             )}

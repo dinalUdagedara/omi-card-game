@@ -28,6 +28,7 @@ import player1 from "@/public/assets/user-avatars/player1.png";
 import player2 from "@/public/assets/user-avatars/player2.png";
 import player3 from "@/public/assets/user-avatars/player3.png";
 import player4 from "@/public/assets/user-avatars/player4.png";
+import NameCardTemplate from "./name-card/name-card-template";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -384,7 +385,7 @@ const GamePlayMultiplayer = () => {
       }
 
       {roomId && isRoomActive && userID && (
-        <div className="z-20 flex justify-center items-center flex-col">
+        <div className="z-20 flex justify-center items-center  flex-col">
           {/* <div className="w-full">
             <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
           </div> */}
@@ -396,7 +397,7 @@ const GamePlayMultiplayer = () => {
 
       <div>
         <div className="flex justify-center z-20">
-          <div className=" flex  gap-4 justify-center items-center mb-4">
+          <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
             <div className="">
               <OtherDecksMobile userHand={exampleCardSet} />
             </div>
@@ -419,11 +420,13 @@ const GamePlayMultiplayer = () => {
               </Avatar>
             </motion.div>
 
-            <div>{teamMember || "Waiting for opponent..."}</div>
+            <div className="text-center ">
+              <NameCardTemplate>{teamMember || "Waiting.."}</NameCardTemplate>
+            </div>
           </div>
         </div>
         <div className="flex justify-center gap-4 bg-white z-20 ">
-          <div className="flex justify-center items-center ">
+          <div className="flex justify-center items-center z-20 ">
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
               <motion.div
                 className=" rounded-full"
@@ -438,7 +441,11 @@ const GamePlayMultiplayer = () => {
                   duration: 0.8,
                 }}
               >
-                <div>{opponent_2 || "Waiting for opponent..."}</div>
+                <div className="text-center py-2">
+                  <NameCardTemplate>
+                    {opponent_2 || "Waiting.."}
+                  </NameCardTemplate>
+                </div>
                 <Avatar className="w-32 h-32 shadow-md">
                   <AvatarImage src={`/assets/user-avatars/player4.png`} />
                   <AvatarFallback>Dp</AvatarFallback>
@@ -474,7 +481,7 @@ const GamePlayMultiplayer = () => {
           </div> */}
 
             <NoticeCardTemplate>
-              <div className="w-full h-full justify-center  items-center z-20 ">
+              <div className="w-full h-full justify-center  items-center z-20 bg-  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
                 {roomId && userID && isRoomActive && (
                   <GameBoardMobileMultiplayer
                     onRestart={restartGame}
@@ -489,7 +496,7 @@ const GamePlayMultiplayer = () => {
               </div>
             </NoticeCardTemplate>
           </div>
-          <div className=" flex justify-center items-center   ">
+          <div className=" flex justify-center items-center  z-20 ">
             <div className="">
               <div className="flex flex-col justify-center items-center  min-w-[70px]">
                 <OtherDecksMobile userHand={exampleCardSet} />
@@ -511,7 +518,11 @@ const GamePlayMultiplayer = () => {
                     <AvatarImage src={`/assets/user-avatars/player2.png`} />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
-                  <div>{opponent_1 || "Waiting for opponent..."}</div>
+                  <div className="text-center py-2">
+                    <NameCardTemplate>
+                      {opponent_1 || "Waiting.."}
+                    </NameCardTemplate>
+                  </div>
                 </motion.div>
               </div>
             </div>

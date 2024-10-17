@@ -58,7 +58,7 @@ const ScoreBoardTemplate = ({ userID, roomName }: ScoreBoardTemplateProps) => {
   }, [teamPoints, trumpSuit]);
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative h-[80px] w-[200px] lg:w-[400px] lg:h-[100px]  rounded-lg  shadow-lg inv-rad inv-rad-12">
+      <div className="relative h-[80px] w-[200px] lg:w-[470px] lg:h-[100px]  rounded-lg  shadow-lg inv-rad inv-rad-12">
         <Image
           alt="Mountains"
           src={modeCardBackground}

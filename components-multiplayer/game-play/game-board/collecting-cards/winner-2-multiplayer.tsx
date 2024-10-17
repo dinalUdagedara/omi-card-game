@@ -1,4 +1,5 @@
 "use client";
+import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
@@ -29,7 +30,7 @@ const Winner2Multiplayer = () => {
               animate={{ opacity: 0, x: 400 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
-              <CardComponentMultiplayer card={opponent2Card} />
+              <CardComponentMobileMultiplayer card={opponent2Card} />
             </motion.div>
           )}
 
@@ -40,7 +41,7 @@ const Winner2Multiplayer = () => {
                 animate={{ opacity: 0, x: 200 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
-                <CardComponentMultiplayer card={teammateCard} />
+                <CardComponentMobileMultiplayer card={teammateCard} />
               </motion.div>
             )}
 
@@ -50,7 +51,7 @@ const Winner2Multiplayer = () => {
                 animate={{ opacity: 0, x: 200 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
-                <CardComponentMultiplayer card={myCard} />
+                <CardComponentMobileMultiplayer card={myCard} />
               </motion.div>
             )}
           </div>
@@ -75,7 +76,7 @@ const Winner2Multiplayer = () => {
                   animate={{ opacity: 0, x: 100 }}
                   transition={{ duration: 0.8, delay: 2.0 }}
                 >
-                  <CardComponentMultiplayer card={opponent1Card} />
+                  <CardComponentMobileMultiplayer card={opponent1Card} />
                 </motion.div>
               </motion.div>
             </>

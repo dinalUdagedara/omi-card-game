@@ -24,6 +24,10 @@ import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
 import { allPlayersWaiting } from "@/convex/rooms";
 import NoticeCardTemplate from "./game-board/game-board-template";
+import player1 from "@/public/assets/user-avatars/player1.png";
+import player2 from "@/public/assets/user-avatars/player2.png";
+import player3 from "@/public/assets/user-avatars/player3.png";
+import player4 from "@/public/assets/user-avatars/player4.png";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -391,7 +395,7 @@ const GamePlayMultiplayer = () => {
       )}
 
       <div>
-        <div className="flex justify-center z-20  ">
+        <div className="flex justify-center z-20">
           <div className=" flex  gap-4 justify-center items-center mb-4">
             <div className="">
               <OtherDecksMobile userHand={exampleCardSet} />
@@ -410,8 +414,8 @@ const GamePlayMultiplayer = () => {
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-14 h-14 shadow-md rounded-full">
-                <AvatarImage src={`/assets/player3.png`} />
+              <Avatar className="w-36 h-36 shadow-md rounded-full">
+                <AvatarImage src={`/assets/user-avatars/player3.png`} />
               </Avatar>
             </motion.div>
 
@@ -435,8 +439,8 @@ const GamePlayMultiplayer = () => {
                 }}
               >
                 <div>{opponent_2 || "Waiting for opponent..."}</div>
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player4.png`} />
+                <Avatar className="w-32 h-32 shadow-md">
+                  <AvatarImage src={`/assets/user-avatars/player4.png`} />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
@@ -503,8 +507,8 @@ const GamePlayMultiplayer = () => {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
-                    <AvatarImage src={`/assets/player2.png`} />
+                  <Avatar className="w-36 h-36 shadow-md">
+                    <AvatarImage src={`/assets/user-avatars/player2.png`} />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                   <div>{opponent_1 || "Waiting for opponent..."}</div>
@@ -515,7 +519,7 @@ const GamePlayMultiplayer = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-amber-800 via-amber-900 to-amber-950  relative mt-5">
+      <div className="bg-gradient-to-b from-amber-800 via-amber-900 to-amber-950  relative mt-5 ">
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive ? (
@@ -549,8 +553,8 @@ const GamePlayMultiplayer = () => {
               duration: 0.8,
             }}
           >
-            <Avatar className="w-16 h-16 ">
-              <AvatarImage src={`/assets/user.jpg`} />
+            <Avatar className="w-40 h-40 ">
+              <AvatarImage src={`/assets/user-avatars/player1.png`} />
               <AvatarFallback>
                 <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
               </AvatarFallback>

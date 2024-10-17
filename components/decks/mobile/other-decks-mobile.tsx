@@ -17,7 +17,7 @@ export function OtherDecksMobile({ userHand }: UserDeckProps) {
             key={index}
             className={`relative transform transition-transform duration-200  hover:shadow-lg `}
             style={{
-              marginLeft: index === 0 ? "0" : "-3rem",
+              marginLeft: index === 0 ? "0" : "-2rem",
             }}
           >
             <motion.div

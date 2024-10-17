@@ -101,7 +101,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               key={index}
               className="absolute"
               style={{
-                transform: `rotate(${angle}deg) translateY(-70px)`,
+                transform: `rotate(${angle}deg) translateY(-50px)`,
                 transformOrigin: "bottom center",
               }}
             >

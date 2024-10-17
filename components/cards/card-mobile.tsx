@@ -6,7 +6,7 @@ import Image from "next/image";
 const CardComponentMobile = ({ card }: { card: Card }) => {
 
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
-  const imgUrl = `/assets/cards/${card.value}_of_${card.suit}.png`;
+  const imgUrl = `/assets/cards-vintage/${card.value}_of_${card.suit}.png`;
 
   // Fetch the blurHash asynchronously when the component mounts
   useEffect(() => {
@@ -34,6 +34,7 @@ const CardComponentMobile = ({ card }: { card: Card }) => {
         alt="card"
         placeholder={blurHash ? "blur" : "empty"}
         blurDataURL={blurHash}
+        className="rounded-lg"
       />
     </div>
   );

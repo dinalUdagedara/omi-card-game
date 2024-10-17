@@ -5,7 +5,7 @@ import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
 
 const OtherCardComponent = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
-  const imgUrl = `/assets/cards/card-back.jpg`;
+  const imgUrl = `/assets/cards-vintage/card-back.png`;
 
   // Fetch the blurHash asynchronously when the component mounts
   useEffect(() => {
@@ -20,7 +20,7 @@ const OtherCardComponent = () => {
       <div>
         <Image
         className="rounded-md"
-          src={`/assets/cards/card-back.jpg`}
+          src={`/assets/cards-vintage/card-back.png`}
           width={80}
           height={80}
           alt="card"

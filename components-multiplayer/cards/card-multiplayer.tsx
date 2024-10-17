@@ -26,9 +26,7 @@ const CardComponentMultiplayer = ({
       : "text-black";
 
   return (
-    <div
-      className={`flex flex-row justify-center rounded-md items-center ${suitColor}`}
-    >
+    <div className={`flex flex-row justify-center items-center ${suitColor}`}>
       <Image
         src={imgUrl}
         width={100}
@@ -36,6 +34,7 @@ const CardComponentMultiplayer = ({
         alt="card"
         placeholder={blurHash ? "blur" : "empty"}
         blurDataURL={blurHash}
+        className="rounded-lg"
       />
     </div>
   );

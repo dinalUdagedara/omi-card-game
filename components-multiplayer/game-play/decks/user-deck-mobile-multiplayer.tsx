@@ -119,13 +119,14 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                 <button
                   disabled={!trumpSuit || !isUserTurn}
                   onClick={() => handleCardSelect(card)}
-                  className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
+                  className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none rounded-lg"
                 >
                   <motion.div
+                    className="rounded-lg"
                     initial={{ boxShadow: "none" }}
                     animate={{
                       boxShadow: isUserTurn
-                        ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
+                        ? "0 0 12px rgba(254 , 250 ,224 ,1)" // Glowing effect
                         : "none", // No shadow when it's not user's turn
                     }}
                     transition={{

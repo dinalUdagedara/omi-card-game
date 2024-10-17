@@ -14,10 +14,11 @@ const CardComponentUserDeck = ({ card }: { card: Card }) => {
       className={`flex flex-row justify-center rounded-md items-center ${suitColor}`}
     >
       <Image
-        src={`/assets/cards/${card.value}_of_${card.suit}.png`}
+        src={`/assets/cards-vintage/${card.value}_of_${card.suit}.png`}
         width={100}
         height={100}
         alt="card"
+             className="rounded-lg"
       />
     </div>
   );

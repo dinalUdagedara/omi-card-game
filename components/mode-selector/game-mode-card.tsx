@@ -28,7 +28,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
         <Card
           isFooterBlurred
           radius="lg"
-          className="col-span-12 sm:col-span-4 md:h-[500px] md:w-[350px] min-w-[300px] hover:scale-105"
+          className="col-span-12 sm:col-span-4 md:h-[500px] md:w-[350px] min-w-[300px]"
         >
           <CardHeader className="absolute z-10 flex-col !items-start rounded-none text-black ">
             <div

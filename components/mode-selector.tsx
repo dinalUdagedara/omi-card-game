@@ -10,6 +10,7 @@ import textArea from "@/public/assets/images/text-area.png";
 import { IoVolumeMuteOutline } from "react-icons/io5";
 import { VscUnmute } from "react-icons/vsc";
 import { ParticlesComponent } from "./particles/particles";
+import { motion } from "framer-motion";
 const spicy_rice = Spicy_Rice({
   subsets: ["latin"],
   weight: "400",
@@ -105,38 +106,53 @@ const ModeSelector = () => {
           onClick={handleClick}
           className="flex flex-col md:flex-row ml-20"
         >
-          <div className="lg:-rotate-6">
-            <Link href={"/practise"}>
-              <GameModeCard
-                topic="Warm Up Before the Challenge"
-                contentHeader="Ready to Test your Limits"
-                title="Practice Mode"
-                content="Test Your Limits Before Challenging"
-                nextMessage="Jump In"
-              />
-            </Link>
-          </div>
-
-          <div
-            // Sound Effects
-            onMouseEnter={handleHover}
-            onMouseLeave={handleHover}
-            onClick={handleClick}
-            className="md:rotate-6 md:-ml-8"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <Link href={"/multiplayer"}>
-              <GameModeCard
-                topic=" Compete with Players Worldwide"
-                contentHeader="Rooms Await.."
-                title="Multiplayer Mode"
-                content="Play With Complete Strangers or Create Private Rooms to Play with Your Friends"
-                nextMessage=" Dive in"
-              />
-            </Link>
-          </div>
+            <div className="lg:-rotate-6">
+              <Link href={"/practise"}>
+                <GameModeCard
+                  topic="Warm Up Before the Challenge"
+                  contentHeader="Ready to Test your Limits"
+                  title="Practice Mode"
+                  content="Test Your Limits Before Challenging"
+                  nextMessage="Jump In"
+                />
+              </Link>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <div
+              // Sound Effects
+              onMouseEnter={handleHover}
+              onMouseLeave={handleHover}
+              onClick={handleClick}
+              className="md:rotate-6 md:-ml-8"
+            >
+              <Link href={"/multiplayer"}>
+                <GameModeCard
+                  topic=" Compete with Players Worldwide"
+                  contentHeader="Rooms Await.."
+                  title="Multiplayer Mode"
+                  content="Play With Complete Strangers or Create Private Rooms to Play with Your Friends"
+                  nextMessage=" Dive in"
+                />
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </div>
-      <ParticlesComponent />
+      {/* <ParticlesComponent /> */}
     </div>
   );
 };

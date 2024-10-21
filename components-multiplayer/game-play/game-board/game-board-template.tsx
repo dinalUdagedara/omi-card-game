@@ -14,8 +14,8 @@ const NotificationCardTemplate: React.FC<NotificationCardTemplateProps> = ({
 }) => {
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative w-[200px] lg:w-[550px] lg:min-h-[350px] h-[250px] md:h-full shadow-lg">
-        <Image
+      <div className="relative w-[200px] lg:w-[550px] lg:min-h-[350px] h-[250px] md:h-full shadow-lg bg-black rounded-2xl">
+        {/* <Image
           alt="Mountains"
           src={modeCardBackground}
           fill
@@ -24,7 +24,7 @@ const NotificationCardTemplate: React.FC<NotificationCardTemplateProps> = ({
             objectFit: "fill",
           }}
           className="rounded-2xl "
-        />
+        /> */}
         <div className="absolute inset-0 text-black m-2 flex">
           <Image
             alt="Mountains"

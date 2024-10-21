@@ -91,7 +91,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }
 
   return (
-    <div className="h-16 w-96 flex justify-center mr-5">
+    <div className="h-2 w-96 flex justify-center mr-5 ">
       <div className="flex justify-center">
         {myCardSet?.map((card, index) => {
           const angle = (index - (myCardSet.length - 1) / 2) * 10;
@@ -101,7 +101,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               key={index}
               className="absolute"
               style={{
-                transform: `rotate(${angle}deg) translateY(-50px)`,
+                transform: `rotate(${angle}deg) translateY(-110px)`,
                 transformOrigin: "bottom center",
               }}
             >

@@ -534,7 +534,7 @@ const GamePlayMultiplayer = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-amber-800 via-amber-900 to-amber-950  relative mt-5  rounded-t-full">
+      <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900  relative mt-20  rounded-t-full">
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive ? (

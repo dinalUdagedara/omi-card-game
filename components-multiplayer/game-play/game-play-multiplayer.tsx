@@ -416,7 +416,7 @@ const GamePlayMultiplayer = () => {
               }}
             >
               <Avatar className="w-36 h-36 shadow-md rounded-full">
-                <AvatarImage src={`/assets/user-avatars/player3.png`} />
+                <AvatarImage src={`/assets/images/user-avatars/person7.png`} />
               </Avatar>
             </motion.div>
 
@@ -447,7 +447,9 @@ const GamePlayMultiplayer = () => {
                   </NameCardTemplate>
                 </div>
                 <Avatar className="w-32 h-32 shadow-md">
-                  <AvatarImage src={`/assets/user-avatars/player4.png`} />
+                  <AvatarImage
+                    src={`/assets/images/user-avatars/person7.png`}
+                  />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
@@ -515,7 +517,9 @@ const GamePlayMultiplayer = () => {
                   }}
                 >
                   <Avatar className="w-36 h-36 shadow-md">
-                    <AvatarImage src={`/assets/user-avatars/player2.png`} />
+                    <AvatarImage
+                      src={`/assets/images/user-avatars/person7.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                   <div className="text-center py-2">
@@ -530,7 +534,7 @@ const GamePlayMultiplayer = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-amber-800 via-amber-900 to-amber-950  relative mt-5 ">
+      <div className="bg-gradient-to-b from-amber-800 via-amber-900 to-amber-950  relative mt-5  rounded-t-full">
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive ? (

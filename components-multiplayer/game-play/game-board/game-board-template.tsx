@@ -1,7 +1,7 @@
 "use client";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
-import notificaitonBackGround from "@/public/assets/images/backgrounds/game-board-background.png";
-// import notificaitonBackGround from "@/public/assets/images/backgrounds/game-board-background6.png";
+import notificaitonBackGround from "@/public/assets/background.png";
+
 import Image from "next/image";
 import { ReactNode } from "react";
 

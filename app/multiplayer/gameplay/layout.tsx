@@ -1,5 +1,5 @@
 import Header from "@/components/header";
-import background from "@/public/assets/images/backgrounds/game-room-background.png"
+import background from "@/public/assets/images/backgrounds/game-room-background.png";
 import Image from "next/image";
 export default function MultiplayerLayout({
   children,
@@ -9,7 +9,7 @@ export default function MultiplayerLayout({
   return (
     <section>
       {/* <Header /> */}
-      <div className="absolute inset-0 p-20">
+      {/* <div className="absolute inset-0 p-20">
         <Image
           alt="Mountains"
           src={background}
@@ -20,7 +20,8 @@ export default function MultiplayerLayout({
             objectFit: "cover",
           }}
         />
-      </div>
+      </div> */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent/60 to-transparent/50 opacity-100" />
       {children}
     </section>
   );

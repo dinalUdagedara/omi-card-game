@@ -29,7 +29,6 @@ export function SuitSelectorMobileMultiplayer({
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
   const updateTrumpSetter = useMutation(api.gameLogic.updateTrumpSetter);
-  const replacePlayerTurn = useMutation(api.gameLogic.replacePlayerTurn);
 
   function handleSuitSelected(suit: Suit) {
     setSelectedSuit(suit);
@@ -45,10 +44,6 @@ export function SuitSelectorMobileMultiplayer({
         roomName,
         userID,
       });
-      replacePlayerTurn({
-        roomName:roomName,
-        userId:userID
-      })
     }
   }
   return (
@@ -61,7 +56,7 @@ export function SuitSelectorMobileMultiplayer({
               className="w-full pl-1 basis-20 md:basis-1/2 lg:basis-1/3"
             >
               <div className="p-1">
-                <Card className="hover:scale-110 bg-slate-300 rounded-2xl">
+                <Card className="hover:scale-110 bg-slate-200 rounded-2xl">
                   <CardContent
                     className={` ${
                       selectedSuit === suit.suit
@@ -76,12 +71,12 @@ export function SuitSelectorMobileMultiplayer({
                       }}
                     >
                       {/* <span className="text-2xl font-semibold">{suit.suit}</span> */}
-                      <span className="flex justify-center items-center rounded-3xl bg-black ">
+                      <span className="flex justify-center items-center rounded-3xl">
                         <Image
                           src={suit.logoUrl}
                           alt="Suit Image"
-                          height={80}
-                          width={80}
+                          height={60}
+                          width={60}
                           className="rounded-full"
                         />
                       </span>

@@ -68,7 +68,7 @@ const ScoreBoardTemplate = ({ userID, roomName }: ScoreBoardTemplateProps) => {
             objectFit: "fill",
           }}
         />
-        <div className="absolute inset-0 text-black m-2 inv-rad inv-rad-12  flex  border-2">
+        <div className="absolute inset-0 text-black m-2 inv-rad inv-rad-12  flex ">
           <Image
             alt="Mountains"
             src={notificaitonBackGround}
@@ -91,7 +91,7 @@ const ScoreBoardTemplate = ({ userID, roomName }: ScoreBoardTemplateProps) => {
                 <Avatar className=" w-16 h-16 p bg-white rounded-full shadow-lg  border-indigo-300">
                   <AvatarImage
                     src={`/assets/suits/${trumpSuit}.png`}
-                    className="rounded-full"
+                    className="rounded-full p-2"
                   />
                   <AvatarFallback className="text-lg font-semibold">
                     Trump

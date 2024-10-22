@@ -22,11 +22,11 @@ const OpponentsName = (props: Props) => {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:gap-28 justify-items-center max-w-md mx-auto pt-4">
+      <div className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-2 lg:gap-28 justify-items-center max-w-md mx-auto pt-4">
         {otherUsers?.map((user) => (
           <div
             key={user}
-            className="flex flex-col justify-center items-center w-32 h-32  rounded-full  text-center gap-2"
+            className="flex flex-col justify-center items-center w-32 h-32  rounded-full  text-center gap-"
           >
             <div>
               <Image

@@ -73,7 +73,7 @@ const CreateRoomContainer = () => {
   }, []);
   return (
     <div className="flex justify-center items-center  h-full min-h-screen w-full ">
-      <div className="relative w-[400px] h-[600px]  p- rounded-lg  shadow-lg inv-rad inv-rad-8">
+      <div className="relative w-[350px] h-[550px] sm:w-[400px] sm:h-[600px] rounded-lg  shadow-lg inv-rad inv-rad-8">
         <Image
           alt="Mountains"
           src={modeCardBackground}
@@ -83,7 +83,7 @@ const CreateRoomContainer = () => {
             objectFit: "fill",
           }}
         />
-        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  border-2">
+        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex ">
           <Image
             alt="Mountains"
             src={notificaitonBackGround}

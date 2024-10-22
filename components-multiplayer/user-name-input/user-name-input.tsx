@@ -29,7 +29,7 @@ const UserNameInput = () => {
           <Card
             isFooterBlurred
             radius="lg"
-            className="col-span-12 sm:col-span-4 md:h-[450px] md:w-[350px] min-w-[300px]"
+            className="col-span-12 sm:col-span-4 h-[430px] md:h-[450px] md:w-[350px] min-w-[300px]"
           >
             <CardHeader className="absolute z-10 flex-col !items-start rounded-none text-black">
               <div
@@ -39,8 +39,8 @@ const UserNameInput = () => {
                 <Image alt="Content Cover" src={titleCover} fill />
                 {/* Text Overlay */}
                 <div className="absolute z-20 w-full h-full mt-3 px-3">
-                  <p className="uppercase font-bold text-xl">Enter Your Name</p>
-                  <h4 className="font-medium text-large">
+                  <p className="uppercase font-bold text-large sm:text-xl">Enter Your Name</p>
+                  <h4 className="font-medium text-medium sm:text-large">
                     choose a name to display other users
                   </h4>
                 </div>

@@ -8,7 +8,7 @@ const MyName = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   return (
     <>
-      <div className="rounded-full items-center justify-center flex flex-col h-60 w-60">
+      <div className="rounded-full items-center justify-center flex flex-col h-40 w-40 md:h-60 md:w-60 ">
         <div>
           {/* <Lottie animationData={person} loop={true} /> */}
           <Image

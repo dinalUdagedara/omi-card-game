@@ -33,7 +33,7 @@ const PublicRoomContainer = () => {
     }
   }, []);
   return (
-    <div className="relative min-w-[400px] min-h-[600px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8">
+    <div className="relative w-[350px] min-h-[550px] sm:w-[400px] sm:h-[600px] sm:min-w-[400px] sm:min-h-[600px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8">
       <Image
         alt="Mountains"
         src={modeCardBackground}
@@ -43,7 +43,7 @@ const PublicRoomContainer = () => {
           objectFit: "fill",
         }}
       />
-      <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  border-2">
+      <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  ">
         <Image
           alt="Mountains"
           src={notificaitonBackGround}

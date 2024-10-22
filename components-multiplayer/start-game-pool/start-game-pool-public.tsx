@@ -116,7 +116,7 @@ const StartGamePoolPublicNew = (props: Props) => {
   }, []);
   return (
     <div className="flex justify-center w-full items-center min-h-screen">
-      <div className=" relative w-[1000px] min-h-[650px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8">
+      <div className=" relative w-[400px] md:w-[1000px] min-h-[680px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8 ">
         <Image
           alt="Mountains"
           src={modeCardBackground}
@@ -126,7 +126,7 @@ const StartGamePoolPublicNew = (props: Props) => {
             objectFit: "fill",
           }}
         />
-        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  border-2">
+        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex ">
           <Image
             alt="Mountains"
             src={notificaitonBackGround}
@@ -143,7 +143,7 @@ const StartGamePoolPublicNew = (props: Props) => {
                 src={logoIcon}
                 width={100}
                 height={100}
-                alt="Picture of the author"
+                alt="Picture of the Icon"
               />
             </div>
 
@@ -164,7 +164,7 @@ const StartGamePoolPublicNew = (props: Props) => {
                     <div className="flex justify-center">
                       <OpponentsName userName={userName} roomName={roomId} />
                     </div>
-                    <div className="flex flex-row justify-center items-center pt-2">
+                    <div className="flex flex-col sm:flex-row justify-center items-center pt-4 gap-4">
                       <MyName />
                       <div
                         className={`${isRoomCreatorDB ? "flex" : " hidden"}`}
@@ -172,7 +172,7 @@ const StartGamePoolPublicNew = (props: Props) => {
                         <Button
                           disabled={!isAllJoined}
                           onClick={handleStartGame}
-                          className=" h-20 w-80 inv-rad-10 inv-rad bg-amber-950 text-white hover:bg-amber-900 text-lg"
+                          className=" h-16 w-72 sm:h-20 sm:w-80 inv-rad-10 inv-rad bg-amber-950 text-white hover:bg-amber-900 text-lg"
                         >
                           Start Game
                         </Button>

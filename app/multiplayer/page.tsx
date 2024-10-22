@@ -23,19 +23,7 @@ const Multiplayer = () => {
         <PoolUI />
       ) : (
         <div className="h-full min-h-screen flex flex-col lg:flex-row  gap-20 lg:gap-40 justify-center items-center">
-          <div className=" z-20">
-            {/* {!isAnimationLoaded && (
-              <div className="flex justify-center items-center  p-20">
-                <div className="flex  justify-center items-center">
-                  <Skeleton className="h-[220px] w-[170px] rounded-xl" />
-                </div>
-              </div>
-            )}
-            <Lottie
-              onDOMLoaded={handleAnimationComplete}
-              animationData={ProfileAnimation}
-              loop={true}
-            /> */}
+          <div className="hidden lg:flex z-20">
             <Image
               src={wizardImage}
               width={400}

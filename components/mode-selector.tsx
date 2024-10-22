@@ -57,7 +57,7 @@ const ModeSelector = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-100" />
       </div>
       {/* Background Music */}
-      <button
+      {/* <button
         className="absolute top-5 right-5 p-2 rounded-full"
         onClick={handlePlayMusic}
       >
@@ -70,7 +70,7 @@ const ModeSelector = () => {
           autoPlay
           loop
         />
-      )}
+      )} */}
       <audio ref={hoverAudioRef} src="/assets/audio-files/select.mp3" />
       <audio ref={clickAudioRef} src="/assets/audio-files/click.mp3" />
       {/* Audio for hover effect */}

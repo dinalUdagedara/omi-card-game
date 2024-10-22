@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import { ConvexClientProvider } from "@/components-multiplayer/ConvexClientProvider";
 import NextProvider from "./next-provider";
+import MusicPlayer from "./multiplayer/music/background-music";
 
 const inter = Inter({ subsets: ["latin"] });
 const cormorant = Cormorant({ subsets: ["latin"] });
@@ -36,7 +37,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ConvexClientProvider>
-            <NextProvider>{children}</NextProvider>
+            <NextProvider>
+              {/* Music Player */}
+
+              <MusicPlayer />
+
+              {children}
+            </NextProvider>
           </ConvexClientProvider>
           <Toaster />
         </ThemeProvider>

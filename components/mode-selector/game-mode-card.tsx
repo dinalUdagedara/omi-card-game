@@ -28,18 +28,15 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
         <Card
           isFooterBlurred
           radius="lg"
-          className="col-span-12 sm:col-span-4 md:h-[500px] md:w-[350px] min-w-[300px]"
+          className="col-span-12 sm:col-span-4 h-[330px] w-[180px] md:h-[500px] md:w-[350px] "
         >
-          <CardHeader className="absolute z-10 flex-col !items-start rounded-none text-black ">
-            <div
-              className="w-full"
-              style={{ position: "relative", height: "90px" }}
-            >
+          <CardHeader className="absolute z-10 flex-col !items-start rounded-none text-black p-2">
+            <div className="w-full h-[65px]  md:h-[90px] relative">
               <Image alt="Content Cover" src={titleCover} fill />
               {/* Text Overlay */}
               <div className="absolute z-20 w-full h-full mt-3">
-                <p className="uppercase font-bold text-xl">{title}</p>
-                <h4 className="font-medium text-large">{topic}</h4>
+                <p className="uppercase font-bold md:text-xl">{title}</p>
+                <h4 className="font-medium sm:text-large text-xs">{topic}</h4>
               </div>
             </div>
           </CardHeader>
@@ -57,7 +54,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
           <CardBody>
             <div className="w-full h-full flex items-center flex-col justify-between gap-2">
               <div className="h-full w-full mt-5">
-                <div style={{ position: "relative", height: "250px" }}>
+                <div className=" h-[130px]  md:h-[250px] relative">
                   <Image
                     className="px-2"
                     alt="Header Cover"
@@ -75,8 +72,8 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
                 </div>
               </div>
               <div className="flex bg-orange-900 w-full rounded-3xl shadow-md justify-between items-center p-2 -mt-4 z-20 px-4">
-                <p className="text-sm">{contentHeader}</p>
-                <p className="text-sm bg-black/20 p-2 rounded-xl">
+                <p className="text-xs sm:text-sm">{contentHeader}</p>
+                <p className="hidden sm:flex text-xs sm:text-sm bg-black/20 p-2 rounded-xl">
                   {nextMessage}
                 </p>
               </div>
@@ -92,8 +89,10 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
                   />
                   {/* Text Overlay */}
                   <div className="absolute z-20 w-full h-full flex flex-col px-5 py-5">
-                    <span className="text-lg font-bold">{title}</span>
-                    <p className="flex w-full text-md whitespace-normal leading-tight text-">
+                    <span className="text-sm sm:text-lg font-bold">
+                      {title}
+                    </span>
+                    <p className="flex w-full text-xs sm:text-md whitespace-normal leading-tight text-">
                       {content}
                     </p>
                   </div>

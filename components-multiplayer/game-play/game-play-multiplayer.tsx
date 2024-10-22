@@ -186,22 +186,6 @@ const GamePlayMultiplayer = () => {
     setTrumpSelected(true);
   }
 
-  function restartGame(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleSelectOtherHands(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleNextTurn(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleNextTurnofShuffling(): void {
-    throw new Error("Function not implemented.");
-  }
-
   useEffect(() => {
     if (playersInRoom) {
       setPlayersIDs(playersInRoom);
@@ -486,10 +470,6 @@ const GamePlayMultiplayer = () => {
               <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
                 {roomId && userID && isRoomActive && (
                   <GameBoardMobileMultiplayer
-                    onRestart={restartGame}
-                    onStart={handleSelectOtherHands}
-                    onNextStart={handleNextTurn}
-                    onShuffleAgain={handleNextTurnofShuffling}
                     onTrumpSelected={handleCloseDrawer}
                     roomName={roomId}
                     userID={userID}

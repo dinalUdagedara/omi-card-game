@@ -41,7 +41,7 @@ const ModeSelector = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen justify-start gap-[8vh] pt-10 z-10">
+    <div className="flex flex-col min-h-screen justify-start gap-[4vh] pt-10 z-10">
       <div className="absolute inset-0">
         <Image
           alt="Mountains"
@@ -99,12 +99,12 @@ const ModeSelector = () => {
           </div>
         </span>
       </div>
-      <div className="flex flex-col lg:flex-row h-full  justify-start  items-center">
+      <div className="flex flex-row h-full items-center mt-20 sm:mt-0">
         <div
           onMouseEnter={handleHover}
           onMouseLeave={handleHover}
           onClick={handleClick}
-          className="flex flex-col md:flex-row ml-20"
+          className="flex flex-row md:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -113,7 +113,7 @@ const ModeSelector = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            <div className="lg:-rotate-6">
+            <div className="-rotate-6">
               <Link href={"/practise"}>
                 <GameModeCard
                   topic="Warm Up Before the Challenge"
@@ -137,7 +137,7 @@ const ModeSelector = () => {
               onMouseEnter={handleHover}
               onMouseLeave={handleHover}
               onClick={handleClick}
-              className="md:rotate-6 md:-ml-8"
+              className="md:rotate-6 md:-ml-8 -ml-16 rotate-6"
             >
               <Link href={"/multiplayer"}>
                 <GameModeCard

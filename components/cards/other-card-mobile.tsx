@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import card from "./card";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
-
+import cardBack from "@/public/assets/cards/card-back.jpg";
 
 const OtherCardComponentMobile = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
@@ -21,8 +21,8 @@ const OtherCardComponentMobile = () => {
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
         <Image
-        className="rounded-md"
-          src={`/assets/cards-vintage/card-back.png`}
+          className="rounded-md"
+          src={cardBack}
           width={50}
           height={50}
           alt="card"

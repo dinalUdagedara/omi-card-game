@@ -2,7 +2,6 @@ import { Card } from "@/utils/types";
 import Image from "next/image";
 
 const CardComponentUserDeck = ({ card }: { card: Card }) => {
-
   // Choose a color based on the suit
   const suitColor =
     card.suit === "hearts" || card.suit === "diamonds"
@@ -14,11 +13,10 @@ const CardComponentUserDeck = ({ card }: { card: Card }) => {
       className={`flex flex-row justify-center rounded-md items-center ${suitColor}`}
     >
       <Image
-        src={`/assets/cards-vintage/${card.value}_of_${card.suit}.png`}
+        src={`/assets/cards/${card.value}_of_${card.suit}.png`}
         width={100}
         height={100}
         alt="card"
-             className="rounded-lg"
       />
     </div>
   );

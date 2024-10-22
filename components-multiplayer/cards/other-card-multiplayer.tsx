@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import card from "./card";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
-import cardBack from "@/public/assets/cards/card-back.jpg";
+import cardBack from "@/public/assets/cards-vintage/card-back.png";
 
-const OtherCardComponent = () => {
+const OtherCardComponentMultiplayer = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
-  const imgUrl = `/assets/cards/card-back.png`;
+  const imgUrl = `/assets/cards-vintage/card-back.png`;
 
   // Fetch the blurHash asynchronously when the component mounts
   useEffect(() => {
@@ -16,14 +15,15 @@ const OtherCardComponent = () => {
     };
     fetchBlurData();
   }, [imgUrl]);
+
   return (
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
         <Image
           className="rounded-md"
           src={cardBack}
-          width={80}
-          height={80}
+          width={50}
+          height={50}
           alt="card"
           placeholder={blurHash ? "blur" : "empty"}
           blurDataURL={blurHash}
@@ -33,4 +33,4 @@ const OtherCardComponent = () => {
   );
 };
 
-export default OtherCardComponent;
+export default OtherCardComponentMultiplayer;

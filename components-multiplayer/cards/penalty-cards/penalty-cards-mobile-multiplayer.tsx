@@ -1,7 +1,7 @@
 import Image from "next/image";
-import cardBack from "@/public/assets/cards/card-back.jpg";
+import cardBack from "@/public/assets/cards-vintage/card-back.png";
 
-const PenaltyCardMobile = () => {
+const PenaltyCardMultiplayerMobile = () => {
   return (
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
@@ -11,4 +11,4 @@ const PenaltyCardMobile = () => {
   );
 };
 
-export default PenaltyCardMobile;
+export default PenaltyCardMultiplayerMobile;

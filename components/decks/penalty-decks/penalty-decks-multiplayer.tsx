@@ -1,7 +1,8 @@
 import { Card, exampleCardSet } from "@/utils/types";
 import { motion } from "framer-motion";
-import PenaltyCard from "@/components/cards/penalty-cards/penalty-card";
-import PenaltyCardMobile from "@/components/cards/penalty-cards/penalty-card-mobile";
+
+import PenaltyCard from "@/components-multiplayer/cards/penalty-cards/penalty-cards-multiplayer";
+import PenaltyCardMultiplayerMobile from "@/components-multiplayer/cards/penalty-cards/penalty-cards-mobile-multiplayer";
 
 interface UserDeckProps {
   penaltyCardNumber: number;
@@ -32,7 +33,7 @@ export function PenaltyDeckMobile({ penaltyCardNumber }: UserDeckProps) {
                     <PenaltyCard />
                   </div>
                   <div className="flex lg:hidden">
-                    <PenaltyCardMobile />
+                    <PenaltyCardMultiplayerMobile />
                   </div>
 
                   {/* Cross mark overlay */}

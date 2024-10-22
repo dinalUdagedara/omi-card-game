@@ -2,12 +2,11 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
+// import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
 import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import ScoreBoardMobileMultiplayer from "./score-board/score-board-mobile";
 import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
@@ -22,13 +21,9 @@ import {
 } from "@/utils/multiplayer/game-logic-multiplayer";
 import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
-import { allPlayersWaiting } from "@/convex/rooms";
 import NoticeCardTemplate from "./game-board/game-board-template";
-import player1 from "@/public/assets/user-avatars/player1.png";
-import player2 from "@/public/assets/user-avatars/player2.png";
-import player3 from "@/public/assets/user-avatars/player3.png";
-import player4 from "@/public/assets/user-avatars/player4.png";
 import NameCardTemplate from "./name-card/name-card-template";
+import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -109,9 +104,6 @@ const GamePlayMultiplayer = () => {
   const isAllPlaying = useQuery(api.rooms.allPlayersPlaying, {
     roomId: roomId || "",
   });
-
-  const updateTrumpSetter = useMutation(api.rooms.updateCreator);
-  const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
 
   const [teamMember, setTeamMember] = useState<string>();
   const [opponent_1, setOpponent_1] = useState<string>();
@@ -383,7 +375,7 @@ const GamePlayMultiplayer = () => {
         <div className="flex justify-center z-20">
           <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
             <div className="">
-              <OtherDecksMobile userHand={exampleCardSet} />
+              <OtherDecksMultiplayer userHand={exampleCardSet} />
             </div>
 
             <motion.div
@@ -400,7 +392,7 @@ const GamePlayMultiplayer = () => {
               }}
             >
               <Avatar className="w-16 h-16  lg:w-36 lg:h-36 shadow-md rounded-full">
-                <AvatarImage src={`/assets/images/user-avatars/person7.png`} />
+                <AvatarImage src={`/assets/images/user-avatars/person8.png`} />
               </Avatar>
             </motion.div>
 
@@ -432,13 +424,13 @@ const GamePlayMultiplayer = () => {
                 </div>
                 <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
                   <AvatarImage
-                    src={`/assets/images/user-avatars/person7.png`}
+                    src={`/assets/images/user-avatars/person8.png`}
                   />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
 
-              <OtherDecksMobile userHand={exampleCardSet} />
+              <OtherDecksMultiplayer userHand={exampleCardSet} />
             </div>
           </div>{" "}
           <div className=" flex justify-center items-center  ">
@@ -481,7 +473,7 @@ const GamePlayMultiplayer = () => {
           <div className=" flex justify-center items-center  z-20 ">
             <div className="">
               <div className="flex flex-col justify-center items-center  min-w-[70px]">
-                <OtherDecksMobile userHand={exampleCardSet} />
+                <OtherDecksMultiplayer userHand={exampleCardSet} />
 
                 <motion.div
                   className=" rounded-full"
@@ -498,7 +490,7 @@ const GamePlayMultiplayer = () => {
                 >
                   <Avatar className="w-16 h-16 lg:w-36 lg:h-36 shadow-md">
                     <AvatarImage
-                      src={`/assets/images/user-avatars/person7.png`}
+                      src={`/assets/images/user-avatars/person8.png`}
                     />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>

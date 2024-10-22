@@ -483,7 +483,7 @@ const GamePlayMultiplayer = () => {
           </div> */}
 
             <NoticeCardTemplate>
-              <div className="w-full h-full justify-center  items-center z-20 bg-  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
+              <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
                 {roomId && userID && isRoomActive && (
                   <GameBoardMobileMultiplayer
                     onRestart={restartGame}

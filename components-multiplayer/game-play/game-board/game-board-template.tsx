@@ -14,7 +14,7 @@ const NotificationCardTemplate: React.FC<NotificationCardTemplateProps> = ({
 }) => {
   return (
     <div className="flex justify-center items-center  h-full ">
-      <div className="relative w-[200px] lg:w-[550px] lg:min-h-[350px] h-[250px] md:h-full shadow-lg bg-black rounded-2xl">
+      <div className="relative w-[200px] lg:w-[550px] lg:min-h-[350px] md:min-h-[250px]  h-[250px] md:h-full shadow-lg bg-black rounded-2xl">
         {/* <Image
           alt="Mountains"
           src={modeCardBackground}

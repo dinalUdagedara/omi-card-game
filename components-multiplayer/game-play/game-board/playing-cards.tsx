@@ -179,10 +179,10 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   ]);
 
   return (
-    <div className="flex bg- w-full py-12 px-28">
+    <div className="flex bg- w-full px-4 lg:py-12 lg:px-28">
       {winningCard ? (
         <>
-          <div className="w-full h-ful">
+          <div className="md:w-full md:h-full h-[125px]">
             <div className="flex flex-col">
               {winningCard === myCard && <Winner1Multiplayer />}
               {winningCard === opponent1Card && <Winner2Multiplayer />}
@@ -192,7 +192,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
           </div>
         </>
       ) : (
-        <div className="flex flex-row w-full h-full justify-center items-center gap-2">
+        <div className="flex flex-row w-full h-full justify-center items-center gap-2  py-10 lg:py-0 ">
           <div className=" justify-center items-center flex w-full ">
             {opponent2Card && !winningCard && (
               <div className="">
@@ -208,7 +208,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
             )}
           </div>
 
-          <div className="flex flex-col justify-between gap-5 w-full lg:min-h-[250px]">
+          <div className="flex flex-col justify-between gap-5 w-full min-h-[175px] z-20 lg:min-h-[250px]">
             <div>
               {teammateCard && !winningCard && (
                 <motion.div

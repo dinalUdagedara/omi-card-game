@@ -12,7 +12,7 @@ const NameCardTemplate: React.FC<NameCardTemplateProps> = ({ children }) => {
     <>
       {" "}
       <div className="flex justify-center items-center  h-full ">
-        <div className="relative h-[80px] w-[50px] lg:w-[100px] lg:h-[40px]  rounded-lg  shadow-lg ">
+        <div className="relative h-[40px] w-[80px] lg:w-[100px] lg:h-[40px]  rounded-lg  shadow-lg ">
           <Image
             className="rounded-md"
             alt="Mountains"

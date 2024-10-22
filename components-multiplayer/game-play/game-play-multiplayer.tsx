@@ -415,7 +415,7 @@ const GamePlayMultiplayer = () => {
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-36 h-36 shadow-md rounded-full">
+              <Avatar className="w-16 h-16  lg:w-36 lg:h-36 shadow-md rounded-full">
                 <AvatarImage src={`/assets/images/user-avatars/person7.png`} />
               </Avatar>
             </motion.div>
@@ -446,7 +446,7 @@ const GamePlayMultiplayer = () => {
                     {opponent_2 || "Waiting.."}
                   </NameCardTemplate>
                 </div>
-                <Avatar className="w-32 h-32 shadow-md">
+                <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
                   <AvatarImage
                     src={`/assets/images/user-avatars/person7.png`}
                   />
@@ -516,7 +516,7 @@ const GamePlayMultiplayer = () => {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-36 h-36 shadow-md">
+                  <Avatar className="w-16 h-16 lg:w-36 lg:h-36 shadow-md">
                     <AvatarImage
                       src={`/assets/images/user-avatars/person7.png`}
                     />

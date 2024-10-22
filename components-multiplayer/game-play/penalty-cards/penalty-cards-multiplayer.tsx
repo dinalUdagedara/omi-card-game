@@ -60,11 +60,18 @@ const PenaltycardsMultiplayer = ({
 
   return (
     <div>
-      <div className="flex mt-5">
+      <div className="hidden lg:flex mt-5">
         <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
         {/* <ScoreBoardMobileMultiplayer userID={userID} roomName={roomName} /> */}
         <ScoreBoardTemplate userID={userID} roomName={roomName} />
         <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+      </div>
+      <div className="flex lg:hidden flex-col mt-2">
+        <ScoreBoardTemplate userID={userID} roomName={roomName} />
+        <div className="flex">
+          <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
+          <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+        </div>
       </div>
     </div>
   );

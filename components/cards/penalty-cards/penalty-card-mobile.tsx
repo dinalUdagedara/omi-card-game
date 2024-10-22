@@ -5,7 +5,7 @@ const PenaltyCardMobile = () => {
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
         <Image
-          src={`/assets/cards/card-back.jpg`}
+          src={`/assets/cards-vintage/card-back.png`}
           width={10}
           height={10}
           alt="card"

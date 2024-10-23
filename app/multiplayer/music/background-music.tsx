@@ -14,7 +14,7 @@ const MusicPlayer = () => {
 
   return (
     <div>
-      dfgdfdfgdfgdfg
+
       {/* Background Music Control */}
       <button
         className="absolute top-5 right-5 p-2 rounded-full"

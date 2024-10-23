@@ -11,6 +11,7 @@ import { IoVolumeMuteOutline } from "react-icons/io5";
 import { VscUnmute } from "react-icons/vsc";
 import { ParticlesComponent } from "./particles/particles";
 import { motion } from "framer-motion";
+import ParticlesComponentExample from "@/components-multiplayer/particles/winner-particles";
 const spicy_rice = Spicy_Rice({
   subsets: ["latin"],
   weight: "400",
@@ -152,7 +153,11 @@ const ModeSelector = () => {
           </motion.div>
         </div>
       </div>
+      {/* Smoke Effect */}
       {/* <ParticlesComponent /> */}
+
+      {/* Winner PArticles */}
+      {/* <ParticlesComponentExample/> */}
     </div>
   );
 };

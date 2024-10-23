@@ -13,7 +13,7 @@ const MusicPlayer = () => {
   };
 
   return (
-    <div className="z-40 bg-white">
+    <div className="z-40">
       dfgdfdfgdfgdfg
       {/* Background Music Control */}
       <button

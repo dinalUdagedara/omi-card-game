@@ -116,8 +116,9 @@ const StartGamePoolPrivateNew = (props: Props) => {
     }
   }, []);
   return (
-    <div className="flex justify-center w-full items-center min-h-screen">
-      <div className=" relative w-[1000px] min-h-[650px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8">
+    <div className="flex justify-center w-full items-center h-full">
+      <div className=" relative w-[400px] md:w-[1000px] min-h-[680px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8 ">
+        {" "}
         <Image
           alt="Mountains"
           src={modeCardBackground}
@@ -127,7 +128,7 @@ const StartGamePoolPrivateNew = (props: Props) => {
             objectFit: "fill",
           }}
         />
-        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex  border-2">
+        <div className="absolute inset-0  text-black m-2 inv-rad inv-rad-8  flex ">
           <Image
             alt="Mountains"
             src={notificaitonBackGround}
@@ -155,23 +156,23 @@ const StartGamePoolPrivateNew = (props: Props) => {
               <div>
                 {userName ? (
                   <div>
-                    <div className="flex  justify-cente">
+                    <div className="flex  justify-center">
                       {isOpponentJoinedDB && userName ? (
-                        <div className="flex flex-col lg:gap-5 p-5">
-                          <div className="flex justify-center gap-10">
+                        <div className="flex flex-col lg:gap-5">
+                          <div className="flex justify-center">
                             <OpponentsName
                               userName={userName}
                               roomName={roomId}
                             />
                           </div>
-                          <div className="flex flex-col lg:flex-row justify-center items-center">
+                          <div className="flex flex-col lg:flex-row justify-center items-center pt-5">
                             <MyName />
                             <div
-                              className={`p-20  ${isRoomCreatorDB ? "flex" : " hidden"}`}
+                              className={`p-10  ${isRoomCreatorDB ? "flex" : " hidden"}`}
                             >
                               <Button
                                 disabled={!isAllJoined}
-                                className="h-20 w-80 rounded-2xl"
+                                className=" h-16 w-72 sm:h-20 sm:w-80 inv-rad-10 inv-rad bg-amber-950 text-white hover:bg-amber-900 text-lg"
                                 onClick={handleStartGame}
                               >
                                 Start Private Game

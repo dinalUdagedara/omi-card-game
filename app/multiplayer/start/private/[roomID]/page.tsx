@@ -2,7 +2,7 @@ import StartGamePoolPrivateNew from "@/components-multiplayer/start-game-pool/st
 
 export default function Page({ params }: { params: { roomID: string } }) {
   return (
-    <div>
+    <div className="flex items-center min-h-screen">
       <StartGamePoolPrivateNew roomId={params.roomID} />
     </div>
   );

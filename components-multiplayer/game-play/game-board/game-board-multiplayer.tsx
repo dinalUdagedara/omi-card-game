@@ -14,20 +14,12 @@ import { FinishStateStore } from "@/store/finish-round-state";
 import { GameOverDialogMultiplayer } from "../game-over/game-over-multiplayer";
 
 interface GameBoardProps {
-  onRestart: () => void;
-  onStart: () => void;
-  onNextStart: () => void;
-  onShuffleAgain: () => void;
   onTrumpSelected: () => void;
   roomName: string;
   userID: Id<"players">;
 }
 
 const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
-  onRestart,
-  onStart,
-  onNextStart,
-  onShuffleAgain,
   onTrumpSelected,
   roomName,
   userID,

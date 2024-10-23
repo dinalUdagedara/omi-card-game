@@ -10,14 +10,14 @@ interface UserDeckProps {
 
 export function OtherDecksMobile({ userHand }: UserDeckProps) {
   return (
-    <div className="h-full w-full flex justify-center items-center  p-4 rounded-lg ">
+    <div className="h-full lg:w-full max-w-20 md:max-w-40 lg:max-w-full flex justify-center items-center  p-2 rounded-lg ">
       <div className="relative flex justify-center items-center">
         {userHand.map((card, index) => (
           <div
             key={index}
             className={`relative transform transition-transform duration-200  hover:shadow-lg `}
             style={{
-              marginLeft: index === 0 ? "0" : "-3rem",
+              marginLeft: index === 0 ? "0" : "-2rem",
             }}
           >
             <motion.div

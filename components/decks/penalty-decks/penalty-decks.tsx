@@ -1,6 +1,6 @@
 import { Card, exampleCardSet } from "@/utils/types";
 import { motion } from "framer-motion";
-import PenaltyCardMobile from "@/components/cards/penalty-cards/penalty-card";
+import PenaltyCardMobile from "@/components/cards/penalty-cards/penalty-card-mobile";
 
 interface UserDeckProps {
   penaltyCardNumber: number;
@@ -13,7 +13,8 @@ export function PenaltyDeckMobile({ penaltyCardNumber }: UserDeckProps) {
     <div className="h-full w-full flex justify-center items-center p-4 rounded-lg">
       <div className="relative flex justify-center items-center">
         {displayedCards.map((card, index) => {
-          const shouldMarkCard = index < displayedCards.length - penaltyCardNumber;
+          const shouldMarkCard =
+            index < displayedCards.length - penaltyCardNumber;
           return (
             <div
               key={index}

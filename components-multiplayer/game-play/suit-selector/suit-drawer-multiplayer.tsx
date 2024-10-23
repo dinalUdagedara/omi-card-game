@@ -19,6 +19,10 @@ import { useEffect, useState } from "react";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { SuitSelectorMobileMultiplayer } from "./suit-selector-mobile-multiplayer";
 
+import Image from "next/image";
+import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+
 const exampleCards: Card[] = [
   { suit: "clubs", value: "10" },
   { suit: "diamonds", value: "K" },
@@ -63,9 +67,11 @@ export function SuitDrawerMultiplayer({
   return (
     <Drawer open={true} onClose={onClose}>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-md ">
+        <div className="mx-auto w-full max-w-md">
           <DrawerHeader>
-            <DrawerTitle>Select Trumps</DrawerTitle>
+            <DrawerTitle className="flex justify-center">
+              Select Trumps
+            </DrawerTitle>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="relative flex items-center justify-center h-56">
@@ -94,13 +100,16 @@ export function SuitDrawerMultiplayer({
             </div>
 
             <div className="">
-              <SuitSelectorMobileMultiplayer roomName={roomName} userID ={userID} />
+              <SuitSelectorMobileMultiplayer
+                roomName={roomName}
+                userID={userID}
+              />
             </div>
           </div>
           <DrawerFooter className="">
             <DrawerClose asChild>
               <Button
-                className=" rounded-2xl"
+                className="h-12 inv-rad-7 inv-rad "
                 onClick={() => {
                   setTrumpSelected(true);
                   onClose();

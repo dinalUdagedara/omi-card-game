@@ -1,9 +1,9 @@
-import StartGamePoolPrivate from "@/components-multiplayer/start-game-pool/start-game-pool-private";
+import StartGamePoolPrivateNew from "@/components-multiplayer/start-game-pool/start-game-pool-private";
 
 export default function Page({ params }: { params: { roomID: string } }) {
   return (
-    <div>
-      <StartGamePoolPrivate roomId={params.roomID} />
+    <div className="flex items-center min-h-screen">
+      <StartGamePoolPrivateNew roomId={params.roomID} />
     </div>
   );
 }

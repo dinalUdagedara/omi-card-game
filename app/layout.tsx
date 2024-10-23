@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Cormorant } from "next/font/google";
+import { Spicy_Rice } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import ModeSelector from "@/components/mode-selector";
-import { NightModeToggle } from "@/components/night-mode-selector";
 import Header from "@/components/header";
 import { ConvexClientProvider } from "@/components-multiplayer/ConvexClientProvider";
+import NextProvider from "./next-provider";
+import MusicPlayer from "./multiplayer/music/background-music";
 
 const inter = Inter({ subsets: ["latin"] });
+const cormorant = Cormorant({ subsets: ["latin"] });
+const spicy_rice = Spicy_Rice({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,14 +29,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={cormorant.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            <NextProvider>
+              {/* Music Player */}
+
+              <MusicPlayer />
+
+              {children}
+            </NextProvider>
+          </ConvexClientProvider>
           <Toaster />
         </ThemeProvider>
       </body>

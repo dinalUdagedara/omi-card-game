@@ -1,10 +1,12 @@
 "use client";
-import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks";
+import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks-multiplayer";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
+import ScoreBoardMobileMultiplayer from "../score-board/score-board-mobile";
+import ScoreBoardTemplate from "../score-board/score-board-template";
 
 interface PenaltycardsMultiplayerProps {
   roomName: string;
@@ -58,9 +60,18 @@ const PenaltycardsMultiplayer = ({
 
   return (
     <div>
-      <div className="flex gap-5 mx-5">
+      <div className="hidden lg:flex mt-5">
         <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
+        {/* <ScoreBoardMobileMultiplayer userID={userID} roomName={roomName} /> */}
+        <ScoreBoardTemplate userID={userID} roomName={roomName} />
         <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+      </div>
+      <div className="flex lg:hidden flex-col mt-2">
+        <ScoreBoardTemplate userID={userID} roomName={roomName} />
+        <div className="flex">
+          <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
+          <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+        </div>
       </div>
     </div>
   );

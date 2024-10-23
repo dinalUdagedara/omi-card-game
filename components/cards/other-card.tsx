@@ -2,10 +2,11 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import card from "./card";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
+import cardBack from "@/public/assets/cards/card-back.jpg";
 
 const OtherCardComponent = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
-  const imgUrl = `/assets/cards/card-back.jpg`;
+  const imgUrl = `/assets/cards/card-back.png`;
 
   // Fetch the blurHash asynchronously when the component mounts
   useEffect(() => {
@@ -19,8 +20,8 @@ const OtherCardComponent = () => {
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
         <Image
-        className="rounded-md"
-          src={`/assets/cards/card-back.jpg`}
+          className="rounded-md"
+          src={cardBack}
           width={80}
           height={80}
           alt="card"

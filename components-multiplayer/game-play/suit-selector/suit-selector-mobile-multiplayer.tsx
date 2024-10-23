@@ -56,7 +56,7 @@ export function SuitSelectorMobileMultiplayer({
               className="w-full pl-1 basis-20 md:basis-1/2 lg:basis-1/3"
             >
               <div className="p-1">
-                <Card className="hover:scale-110 bg-slate-300 rounded-2xl">
+                <Card className="hover:scale-110 bg-slate-200 rounded-2xl">
                   <CardContent
                     className={` ${
                       selectedSuit === suit.suit

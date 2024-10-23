@@ -40,6 +40,7 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div
+                className="rounded-lg"
                   initial={{ boxShadow: "none" }}
                   animate={{
                     boxShadow: isUserTurn

@@ -4,8 +4,11 @@ import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
 import Image from "next/image";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
 
-const CardComponentMobileMultiplayer = ({ card }: { card: cardMultiplayer }) => {
-
+const CardComponentMobileMultiplayer = ({
+  card,
+}: {
+  card: cardMultiplayer;
+}) => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
   const imgUrl = `/assets/cards/${card.value}_of_${card.suit}.png`;
 
@@ -35,6 +38,7 @@ const CardComponentMobileMultiplayer = ({ card }: { card: cardMultiplayer }) => 
         alt="card"
         placeholder={blurHash ? "blur" : "empty"}
         blurDataURL={blurHash}
+        className="p-"
       />
     </div>
   );

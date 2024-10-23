@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useEffect } from "react";
+import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
 const Winner1Multiplayer = () => {
   const myCard = MultiplayerStateStore((state) => state.myCard);
   const opponentCard = MultiplayerStateStore((state) => state.opponentsCard);
@@ -29,7 +30,7 @@ const Winner1Multiplayer = () => {
               animate={{ opacity: 0, y: 200 }}
               transition={{ duration: 0.8, delay: 2.0 }}
             >
-              <CardComponentMultiplayer card={opponent2Card} />
+              <CardComponentMobileMultiplayer card={opponent2Card} />
             </motion.div>
           )}
 
@@ -40,7 +41,7 @@ const Winner1Multiplayer = () => {
                 animate={{ opacity: 0, y: 400 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
-                <CardComponentMultiplayer card={teammateCard} />
+                <CardComponentMobileMultiplayer card={teammateCard} />
               </motion.div>
             )}
 
@@ -64,7 +65,7 @@ const Winner1Multiplayer = () => {
                   animate={{ opacity: 0, y: 200 }}
                   transition={{ duration: 0.8, delay: 2.0 }}
                 >
-                  <CardComponentMultiplayer card={myCard} />
+                  <CardComponentMobileMultiplayer card={myCard} />
                 </motion.div>
               </motion.div>
             )}
@@ -76,7 +77,7 @@ const Winner1Multiplayer = () => {
                 animate={{ opacity: 0, y: 200 }}
                 transition={{ duration: 0.8, delay: 2.0 }}
               >
-                <CardComponentMultiplayer card={opponent1Card} />
+                <CardComponentMobileMultiplayer card={opponent1Card} />
               </motion.div>
             </>
           )}

@@ -1,18 +1,14 @@
 import Image from "next/image";
+import cardBack from "@/public/assets/cards/card-back.jpg";
 
-const PenaltyCardMobile = () => {
+const PenaltyCard = () => {
   return (
     <div className={`flex flex-row justify-center rounded-md items-center`}>
       <div>
-        <Image
-          src={`/assets/cards/card-back.jpg`}
-          width={10}
-          height={10}
-          alt="card"
-        />
+        <Image src={cardBack} width={20} height={20} alt="card" />
       </div>
     </div>
   );
 };
 
-export default PenaltyCardMobile;
+export default PenaltyCard;

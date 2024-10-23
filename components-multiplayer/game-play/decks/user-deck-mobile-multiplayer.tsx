@@ -7,6 +7,9 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
 import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
+import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
+import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
+import { MultiplayerStateStore } from "@/store/multiplayer-state";
 
 interface UserDeckProps {
   userID: Id<"players">;
@@ -17,6 +20,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const trumpSuit = useStore((state) => state.trumpSuit);
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setUserTurn = useStore((state) => state.setIsUserTurn);
+  const userName = MultiplayerStateStore((state) => state.userName);
 
   const [myCardDeck, setMyCardDeck] = useState<
     { suit: string; value: string }[] | null
@@ -36,7 +40,15 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   });
 
   const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+  const updateViolation = useMutation(api.gameStates.updateViolationOccured);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
+  const turnsuit = useQuery(api.gameLogic.getTurnSuit, {
+    roomName: roomName,
+  });
+  const myTeam = useQuery(api.gameLogic.getMyTeam, {
+    userId: userID,
+    roomName: roomName,
+  });
 
   useEffect(() => {
     if (turnPlayerID) {
@@ -55,7 +67,21 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
       status: "playing",
       userId: userID,
     });
-    console.log("Selected Card", card);
+    if (myCardSet && turnsuit) {
+      const validationOccured = checkIfViolationOccured(
+        card,
+        myCardSet,
+        turnsuit
+      );
+      if (validationOccured && userName && myTeam) {
+        updateViolation({
+          roomName: roomName,
+          teamNumber: myTeam,
+          userName: userName,
+          violation: "Played a Diffferent Card from the Turn Suit",
+        });
+      }
+    }
     const userId = userID;
     await selectCard({
       card,
@@ -65,8 +91,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }
 
   return (
-    <div className="h-16 w-60 flex justify-center mr-5">
-      <div className="bg-black flex justify-center">
+    <div className="h-2 w-96 flex justify-center mr-5 ">
+      <div className="flex justify-center">
         {myCardSet?.map((card, index) => {
           const angle = (index - (myCardSet.length - 1) / 2) * 10;
 
@@ -75,7 +101,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               key={index}
               className="absolute"
               style={{
-                transform: `rotate(${angle}deg) translateY(-40px)`,
+                transform: `rotate(${angle}deg) translateY(-110px)`,
                 transformOrigin: "bottom center",
               }}
             >
@@ -93,14 +119,14 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                 <button
                   disabled={!trumpSuit || !isUserTurn}
                   onClick={() => handleCardSelect(card)}
-                  className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
+                  className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none rounded-lg"
                 >
-                  {" "}
                   <motion.div
+                    className="rounded-lg"
                     initial={{ boxShadow: "none" }}
                     animate={{
                       boxShadow: isUserTurn
-                        ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
+                        ? "0 0 12px rgba(254 , 250 ,224 ,1)" // Glowing effect
                         : "none", // No shadow when it's not user's turn
                     }}
                     transition={{
@@ -110,7 +136,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                       repeatType: "reverse",
                     }}
                   >
-                    <CardComponentMobileMultiplayer card={card} />{" "}
+                    <CardComponentMultiplayer card={card} />
                   </motion.div>
                 </button>
               </motion.div>

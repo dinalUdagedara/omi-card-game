@@ -2,7 +2,6 @@ import { Card } from "@/utils/types";
 import Image from "next/image";
 
 const CardComponentUserDeck = ({ card }: { card: Card }) => {
-
   // Choose a color based on the suit
   const suitColor =
     card.suit === "hearts" || card.suit === "diamonds"

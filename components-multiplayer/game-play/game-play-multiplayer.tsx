@@ -2,12 +2,11 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
+// import { OtherDecksMobile } from "@/components/decks/mobile/other-decks-mobile";
 import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import ScoreBoardMobileMultiplayer from "./score-board/score-board-mobile";
 import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
@@ -22,7 +21,9 @@ import {
 } from "@/utils/multiplayer/game-logic-multiplayer";
 import { Id } from "@/convex/_generated/dataModel";
 import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
-import { allPlayersWaiting } from "@/convex/rooms";
+import NoticeCardTemplate from "./game-board/game-board-template";
+import NameCardTemplate from "./name-card/name-card-template";
+import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -104,9 +105,6 @@ const GamePlayMultiplayer = () => {
     roomId: roomId || "",
   });
 
-  const updateTrumpSetter = useMutation(api.rooms.updateCreator);
-  const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
-
   const [teamMember, setTeamMember] = useState<string>();
   const [opponent_1, setOpponent_1] = useState<string>();
   const [opponent_2, setOpponent_2] = useState<string>();
@@ -178,22 +176,6 @@ const GamePlayMultiplayer = () => {
   function handleCloseDrawer() {
     if (roomId) handleSuitChange(trumpSuit);
     setTrumpSelected(true);
-  }
-
-  function restartGame(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleSelectOtherHands(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleNextTurn(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleNextTurnofShuffling(): void {
-    throw new Error("Function not implemented.");
   }
 
   useEffect(() => {
@@ -366,7 +348,7 @@ const GamePlayMultiplayer = () => {
   }, [isRoomCreator]);
 
   return (
-    <div className="flex flex-col h-full min-h-screen justify-between">
+    <div className="flex flex-col h-full min-h-screen justify-between w-full">
       {
         // !isTrumpSelected &&
         !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (
@@ -379,53 +361,29 @@ const GamePlayMultiplayer = () => {
       }
 
       {roomId && isRoomActive && userID && (
-        <div>
-          <div>
+        <div className="z-20 flex justify-center items-center  flex-col">
+          {/* <div className="w-full">
             <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
-          </div>
-          <div>
+          </div> */}
+          <div className="w-full">
             <PenaltycardsMultiplayer userID={userID} roomName={roomId} />
           </div>
         </div>
       )}
 
-      <div className=" flex justify-center ">
-        <div className=" flex  gap-4 justify-center items-center ">
-          <div className="">
-            <OtherDecksMobile userHand={exampleCardSet} />
-          </div>
+      <div>
+        <div className="flex justify-center z-20">
+          <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
+            <div className="">
+              <OtherDecksMultiplayer userHand={exampleCardSet} />
+            </div>
 
-          <motion.div
-            className=" rounded-full"
-            initial={{ boxShadow: "none" }}
-            // animate={{
-            //   boxShadow:
-            //     lastWinner === 2
-            //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-            //       : "none", // No shadow when it's not players's turn
-            // }}
-            transition={{
-              duration: 0.8,
-            }}
-          >
-            <Avatar className="w-14 h-14 shadow-md rounded-full">
-              <AvatarImage src={`/assets/player3.png`} />
-            </Avatar>
-          </motion.div>
-
-          <div>{teamMember || "Waiting for opponent..."}</div>
-        </div>
-      </div>
-
-      <div className="flex justify-center gap-4">
-        <div className="flex justify-center items-center">
-          <div className="flex flex-col justify-center items-center  min-w-[70px]">
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
               // animate={{
               //   boxShadow:
-              //     lastWinner === 3
+              //     lastWinner === 2
               //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
               //       : "none", // No shadow when it's not players's turn
               // }}
@@ -433,27 +391,59 @@ const GamePlayMultiplayer = () => {
                 duration: 0.8,
               }}
             >
-              <div>{opponent_2 || "Waiting for opponent..."}</div>
-              <Avatar className="w-14 h-14 shadow-md">
-                <AvatarImage src={`/assets/player4.png`} />
-                <AvatarFallback>Dp</AvatarFallback>
+              <Avatar className="w-16 h-16  lg:w-36 lg:h-36 shadow-md rounded-full">
+                <AvatarImage src={`/assets/images/user-avatars/person8.png`} />
               </Avatar>
             </motion.div>
 
-            <OtherDecksMobile userHand={exampleCardSet} />
+            <div className="text-center ">
+              <NameCardTemplate>{teamMember || "Waiting.."}</NameCardTemplate>
+            </div>
           </div>
-        </div>{" "}
-        <div className=" flex justify-center items-center">
-          <div
-            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+        </div>
+        <div className="flex justify-center gap-4 bg-white z-20 ">
+          <div className="flex justify-center items-center z-20 ">
+            <div className="flex flex-col justify-center items-center  min-w-[70px]">
+              <motion.div
+                className=" rounded-full"
+                initial={{ boxShadow: "none" }}
+                // animate={{
+                //   boxShadow:
+                //     lastWinner === 3
+                //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                //       : "none", // No shadow when it's not players's turn
+                // }}
+                transition={{
+                  duration: 0.8,
+                }}
+              >
+                <div className="text-center py-2">
+                  <NameCardTemplate>
+                    {opponent_2 || "Waiting.."}
+                  </NameCardTemplate>
+                </div>
+                <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
+                  <AvatarImage
+                    src={`/assets/images/user-avatars/person8.png`}
+                  />
+                  <AvatarFallback>Dp</AvatarFallback>
+                </Avatar>
+              </motion.div>
+
+              <OtherDecksMultiplayer userHand={exampleCardSet} />
+            </div>
+          </div>{" "}
+          <div className=" flex justify-center items-center  ">
+            {/* <div
+            className="border-8 h-[450px] w-[400px] flex z-20 min-w-60 min-h-96 lg:min-h-92 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 "
             style={{
-              backgroundImage: `url('/assets/background.png')`,
+              backgroundImage: `url('/assets/images/backgrounds/backgroundlatest.png')`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full h-full justify-center  items-center  ">
+            <div className="w-full h-full justify-center  items-center  z-20 ">
               {roomId && userID && isRoomActive && (
                 <GameBoardMobileMultiplayer
                   onRestart={restartGame}
@@ -466,38 +456,57 @@ const GamePlayMultiplayer = () => {
                 />
               )}
             </div>
-          </div>
-        </div>
-        <div className=" flex justify-center items-center   ">
-          <div className="">
-            <div className="flex flex-col justify-center items-center  min-w-[70px]">
-              <OtherDecksMobile userHand={exampleCardSet} />
+          </div> */}
 
-              <motion.div
-                className=" rounded-full"
-                initial={{ boxShadow: "none" }}
-                // animate={{
-                //   boxShadow:
-                //     lastWinner === 1
-                //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                //       : "none", // No shadow when it's not players's turn
-                // }}
-                transition={{
-                  duration: 0.8,
-                }}
-              >
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player2.png`} />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
-                <div>{opponent_1 || "Waiting for opponent..."}</div>
-              </motion.div>
+            <NoticeCardTemplate>
+              <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
+                {roomId && userID && isRoomActive && (
+                  <GameBoardMobileMultiplayer
+                    onTrumpSelected={handleCloseDrawer}
+                    roomName={roomId}
+                    userID={userID}
+                  />
+                )}
+              </div>
+            </NoticeCardTemplate>
+          </div>
+          <div className=" flex justify-center items-center  z-20 ">
+            <div className="">
+              <div className="flex flex-col justify-center items-center  min-w-[70px]">
+                <OtherDecksMultiplayer userHand={exampleCardSet} />
+
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  // animate={{
+                  //   boxShadow:
+                  //     lastWinner === 1
+                  //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                  //       : "none", // No shadow when it's not players's turn
+                  // }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="w-16 h-16 lg:w-36 lg:h-36 shadow-md">
+                    <AvatarImage
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                  <div className="text-center py-2">
+                    <NameCardTemplate>
+                      {opponent_1 || "Waiting.."}
+                    </NameCardTemplate>
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative mt-20 ">
+      <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900  relative mt-20  rounded-t-full">
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive ? (
@@ -531,8 +540,8 @@ const GamePlayMultiplayer = () => {
               duration: 0.8,
             }}
           >
-            <Avatar className="w-16 h-16 ">
-              <AvatarImage src={`/assets/user.jpg`} />
+            <Avatar className="w-40 h-40 ">
+              <AvatarImage src={`/assets/user-avatars/player1.png`} />
               <AvatarFallback>
                 <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
               </AvatarFallback>

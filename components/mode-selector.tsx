@@ -41,7 +41,7 @@ const ModeSelector = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen justify-start gap-[4vh] pt-10 z-10">
+    <div className="flex flex-col  justify-start gap-[4vh] pt-10">
       <div className="absolute inset-0">
         <Image
           alt="Mountains"

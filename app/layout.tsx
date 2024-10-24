@@ -40,7 +40,7 @@ export default function RootLayout({
             <NextProvider>
               {/* Music Player */}
 
-              <MusicPlayer />
+              {/* <MusicPlayer /> */}
 
               {children}
             </NextProvider>

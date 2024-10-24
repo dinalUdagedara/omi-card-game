@@ -105,6 +105,10 @@ const GamePlayMultiplayer = () => {
     roomId: roomId || "",
   });
 
+  const playerTurnUserName = useQuery(api.gameLogic.getPlayerTurnName, {
+    roomName: roomId || "",
+  });
+
   const [teamMember, setTeamMember] = useState<string>();
   const [opponent_1, setOpponent_1] = useState<string>();
   const [opponent_2, setOpponent_2] = useState<string>();
@@ -371,7 +375,7 @@ const GamePlayMultiplayer = () => {
         </div>
       )}
 
-      <div>
+      <div className="lg:mt-3">
         <div className="flex justify-center z-20">
           <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
             <div className="">
@@ -381,17 +385,18 @@ const GamePlayMultiplayer = () => {
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              // animate={{
-              //   boxShadow:
-              //     lastWinner === 2
-              //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-              //       : "none", // No shadow when it's not players's turn
-              // }}
+              animate={{
+                boxShadow:
+                  playerTurnUserName === teamMember
+                    ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                    : "none", // No shadow when it's not players's turn
+              }}
               transition={{
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-16 h-16  lg:w-36 lg:h-36 shadow-md rounded-full">
+              {/* <Avatar className="w-16 h-16 bg-red-400 lg:w-24 lg:h-24 shadow-md rounded-full"> */}
+              <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
                 <AvatarImage src={`/assets/images/user-avatars/person8.png`} />
               </Avatar>
             </motion.div>
@@ -407,12 +412,12 @@ const GamePlayMultiplayer = () => {
               <motion.div
                 className=" rounded-full"
                 initial={{ boxShadow: "none" }}
-                // animate={{
-                //   boxShadow:
-                //     lastWinner === 3
-                //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                //       : "none", // No shadow when it's not players's turn
-                // }}
+                animate={{
+                  boxShadow:
+                    playerTurnUserName === opponent_2
+                      ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                      : "none", // No shadow when it's not players's turn
+                }}
                 transition={{
                   duration: 0.8,
                 }}
@@ -478,12 +483,12 @@ const GamePlayMultiplayer = () => {
                 <motion.div
                   className=" rounded-full"
                   initial={{ boxShadow: "none" }}
-                  // animate={{
-                  //   boxShadow:
-                  //     lastWinner === 1
-                  //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                  //       : "none", // No shadow when it's not players's turn
-                  // }}
+                  animate={{
+                    boxShadow:
+                      playerTurnUserName === opponent_1
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
                   transition={{
                     duration: 0.8,
                   }}
@@ -532,7 +537,7 @@ const GamePlayMultiplayer = () => {
             initial={{ boxShadow: "none" }}
             // animate={{
             //   boxShadow:
-            //     lastWinner === 0
+            //     playerTurnUserName === userName
             //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
             //       : "none", // No shadow when it's not user's turn
             // }}

@@ -24,6 +24,9 @@ import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
 import NoticeCardTemplate from "./game-board/game-board-template";
 import NameCardTemplate from "./name-card/name-card-template";
 import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
+import Image from "next/image";
+import UserAvatarBg from "@/public/assets/images/user-avatars/person8.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -395,9 +398,20 @@ const GamePlayMultiplayer = () => {
                 duration: 0.8,
               }}
             >
-              {/* <Avatar className="w-16 h-16 bg-red-400 lg:w-24 lg:h-24 shadow-md rounded-full"> */}
-              <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
-                <AvatarImage src={`/assets/images/user-avatars/person8.png`} />
+              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+                <Image
+                  alt="Mountains"
+                  src={notificaitonBackGround}
+                  fill
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  style={{
+                    objectFit: "cover", // cover, contain, none
+                  }}
+                />
+                <AvatarImage
+                  className="z-20"
+                  src={`/assets/images/user-avatars/person8.png`}
+                />
               </Avatar>
             </motion.div>
 
@@ -409,6 +423,9 @@ const GamePlayMultiplayer = () => {
         <div className="flex justify-center gap-4 bg-white z-20 ">
           <div className="flex justify-center items-center z-20 ">
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
+              <div className="text-center py-2">
+                <NameCardTemplate>{opponent_2 || "Waiting.."}</NameCardTemplate>
+              </div>{" "}
               <motion.div
                 className=" rounded-full"
                 initial={{ boxShadow: "none" }}
@@ -422,19 +439,23 @@ const GamePlayMultiplayer = () => {
                   duration: 0.8,
                 }}
               >
-                <div className="text-center py-2">
-                  <NameCardTemplate>
-                    {opponent_2 || "Waiting.."}
-                  </NameCardTemplate>
-                </div>
-                <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
+                <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+                  <Image
+                    alt="Mountains"
+                    src={notificaitonBackGround}
+                    fill
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    style={{
+                      objectFit: "cover", // cover, contain, none
+                    }}
+                  />
                   <AvatarImage
+                    className="z-20"
                     src={`/assets/images/user-avatars/person8.png`}
                   />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
-
               <OtherDecksMultiplayer userHand={exampleCardSet} />
             </div>
           </div>{" "}
@@ -479,7 +500,6 @@ const GamePlayMultiplayer = () => {
             <div className="">
               <div className="flex flex-col justify-center items-center  min-w-[70px]">
                 <OtherDecksMultiplayer userHand={exampleCardSet} />
-
                 <motion.div
                   className=" rounded-full"
                   initial={{ boxShadow: "none" }}
@@ -493,18 +513,28 @@ const GamePlayMultiplayer = () => {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-16 h-16 lg:w-36 lg:h-36 shadow-md">
+                  <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
                     <AvatarImage
+                      className="z-20"
                       src={`/assets/images/user-avatars/person8.png`}
                     />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
-                  <div className="text-center py-2">
-                    <NameCardTemplate>
-                      {opponent_1 || "Waiting.."}
-                    </NameCardTemplate>
-                  </div>
-                </motion.div>
+                </motion.div>{" "}
+                <div className="text-center py-2">
+                  <NameCardTemplate>
+                    {opponent_1 || "Waiting.."}
+                  </NameCardTemplate>
+                </div>
               </div>
             </div>
           </div>

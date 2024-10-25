@@ -3,9 +3,10 @@ import { Card } from "@/utils/types";
 import { motion } from "framer-motion";
 
 import OtherCardComponentMultiplayer from "./other-card-multiplayer";
+import { cardMultiplayer } from "@/utils/types-multiplayer";
 
 interface UserDeckProps {
-  userHand: Card[];
+  userHand: cardMultiplayer[];
 }
 
 export function OtherDecksMultiplayer({ userHand }: UserDeckProps) {

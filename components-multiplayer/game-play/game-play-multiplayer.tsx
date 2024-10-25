@@ -65,6 +65,7 @@ const GamePlayMultiplayer = () => {
   const newRound = MultiplayerStateStore((state) => state.newRound);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
+  const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
 
   const setteamMemberID = MultiplayerStateStore(
     (state) => state.setteamMemberID
@@ -382,7 +383,7 @@ const GamePlayMultiplayer = () => {
         <div className="flex justify-center z-20">
           <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
             <div className="">
-              <OtherDecksMultiplayer userHand={exampleCardSet} />
+              <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
 
             <motion.div
@@ -456,7 +457,7 @@ const GamePlayMultiplayer = () => {
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
-              <OtherDecksMultiplayer userHand={exampleCardSet} />
+              <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
           </div>{" "}
           <div className=" flex justify-center items-center  ">
@@ -499,7 +500,9 @@ const GamePlayMultiplayer = () => {
           <div className=" flex justify-center items-center  z-20 ">
             <div className="">
               <div className="flex flex-col justify-center items-center  min-w-[70px]">
-                <OtherDecksMultiplayer userHand={exampleCardSet} />
+                <OtherDecksMultiplayer
+                  userHand={myCardDeck ?? exampleCardSet}
+                />
                 <motion.div
                   className=" rounded-full"
                   initial={{ boxShadow: "none" }}

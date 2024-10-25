@@ -21,10 +21,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setUserTurn = useStore((state) => state.setIsUserTurn);
   const userName = MultiplayerStateStore((state) => state.userName);
-
-  const [myCardDeck, setMyCardDeck] = useState<
-    { suit: string; value: string }[] | null
-  >(null);
+  const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
+  const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
     playerId: userID,
@@ -60,6 +58,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
       }
     }
   }, [turnPlayerID, noOfPlayingcards]);
+
+  useEffect(() => {
+    if (myCardSet) setMyCardDeck(myCardSet);
+    console.log("");
+  }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
     // update this player status to "playing"

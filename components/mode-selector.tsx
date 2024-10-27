@@ -100,12 +100,12 @@ const ModeSelector = () => {
           </div>
         </span>
       </div>
-      <div className="flex flex-row h-full items-center mt-20 sm:mt-0">
+      <div className="flex flex-row h-full items-center sm:mt-20">
         <div
           onMouseEnter={handleHover}
           onMouseLeave={handleHover}
           onClick={handleClick}
-          className="flex flex-row md:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
+          className="flex flex-col md:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -114,7 +114,7 @@ const ModeSelector = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            <div className="-rotate-6">
+            <div className="md:-rotate-6">
               <Link href={"/practise"}>
                 <GameModeCard
                   topic="Warm Up Before the Challenge"
@@ -138,7 +138,7 @@ const ModeSelector = () => {
               onMouseEnter={handleHover}
               onMouseLeave={handleHover}
               onClick={handleClick}
-              className="md:rotate-6 md:-ml-8 -ml-16 rotate-6"
+              className="md:rotate-6 md:-ml-8"
             >
               <Link href={"/multiplayer"}>
                 <GameModeCard

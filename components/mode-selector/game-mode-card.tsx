@@ -26,9 +26,8 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
     <div>
       <Button className="w-full h-full bg-inherit hover:bg-inherit">
         <Card
-          isFooterBlurred
           radius="lg"
-          className="col-span-12 sm:col-span-4 h-[330px] w-[180px] md:h-[500px] md:w-[350px] "
+          className="col-span-12 sm:col-span-4 h-[275px] w-[280px] md:h-[500px] md:w-[350px] "
         >
           <CardHeader className="absolute z-10 flex-col !items-start rounded-none text-black p-2">
             <div className="w-full h-[65px]  md:h-[90px] relative">

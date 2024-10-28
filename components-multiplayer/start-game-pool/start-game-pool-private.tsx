@@ -12,6 +12,8 @@ import logoIcon from "@/public/assets/images/logo-icon.png";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import UserNameInputPrivate from "../user-name-input/user-name-input-private";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 type Props = {
   roomId: string;
@@ -46,6 +48,11 @@ const StartGamePoolPrivateNew = (props: Props) => {
   const PlayersJoined = useQuery(api.rooms.isPlayersJoined, {
     roomName: roomId || "",
   });
+
+  const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
+
   useEffect(() => {
     if (PlayersJoined) {
       router.push(`/multiplayer/gameplay/public/${roomId}`);
@@ -85,6 +92,7 @@ const StartGamePoolPrivateNew = (props: Props) => {
   };
 
   const handleStartGame = () => {
+    playClickButton(muted);
     console.log("start");
     const roomName = roomId;
     updateRoomStatustoJoined({

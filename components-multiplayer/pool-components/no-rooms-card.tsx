@@ -5,12 +5,14 @@ import logoIcon from "@/public/assets/images/logo-icon.png";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useHoverSound } from "@/utils/play-sounds";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 
 const NotificationCard = () => {
-  const { playHoverSound } = useHoverSound();
   const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
+
   return (
     <div className="flex justify-center items-center  h-full ">
       <div className="relative w-[350px] h-[350px] sm:w-[400px] sm:h-[400px]   rounded-lg  shadow-lg inv-rad inv-rad-8 ">
@@ -51,7 +53,12 @@ const NotificationCard = () => {
             </div>
 
             <div className="mt-8">
-              <Link href={"/multiplayer/create-room"}>
+              <Link
+                href={"/multiplayer/create-room"}
+                onClick={() => {
+                  playClickButton(muted); //Playing Clicking Sound Effect
+                }}
+              >
                 <Button
                   onMouseEnter={() => {
                     playHoverSound(muted);

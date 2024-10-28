@@ -2,20 +2,25 @@
 import { Card, CardHeader, CardBody } from "@nextui-org/react";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import cardHeaderCoverMultiplayer from "@/public/assets/images/cover.png";
-import cardHeaderCoverPractice from "@/public/assets/images/practise.png";
 import cardContentCover from "@/public/assets/images/Background (1).png";
 import titleCover from "@/public/assets/images/title-cover.png";
 import Image from "next/image";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useState } from "react";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
+
 const UserNameInput = () => {
   const [username, setUsername] = useState<string | null>(null);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
+  const muted = useStore((state) => state.muted);
+  const { playClickButton } = useClickSound();
+  const { playHoverSound } = useHoverSound();
 
   function handleSelectUserName() {
+    playClickButton(muted); //Playing Clicking Sound Effect
     console.log("enter username", username);
     if (username) {
       setUserName(username);
@@ -39,7 +44,9 @@ const UserNameInput = () => {
                 <Image alt="Content Cover" src={titleCover} fill />
                 {/* Text Overlay */}
                 <div className="absolute z-20 w-full h-full mt-3 px-3">
-                  <p className="uppercase font-bold text-large sm:text-xl">Enter Your Name</p>
+                  <p className="uppercase font-bold text-large sm:text-xl">
+                    Enter Your Name
+                  </p>
                   <h4 className="font-medium text-medium sm:text-large">
                     choose a name to display other users
                   </h4>
@@ -97,6 +104,9 @@ const UserNameInput = () => {
                         />
                         <Button
                           className="bg-amber-950 text-white rounded-2xl hover:bg-amber-800 p-5 text-md"
+                          onMouseEnter={() => {
+                            playHoverSound(muted);
+                          }}
                           onClick={handleSelectUserName}
                           disabled={!username}
                           type="submit"

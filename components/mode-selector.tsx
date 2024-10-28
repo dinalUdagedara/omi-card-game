@@ -2,43 +2,26 @@
 import Link from "next/link";
 import Image from "next/image";
 import background from "@/public/assets/images/background.png";
-import ReactAudioPlayer from "react-audio-player";
-import { useRef, useState } from "react";
 import GameModeCard from "./mode-selector/game-mode-card";
 import { Spicy_Rice } from "next/font/google";
 import textArea from "@/public/assets/images/text-area.png";
-import { IoVolumeMuteOutline } from "react-icons/io5";
-import { VscUnmute } from "react-icons/vsc";
 import { ParticlesComponent } from "./particles/particles";
 import { motion } from "framer-motion";
 import ParticlesComponentExample from "@/components-multiplayer/particles/winner-particles";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 const spicy_rice = Spicy_Rice({
   subsets: ["latin"],
   weight: "400",
 });
 
 const ModeSelector = () => {
-  const [playMusic, setPlayMusic] = useState(false);
-
-  const hoverAudioRef = useRef<HTMLAudioElement | null>(null);
-  const clickAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  const handlePlayMusic = () => {
-    setPlayMusic(!playMusic);
-  };
+  const { playHoverSound } = useHoverSound();
+  const muted = useStore((state) => state.muted);
+  const { playClickButton } = useClickSound();
 
   const handleHover = () => {
-    // Play the hover sound
-    if (hoverAudioRef.current && playMusic) {
-      hoverAudioRef.current.play();
-    }
-  };
-
-  const handleClick = () => {
-    //play click sound
-    if (clickAudioRef.current && playMusic) {
-      clickAudioRef.current.play();
-    }
+    playHoverSound(muted);
   };
 
   return (
@@ -57,24 +40,7 @@ const ModeSelector = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-100" />
       </div>
-      {/* Background Music */}
-      {/* <button
-        className="absolute top-5 right-5 p-2 rounded-full"
-        onClick={handlePlayMusic}
-      >
-        {!playMusic ? <IoVolumeMuteOutline /> : <VscUnmute />}
-      </button>
-      {playMusic && (
-        <ReactAudioPlayer
-          // src="/assets/audio-files/the-magic-tree.mp3"
-          src="/assets/audio-files/fireplace-with-crackling.mp3"
-          autoPlay
-          loop
-        />
-      )} */}
-      <audio ref={hoverAudioRef} src="/assets/audio-files/select.mp3" />
-      <audio ref={clickAudioRef} src="/assets/audio-files/click.mp3" />
-      {/* Audio for hover effect */}
+
       <div className="flex flex-col items-center justify-center z-20 gap-2 w-full">
         <div className={`h-full font ${spicy_rice.className} text-7xl t-10 `}>
           Omi
@@ -103,8 +69,6 @@ const ModeSelector = () => {
       <div className="flex flex-row h-full items-center sm:mt-5">
         <div
           onMouseEnter={handleHover}
-          onMouseLeave={handleHover}
-          onClick={handleClick}
           className="flex flex-col sm:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
         >
           <motion.div
@@ -115,7 +79,12 @@ const ModeSelector = () => {
             whileTap={{ scale: 0.9 }}
           >
             <div className="md:-rotate-6">
-              <Link href={"/practise"}>
+              <Link
+                onClick={() => {
+                  playClickButton(muted);
+                }}
+                href={"/practise"}
+              >
                 <GameModeCard
                   topic="Warm Up Before the Challenge"
                   contentHeader="Ready to Test your Limits"
@@ -137,10 +106,14 @@ const ModeSelector = () => {
               // Sound Effects
               onMouseEnter={handleHover}
               onMouseLeave={handleHover}
-              onClick={handleClick}
               className="md:rotate-6 md:-ml-8"
             >
-              <Link href={"/multiplayer"}>
+              <Link
+                href={"/multiplayer"}
+                onClick={() => {
+                  playClickButton(muted);
+                }}
+              >
                 <GameModeCard
                   topic=" Compete with Players Worldwide"
                   contentHeader="Rooms Await.."

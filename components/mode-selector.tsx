@@ -100,12 +100,12 @@ const ModeSelector = () => {
           </div>
         </span>
       </div>
-      <div className="flex flex-row h-full items-center sm:mt-20">
+      <div className="flex flex-row h-full items-center sm:mt-5">
         <div
           onMouseEnter={handleHover}
           onMouseLeave={handleHover}
           onClick={handleClick}
-          className="flex flex-col md:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
+          className="flex flex-col sm:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}

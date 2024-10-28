@@ -15,6 +15,9 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useStore } from "@/store/state";
+import Image from "next/image";
+import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 
 interface RoundOverDialogMobileProps {
   userID: Id<"players">;
@@ -219,19 +222,39 @@ export function RoundOverDialogMultiplayer({
   return (
     <div>
       <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="w-[300px] sm:w-[310px] p-6 border-none rounded-3xl bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl text-white">
+        <DialogContent className="w-[300px] sm:w-[310px] p-6 border-none rounded-3xl  shadow-2xl text-black bg-transparent">
+          <Image
+            className="rounded-md inv-rad-7 inv-rad"
+            alt="Mountains"
+            src={modeCardBackground}
+            fill
+            sizes="(min-width: 808px) 50vw, 100vw"
+            style={{
+              objectFit: "fill",
+            }}
+          />
           <div className="text-center">
+            <Image
+              className="rounded-md p-2  inv-rad-9 inv-rad "
+              alt="Mountains"
+              src={notificaitonBackGround}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "fill",
+              }}
+            />
             <DialogHeader>
-              <DialogTitle className="text-xl font-semibold tracking-wider text-center">
+              <DialogTitle className="text-xl font-semibold tracking-wider text-center z-20">
                 {message.title}
               </DialogTitle>
-              <DialogDescription className="text-md mt-2 font-light text-center">
+              <DialogDescription className="text-md mt-2 font-light text-center  z-20 text-black">
                 {message.message}
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="mt-6">
+            <DialogFooter className="mt-6 z-20">
               <Button
-                className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
+                className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md inv-rad-7 inv-rad py-2 w-full"
                 type="button"
                 onClick={handleClose}
               >
@@ -246,20 +269,41 @@ export function RoundOverDialogMultiplayer({
         <>
           {violations?.length > 0 && (
             <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
-              <DialogContent className="w-[300px] sm:w-[310px] p-6 border-none rounded-3xl bg-gradient-to-r from-gray-700 to-gray-900 shadow-2xl text-white">
-                <div className="text-center">
-                  <DialogHeader>
-                    <DialogTitle className="text-xl font-semibold tracking-wider text-center">
+              <DialogContent className="w-[300px] sm:w-[310px] p-6 border-none rounded-3xl text-black">
+                <Image
+                  className="rounded-md inv-rad-7 inv-rad"
+                  alt="Mountains"
+                  src={modeCardBackground}
+                  fill
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  style={{
+                    objectFit: "fill",
+                  }}
+                />
+                <div className="text-center z-20">
+                  <Image
+                    className="rounded-md p-2 inv-rad-9 inv-rad "
+                    alt="Mountains"
+                    src={notificaitonBackGround}
+                    fill
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    style={{
+                      objectFit: "fill",
+                    }}
+                  />
+                  <DialogHeader className="z-20">
+                    <DialogTitle className="text-xl font-semibold tracking-wider text-center z-20">
                       {message.title}
                     </DialogTitle>
-                    <DialogDescription className="text-md mt-2 font-light text-center">
+                    <DialogDescription className="text-md mt-2 font-light text-center z-20 text-black">
                       {message.message} but Violations caught penalty cards will
                       deduct
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="mt-6">
                     <Button
-                      className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md inv-rad-7 inv-rad py-2 w-full"
+                      // className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
                       type="button"
                       onClick={handleClose}
                     >

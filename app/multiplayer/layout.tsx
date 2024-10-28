@@ -28,7 +28,6 @@ export default function MultiplayerLayout({
 
       {/* Music Player */}
       {/* <MusicPlayer /> */}
-
       {children}
     </section>
   );

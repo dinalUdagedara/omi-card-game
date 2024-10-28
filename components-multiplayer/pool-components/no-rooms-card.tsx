@@ -5,8 +5,12 @@ import logoIcon from "@/public/assets/images/logo-icon.png";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useHoverSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 const NotificationCard = () => {
+  const { playHoverSound } = useHoverSound();
+  const muted = useStore((state) => state.muted);
   return (
     <div className="flex justify-center items-center  h-full ">
       <div className="relative w-[350px] h-[350px] sm:w-[400px] sm:h-[400px]   rounded-lg  shadow-lg inv-rad inv-rad-8 ">
@@ -48,7 +52,12 @@ const NotificationCard = () => {
 
             <div className="mt-8">
               <Link href={"/multiplayer/create-room"}>
-                <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
+                <Button
+                  onMouseEnter={() => {
+                    playHoverSound(muted);
+                  }}
+                  className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md"
+                >
                   Create a Room
                 </Button>
               </Link>

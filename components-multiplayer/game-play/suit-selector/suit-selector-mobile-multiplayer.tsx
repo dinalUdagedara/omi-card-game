@@ -15,6 +15,12 @@ import Image from "next/image";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import {
+  useHoverSound,
+  useClickSound,
+  useCardSelectSound,
+  useSuitSelectSound,
+} from "@/utils/play-sounds";
 
 interface SuitSelectorProps {
   roomName: string;
@@ -29,8 +35,12 @@ export function SuitSelectorMobileMultiplayer({
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
   const updateTrumpSetter = useMutation(api.gameLogic.updateTrumpSetter);
+  const muted = useStore((state) => state.muted);
+  const { playSuitSelected } = useSuitSelectSound();
 
   function handleSuitSelected(suit: Suit) {
+    console.log("Suit selcted");
+    playSuitSelected(muted);
     setSelectedSuit(suit);
     setTrumpSuit(suit);
     const trumpSuit = suit;

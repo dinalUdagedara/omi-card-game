@@ -36,3 +36,39 @@ export const useClickSound = () => {
 
   return { playClickButton: playClickSoundWithCheck };
 };
+
+// to play Selecting card sound
+export const useCardSelectSound = () => {
+  const [playCardSelect] = useSound("assets/audio-files/card-select.mp3", {
+    volume: 1,
+  });
+  console.log("Card Sound");
+  const playCardSelectSound = useCallback(
+    (muted: boolean) => {
+      if (!muted) {
+        playCardSelect();
+      }
+    },
+    [playCardSelect]
+  );
+
+  return { playCardSelect: playCardSelectSound };
+};
+
+// to play Selecting Suit sound
+export const useSuitSelectSound = () => {
+  const [playSuitSelect] = useSound("assets/audio-files/trump-selected.mp3", {
+    volume: 1,
+  });
+  console.log("Suit select Sound");
+  const playSuitSelectSound = useCallback(
+    (muted: boolean) => {
+      if (!muted) {
+        playSuitSelect();
+      }
+    },
+    [playSuitSelect]
+  );
+
+  return { playSuitSelected: playSuitSelectSound };
+};

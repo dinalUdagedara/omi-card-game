@@ -369,7 +369,7 @@ const GamePlayMultiplayer = () => {
       }
 
       {roomId && isRoomActive && userID && (
-        <div className="z-20 flex justify-center items-center  flex-col">
+        <div className="flex justify-center items-center flex-col">
           {/* <div className="w-full">
             <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
           </div> */}

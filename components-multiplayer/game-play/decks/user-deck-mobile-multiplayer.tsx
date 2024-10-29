@@ -10,6 +10,11 @@ import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
+import {
+  useHoverSound,
+  useClickSound,
+  useCardSelectSound,
+} from "@/utils/play-sounds";
 
 interface UserDeckProps {
   userID: Id<"players">;
@@ -23,6 +28,10 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const userName = MultiplayerStateStore((state) => state.userName);
   const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
   const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
+  const muted = useStore((state) => state.muted);
+  const { playCardSelect } = useCardSelectSound();
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
     playerId: userID,
@@ -65,6 +74,9 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
+    console.log("Card Selected", muted);
+    playCardSelect(muted);
+
     // update this player status to "playing"
     updatePlayerStatus({
       status: "playing",
@@ -121,7 +133,14 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               >
                 <button
                   disabled={!trumpSuit || !isUserTurn}
-                  onClick={() => handleCardSelect(card)}
+                  onMouseEnter={() => {
+                    console.log("Mouse Entered");
+                    playHoverSound(muted);
+                  }}
+                  onClick={() => {
+                    playCardSelect(muted);
+                    handleCardSelect(card);
+                  }}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none rounded-lg"
                 >
                   <motion.div

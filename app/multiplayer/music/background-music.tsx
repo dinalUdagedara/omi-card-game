@@ -25,9 +25,10 @@ const MusicPlayer = () => {
       </button>
       {!muted && (
         <ReactAudioPlayer
-          src="/assets/audio-files/fireplace-with-crackling.mp3"
+          src="/assets/audio-files/background.mp3"
           autoPlay
           loop
+          volume={0.3}
         />
       )}
     </div>

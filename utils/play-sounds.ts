@@ -6,7 +6,7 @@ export const useHoverSound = () => {
   const [playHoverSound] = useSound("assets/audio-files/select.mp3", {
     volume: 1,
   });
-
+  console.log("Hover Sound");
   const playHoverSoundWithCheck = useCallback(
     (muted: boolean) => {
       if (!muted) {

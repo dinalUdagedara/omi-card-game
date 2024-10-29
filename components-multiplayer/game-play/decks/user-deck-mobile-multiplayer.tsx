@@ -6,7 +6,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
-import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
@@ -133,12 +132,13 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               >
                 <button
                   disabled={!trumpSuit || !isUserTurn}
-                  onMouseEnter={() => {
-                    console.log("Mouse Entered");
-                    playHoverSound(muted);
-                  }}
+                  // onMouseEnter={() => {
+                  //   console.log("Mouse Entered");
+                  //   // playHoverSound(muted);
+                  // }}
                   onClick={() => {
-                    playCardSelect(muted);
+                    playHoverSound(muted);
+                    // playCardSelect(muted);
                     handleCardSelect(card);
                   }}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none rounded-lg"

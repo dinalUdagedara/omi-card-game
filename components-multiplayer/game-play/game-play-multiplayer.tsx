@@ -447,7 +447,7 @@ const GamePlayMultiplayer = () => {
                     fill
                     sizes="(min-width: 808px) 50vw, 100vw"
                     style={{
-                      objectFit: "cover", // cover, contain, none
+                      objectFit: "cover",
                     }}
                   />
                   <AvatarImage
@@ -461,30 +461,6 @@ const GamePlayMultiplayer = () => {
             </div>
           </div>{" "}
           <div className=" flex justify-center items-center  ">
-            {/* <div
-            className="border-8 h-[450px] w-[400px] flex z-20 min-w-60 min-h-96 lg:min-h-92 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 "
-            style={{
-              backgroundImage: `url('/assets/images/backgrounds/backgroundlatest.png')`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="w-full h-full justify-center  items-center  z-20 ">
-              {roomId && userID && isRoomActive && (
-                <GameBoardMobileMultiplayer
-                  onRestart={restartGame}
-                  onStart={handleSelectOtherHands}
-                  onNextStart={handleNextTurn}
-                  onShuffleAgain={handleNextTurnofShuffling}
-                  onTrumpSelected={handleCloseDrawer}
-                  roomName={roomId}
-                  userID={userID}
-                />
-              )}
-            </div>
-          </div> */}
-
             <NoticeCardTemplate>
               <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
                 {roomId && userID && isRoomActive && (

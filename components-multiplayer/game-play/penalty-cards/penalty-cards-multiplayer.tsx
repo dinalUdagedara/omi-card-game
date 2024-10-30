@@ -5,8 +5,9 @@ import { Id } from "@/convex/_generated/dataModel";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
-import ScoreBoardMobileMultiplayer from "../score-board/score-board-mobile";
 import ScoreBoardTemplate from "../score-board/score-board-template";
+import { useRoundLoseSound, useRoundWonSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 interface PenaltycardsMultiplayerProps {
   roomName: string;
@@ -30,6 +31,9 @@ const PenaltycardsMultiplayer = ({
 
   const setGameOver = MultiplayerStateStore((state) => state.setGameOver);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+  const { playRoundWon } = useRoundWonSound();
+  const { playRoundLose } = useRoundLoseSound();
+  const muted = useStore((state) => state.muted);
 
   useEffect(() => {
     if (penaltyCards) {
@@ -49,11 +53,15 @@ const PenaltycardsMultiplayer = ({
         console.log("I lost");
         setGameWon(false);
         setGameOver(true);
+        // game lose sound
+        playRoundLose(muted);
       }
       if (opponentInfo?.penaltyCards === 0) {
         console.log("I Won");
         setGameWon(true);
         setGameOver(true);
+        // game won sound
+        playRoundWon(muted);
       }
     }
   }, [penaltyCards, userID]); // Run effect when playersInRoom or userID changes

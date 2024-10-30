@@ -6,7 +6,7 @@ export const useHoverSound = () => {
   const [playHoverSound] = useSound("/assets/audio-files/select.mp3", {
     volume: 1,
   });
-  console.log("Hover Sound");
+
   const playHoverSoundWithCheck = useCallback(
     (muted: boolean) => {
       if (!muted) {
@@ -40,7 +40,6 @@ export const useClickSound = () => {
 // to play sound when collecting cards
 export const useCollectingCardSound = () => {
   const [playCollectCards] = useSound("/assets/audio-files/woosh.mp3");
-  console.log("CollectingCard Soundddd");
 
   const playCollectingCardSound = useCallback(
     (muted: boolean) => {
@@ -88,7 +87,7 @@ export const useCardSelectSound = () => {
   const [playCardSelect] = useSound("/assets/audio-files/card-select.mp3", {
     volume: 1,
   });
-  console.log("Card Sound");
+
   const playCardSelectSound = useCallback(
     (muted: boolean) => {
       if (!muted) {
@@ -106,7 +105,7 @@ export const useSuitSelectSound = () => {
   const [playSuitSelect] = useSound("/assets/audio-files/trump-selected.mp3", {
     volume: 1,
   });
-  console.log("Suit select Sound");
+
   const playSuitSelectSound = useCallback(
     (muted: boolean) => {
       if (!muted) {
@@ -117,4 +116,18 @@ export const useSuitSelectSound = () => {
   );
 
   return { playSuitSelected: playSuitSelectSound };
+};
+
+export const useDealtingCardSound = () => {
+  const [playDealtCards] = useSound("/assets/audio-files/card-dealting.mp3");
+
+  const playDealtingCardSound = useCallback(
+    (muted: boolean) => {
+      if (!muted) {
+        playDealtCards();
+      }
+    },
+    [playDealtCards]
+  );
+  return { playDealtCards: playDealtingCardSound };
 };

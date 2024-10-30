@@ -28,7 +28,7 @@ const MusicPlayer = () => {
           src="/assets/audio-files/background.mp3"
           autoPlay
           loop
-          volume={0.3}
+          volume={0.2}
         />
       )}
     </div>

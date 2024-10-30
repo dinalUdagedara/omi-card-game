@@ -14,6 +14,8 @@ import Winner2Multiplayer from "./collecting-cards/winner-2-multiplayer";
 import Winner3Multiplayer from "./collecting-cards/winner-3-multiplayer";
 import Winner4Multiplayer from "./collecting-cards/winner-4-multiplayer";
 import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
+import { useCollectingCardSound, useHoverSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 interface PlayingCardsProps {
   playingCards: {
@@ -71,6 +73,10 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
     roomName: roomName || "",
   });
 
+  const muted = useStore((state) => state.muted);
+  const { playCollectCards } = useCollectingCardSound();
+
+
   useEffect(() => {
     if (playingCards) {
       playingCards.map((cardSet) => {
@@ -117,6 +123,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
       if (winningCard)
         setTimeout(() => {
           setWinningCard(winningCard);
+          playCollectCards(muted);
         }, 2000);
     }
   }, [cardSet]);

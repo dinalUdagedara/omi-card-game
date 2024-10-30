@@ -18,6 +18,7 @@ import { useStore } from "@/store/state";
 import Image from "next/image";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 
 interface RoundOverDialogMobileProps {
   userID: Id<"players">;
@@ -81,6 +82,10 @@ export function RoundOverDialogMultiplayer({
   const resetViolation = useMutation(api.gameStates.resetViolations);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
+
+  const muted = useStore((state) => state.muted);
 
   async function decrementValues() {
     if (lostCallingTrumps && playersInRoom) {
@@ -181,6 +186,7 @@ export function RoundOverDialogMultiplayer({
   }
 
   const handleClose = async () => {
+    playClickButton(muted);
     setAllFalse(false);
     if (userName === roomdataFromDB?.playerUserNames[0]) {
       await decrementValues();
@@ -257,6 +263,9 @@ export function RoundOverDialogMultiplayer({
                 className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md inv-rad-7 inv-rad py-2 w-full"
                 type="button"
                 onClick={handleClose}
+                onMouseEnter={() => {
+                  playHoverSound(muted);
+                }}
               >
                 Ok
               </Button>
@@ -306,6 +315,9 @@ export function RoundOverDialogMultiplayer({
                       // className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
                       type="button"
                       onClick={handleClose}
+                      onMouseEnter={() => {
+                        playHoverSound(muted);
+                      }}
                     >
                       Ok
                     </Button>

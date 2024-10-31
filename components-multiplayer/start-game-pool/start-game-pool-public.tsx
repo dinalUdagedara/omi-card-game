@@ -11,6 +11,8 @@ import notificaitonBackGround from "@/public/assets/images/cover-notification.pn
 import logoIcon from "@/public/assets/images/logo-icon.png";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 type Props = {
   roomId: string;
@@ -45,6 +47,11 @@ const StartGamePoolPublicNew = (props: Props) => {
   const PlayersJoined = useQuery(api.rooms.isPlayersJoined, {
     roomName: roomId || "",
   });
+
+  const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
+
   useEffect(() => {
     if (PlayersJoined) {
       router.push(`/multiplayer/gameplay/public/${roomId}`);
@@ -84,6 +91,7 @@ const StartGamePoolPublicNew = (props: Props) => {
   };
 
   const handleStartGame = () => {
+    playClickButton(muted);
     console.log("start");
     const roomName = roomId;
     updateRoomStatustoJoined({
@@ -171,6 +179,9 @@ const StartGamePoolPublicNew = (props: Props) => {
                       >
                         <Button
                           disabled={!isAllJoined}
+                          onMouseEnter={() => {
+                            playHoverSound(muted);
+                          }}
                           onClick={handleStartGame}
                           className=" h-16 w-72 sm:h-20 sm:w-80 inv-rad-10 inv-rad bg-amber-950 text-white hover:bg-amber-900 text-lg"
                         >

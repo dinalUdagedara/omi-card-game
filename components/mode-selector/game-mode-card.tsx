@@ -6,6 +6,8 @@ import cardHeaderCoverPractice from "@/public/assets/images/practise.png";
 import cardContentCover from "@/public/assets/images/Background (1).png";
 import titleCover from "@/public/assets/images/title-cover.png";
 import Image from "next/image";
+import { useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 interface GameModeCardProps {
   title: string;
@@ -22,19 +24,26 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
   content,
   nextMessage,
 }) => {
+  const { playClickButton } = useClickSound();
+  const muted = useStore((state) => state.muted);
+
   return (
     <div>
-      <Button className="w-full h-full bg-inherit hover:bg-inherit">
+      <div
+        onClick={() => {
+          playClickButton(muted);
+        }}
+        className="w-full h-full flex justify-center items-center bg-inherit hover:bg-inherit"
+      >
         <Card
-          isFooterBlurred
           radius="lg"
-          className="col-span-12 sm:col-span-4 h-[330px] w-[180px] md:h-[500px] md:w-[350px] "
+          className="col-span-12 sm:col-span-4 h-[275px] w-[280px] md:h-[500px] md:w-[350px] "
         >
           <CardHeader className="absolute z-10 flex-col !items-start rounded-none text-black p-2">
             <div className="w-full h-[65px]  md:h-[90px] relative">
               <Image alt="Content Cover" src={titleCover} fill />
               {/* Text Overlay */}
-              <div className="absolute z-20 w-full h-full mt-3">
+              <div className="absolute z-20 w-full h-full mt-3 px-3">
                 <p className="uppercase font-bold md:text-xl">{title}</p>
                 <h4 className="font-medium sm:text-large text-xs">{topic}</h4>
               </div>
@@ -101,7 +110,7 @@ const GameModeCard: React.FC<GameModeCardProps> = ({
             </div>
           </CardBody>
         </Card>
-      </Button>
+      </div>
     </div>
   );
 };

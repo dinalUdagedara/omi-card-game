@@ -6,14 +6,18 @@ import {
   cardMultiplayer,
   getWinnerMultiplayer,
 } from "@/utils/types-multiplayer";
-import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { motion } from "framer-motion";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Winner1Multiplayer from "./collecting-cards/winner-1-multiplayer";
 import Winner2Multiplayer from "./collecting-cards/winner-2-multiplayer";
 import Winner3Multiplayer from "./collecting-cards/winner-3-multiplayer";
 import Winner4Multiplayer from "./collecting-cards/winner-4-multiplayer";
 import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
+import {
+  useCollectingCardSound,
+  useCardSelectSound,
+} from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 interface PlayingCardsProps {
   playingCards: {
@@ -71,6 +75,18 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
     roomName: roomName || "",
   });
 
+  const muted = useStore((state) => state.muted);
+  const { playCollectCards } = useCollectingCardSound();
+  const { playCardSelect } = useCardSelectSound();
+
+  // playing select card when a card is selected
+  useEffect(() => {
+    console.log("playing cards lenght ", playingCards.length);
+    if (playingCards.length !== 0) {
+      playCardSelect(muted);
+    }
+  }, [playingCards]);
+
   useEffect(() => {
     if (playingCards) {
       playingCards.map((cardSet) => {
@@ -117,6 +133,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
       if (winningCard)
         setTimeout(() => {
           setWinningCard(winningCard);
+          playCollectCards(muted);
         }, 2000);
     }
   }, [cardSet]);

@@ -15,10 +15,14 @@ import room1 from "@/public/assets/images/rooms/room1.png";
 import room2 from "@/public/assets/images/rooms/room2.png";
 import room3 from "@/public/assets/images/rooms/room3.png";
 import room4 from "@/public/assets/images/rooms/room4.png";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 const PublicRoomContainer = () => {
   const availableRooms = useQuery(api.rooms.getAllActivePublicRooms);
-
+  const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
   // Array of images
   const roomImages = [room1, room2, room3, room4];
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
@@ -76,7 +80,12 @@ const PublicRoomContainer = () => {
 
                   return (
                     <div key={index} className="flex flex-col mt-3">
-                      <Link href={`/multiplayer/start/public/${room.roomName}`}>
+                      <Link
+                        onClick={() => {
+                          playClickButton(muted);
+                        }}
+                        href={`/multiplayer/start/public/${room.roomName}`}
+                      >
                         <Button className="w-full h-full bg-inherit hover:bg-inherit">
                           <Card
                             isFooterBlurred
@@ -112,7 +121,15 @@ const PublicRoomContainer = () => {
           </div>
 
           <div className="flex items-center justify-center flex-grow  z-20">
-            <Link href={"/multiplayer/create-room"}>
+            <Link
+              onClick={() => {
+                playClickButton(muted);
+              }}
+              href={"/multiplayer/create-room"}
+              onMouseEnter={() => {
+                playHoverSound(muted);
+              }}
+            >
               <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
                 Create a Room
               </Button>

@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "convex/react";
 import { use, useEffect, useState } from "react";
 import { RoundOverDialogMultiplayer } from "../round-over-dialogs/round-over-dialog";
 import { useStore } from "@/store/state";
+import { useRoundLoseSound, useRoundWonSound } from "@/utils/play-sounds";
 
 interface RoundOverMultiplayerProps {
   userID: Id<"players">;
@@ -59,6 +60,9 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
 
   const team1Points = useStore((state) => state.team1Points);
   const team2Points = useStore((state) => state.team2Points);
+  const { playRoundWon } = useRoundWonSound();
+  const { playRoundLose } = useRoundLoseSound();
+  const muted = useStore((state) => state.muted);
 
   function getMyTeam() {
     const myTeamPoints = team1Points;
@@ -76,6 +80,9 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
     const opponentsPoint = opponentTeamPoints;
 
     if (myPoints > opponentsPoint) {
+      // Round won music
+      playRoundWon(muted);
+
       if (trumpSetter?.teamNumber === myTeam) {
         setwonCallingTrumps(true);
         if (trumpSetter?.playerId === userID) {
@@ -85,6 +92,9 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
         setwonWithoutCallingTrumps(true);
       }
     } else if (opponentsPoint > myPoints) {
+      // round lose music
+      playRoundLose(muted);
+
       if (trumpSetter?.teamNumber === myTeam) {
         setlostCallingTrumps(true);
         if (trumpSetter?.playerId === userID) {

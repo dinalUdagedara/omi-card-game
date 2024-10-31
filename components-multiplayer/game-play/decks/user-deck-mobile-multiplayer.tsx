@@ -1,15 +1,15 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/state";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cardMultiplayer } from "@/utils/types-multiplayer";
-import CardComponentMobileMultiplayer from "@/components-multiplayer/cards/card-mobile-multiplayer";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
+import { useHoverSound } from "@/utils/play-sounds";
 
 interface UserDeckProps {
   userID: Id<"players">;
@@ -21,10 +21,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setUserTurn = useStore((state) => state.setIsUserTurn);
   const userName = MultiplayerStateStore((state) => state.userName);
-
-  const [myCardDeck, setMyCardDeck] = useState<
-    { suit: string; value: string }[] | null
-  >(null);
+  const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
+  const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
+  const muted = useStore((state) => state.muted);
+  // const { playCardSelect } = useCardSelectSound();
+  const { playHoverSound } = useHoverSound();
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
     playerId: userID,
@@ -60,6 +61,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
       }
     }
   }, [turnPlayerID, noOfPlayingcards]);
+
+  useEffect(() => {
+    if (myCardSet) setMyCardDeck(myCardSet);
+    console.log("");
+  }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
     // update this player status to "playing"
@@ -118,7 +124,15 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
               >
                 <button
                   disabled={!trumpSuit || !isUserTurn}
-                  onClick={() => handleCardSelect(card)}
+                  // onMouseEnter={() => {
+                  //   console.log("Mouse Entered");
+                  //   // playHoverSound(muted);
+                  // }}
+                  onClick={() => {
+                    playHoverSound(muted);
+                    // playCardSelect(muted);
+                    handleCardSelect(card);
+                  }}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none rounded-lg"
                 >
                   <motion.div

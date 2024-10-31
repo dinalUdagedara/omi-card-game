@@ -202,6 +202,57 @@ export const getPlayerTurn = query({
   },
 });
 
+export const getPlayerTurnName = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch game state using roomID
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      if (!gameState) {
+        return null;
+      }
+
+      // Get the player ID whose turn it is to play
+      const turnPlayerId = gameState.playerTurn;
+
+      if (!turnPlayerId) {
+        throw new Error("Player turn not found");
+      }
+
+      // Fetch the player's username using the player ID
+      const player = await ctx.db
+        .query("players")
+        .filter((q) => q.eq(q.field("_id"), turnPlayerId))
+        .first();
+
+      if (!player) {
+        throw new Error("Player not found");
+      }
+
+      // Return the player's username
+      return player.userName;
+    }
+  },
+});
+
 export const noOfPlayingCards = query({
   args: {
     roomName: v.string(),

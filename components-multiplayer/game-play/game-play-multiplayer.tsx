@@ -24,6 +24,9 @@ import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
 import NoticeCardTemplate from "./game-board/game-board-template";
 import NameCardTemplate from "./name-card/name-card-template";
 import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
+import Image from "next/image";
+import UserAvatarBg from "@/public/assets/images/user-avatars/person8.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -62,6 +65,7 @@ const GamePlayMultiplayer = () => {
   const newRound = MultiplayerStateStore((state) => state.newRound);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
+  const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
 
   const setteamMemberID = MultiplayerStateStore(
     (state) => state.setteamMemberID
@@ -103,6 +107,10 @@ const GamePlayMultiplayer = () => {
 
   const isAllPlaying = useQuery(api.rooms.allPlayersPlaying, {
     roomId: roomId || "",
+  });
+
+  const playerTurnUserName = useQuery(api.gameLogic.getPlayerTurnName, {
+    roomName: roomId || "",
   });
 
   const [teamMember, setTeamMember] = useState<string>();
@@ -361,7 +369,7 @@ const GamePlayMultiplayer = () => {
       }
 
       {roomId && isRoomActive && userID && (
-        <div className="z-20 flex justify-center items-center  flex-col">
+        <div className="flex justify-center items-center flex-col">
           {/* <div className="w-full">
             <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
           </div> */}
@@ -371,28 +379,40 @@ const GamePlayMultiplayer = () => {
         </div>
       )}
 
-      <div>
+      <div className="lg:mt-3">
         <div className="flex justify-center z-20">
           <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
             <div className="">
-              <OtherDecksMultiplayer userHand={exampleCardSet} />
+              <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
 
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              // animate={{
-              //   boxShadow:
-              //     lastWinner === 2
-              //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-              //       : "none", // No shadow when it's not players's turn
-              // }}
+              animate={{
+                boxShadow:
+                  playerTurnUserName === teamMember
+                    ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                    : "none", // No shadow when it's not players's turn
+              }}
               transition={{
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-16 h-16  lg:w-36 lg:h-36 shadow-md rounded-full">
-                <AvatarImage src={`/assets/images/user-avatars/person8.png`} />
+              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+                <Image
+                  alt="Mountains"
+                  src={notificaitonBackGround}
+                  fill
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  style={{
+                    objectFit: "cover", // cover, contain, none
+                  }}
+                />
+                <AvatarImage
+                  className="z-20"
+                  src={`/assets/images/user-avatars/person8.png`}
+                />
               </Avatar>
             </motion.div>
 
@@ -404,60 +424,43 @@ const GamePlayMultiplayer = () => {
         <div className="flex justify-center gap-4 bg-white z-20 ">
           <div className="flex justify-center items-center z-20 ">
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
+              <div className="text-center py-2">
+                <NameCardTemplate>{opponent_2 || "Waiting.."}</NameCardTemplate>
+              </div>{" "}
               <motion.div
                 className=" rounded-full"
                 initial={{ boxShadow: "none" }}
-                // animate={{
-                //   boxShadow:
-                //     lastWinner === 3
-                //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                //       : "none", // No shadow when it's not players's turn
-                // }}
+                animate={{
+                  boxShadow:
+                    playerTurnUserName === opponent_2
+                      ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                      : "none", // No shadow when it's not players's turn
+                }}
                 transition={{
                   duration: 0.8,
                 }}
               >
-                <div className="text-center py-2">
-                  <NameCardTemplate>
-                    {opponent_2 || "Waiting.."}
-                  </NameCardTemplate>
-                </div>
-                <Avatar className="w-16 h-16 lg:w-32 lg:h-32 shadow-md">
+                <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+                  <Image
+                    alt="Mountains"
+                    src={notificaitonBackGround}
+                    fill
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    style={{
+                      objectFit: "cover",
+                    }}
+                  />
                   <AvatarImage
+                    className="z-20"
                     src={`/assets/images/user-avatars/person8.png`}
                   />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
-
-              <OtherDecksMultiplayer userHand={exampleCardSet} />
+              <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
           </div>{" "}
           <div className=" flex justify-center items-center  ">
-            {/* <div
-            className="border-8 h-[450px] w-[400px] flex z-20 min-w-60 min-h-96 lg:min-h-92 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 "
-            style={{
-              backgroundImage: `url('/assets/images/backgrounds/backgroundlatest.png')`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="w-full h-full justify-center  items-center  z-20 ">
-              {roomId && userID && isRoomActive && (
-                <GameBoardMobileMultiplayer
-                  onRestart={restartGame}
-                  onStart={handleSelectOtherHands}
-                  onNextStart={handleNextTurn}
-                  onShuffleAgain={handleNextTurnofShuffling}
-                  onTrumpSelected={handleCloseDrawer}
-                  roomName={roomId}
-                  userID={userID}
-                />
-              )}
-            </div>
-          </div> */}
-
             <NoticeCardTemplate>
               <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
                 {roomId && userID && isRoomActive && (
@@ -473,33 +476,44 @@ const GamePlayMultiplayer = () => {
           <div className=" flex justify-center items-center  z-20 ">
             <div className="">
               <div className="flex flex-col justify-center items-center  min-w-[70px]">
-                <OtherDecksMultiplayer userHand={exampleCardSet} />
-
+                <OtherDecksMultiplayer
+                  userHand={myCardDeck ?? exampleCardSet}
+                />
                 <motion.div
                   className=" rounded-full"
                   initial={{ boxShadow: "none" }}
-                  // animate={{
-                  //   boxShadow:
-                  //     lastWinner === 1
-                  //       ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                  //       : "none", // No shadow when it's not players's turn
-                  // }}
+                  animate={{
+                    boxShadow:
+                      playerTurnUserName === opponent_1
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
                   transition={{
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-16 h-16 lg:w-36 lg:h-36 shadow-md">
+                  <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
                     <AvatarImage
+                      className="z-20"
                       src={`/assets/images/user-avatars/person8.png`}
                     />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
-                  <div className="text-center py-2">
-                    <NameCardTemplate>
-                      {opponent_1 || "Waiting.."}
-                    </NameCardTemplate>
-                  </div>
-                </motion.div>
+                </motion.div>{" "}
+                <div className="text-center py-2">
+                  <NameCardTemplate>
+                    {opponent_1 || "Waiting.."}
+                  </NameCardTemplate>
+                </div>
               </div>
             </div>
           </div>
@@ -532,7 +546,7 @@ const GamePlayMultiplayer = () => {
             initial={{ boxShadow: "none" }}
             // animate={{
             //   boxShadow:
-            //     lastWinner === 0
+            //     playerTurnUserName === userName
             //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
             //       : "none", // No shadow when it's not user's turn
             // }}

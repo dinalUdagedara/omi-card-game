@@ -22,6 +22,8 @@ import logoIcon from "@/public/assets/images/logo-icon.png";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 const CreateRoomContainer = () => {
   const [roomName, setRoomName] = useState<string>(generateRandomName());
@@ -33,7 +35,13 @@ const CreateRoomContainer = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const createRoomsDB = useMutation(api.rooms.createRoom);
+
+  const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
+
   const handleCreateRoom = () => {
+    playClickButton(muted);
     if (userName)
       createRoomsDB({
         roomName,
@@ -112,12 +120,18 @@ const CreateRoomContainer = () => {
               >
                 <TabsList className="grid w-full px-4 grid-cols-2 bg-transparent">
                   <TabsTrigger
+                    onClick={() => {
+                      playClickButton(muted);
+                    }}
                     className=" text-black data-[state=active]:bg-amber-900 data-[state=active]:inv-rad-5 inv-rad font-bold text-md"
                     value="private"
                   >
                     Private
                   </TabsTrigger>
                   <TabsTrigger
+                    onClick={() => {
+                      playClickButton(muted);
+                    }}
                     className=" text-black data-[state=active]:bg-amber-900 data-[state=active]:inv-rad-5 inv-rad font-bold text-md"
                     value="public"
                   >
@@ -168,8 +182,16 @@ const CreateRoomContainer = () => {
                       <Button
                         disabled={!isRoomCreated}
                         className="bg-amber-950 text-white hover:bg-amber-900"
+                        onMouseEnter={() => {
+                          playHoverSound(muted);
+                        }}
                       >
-                        <Link href={`/multiplayer/start/private/${roomName}`}>
+                        <Link
+                          onClick={() => {
+                            playClickButton(muted);
+                          }}
+                          href={`/multiplayer/start/private/${roomName}`}
+                        >
                           Next
                         </Link>
                       </Button>
@@ -202,8 +224,16 @@ const CreateRoomContainer = () => {
                       <Button
                         disabled={!isRoomCreated}
                         className="bg-amber-950 text-white hover:bg-amber-900"
+                        onMouseEnter={() => {
+                          playHoverSound(muted);
+                        }}
                       >
-                        <Link href={`/multiplayer/start/public/${roomName}`}>
+                        <Link
+                          onClick={() => {
+                            playClickButton(muted);
+                          }}
+                          href={`/multiplayer/start/public/${roomName}`}
+                        >
                           Next
                         </Link>{" "}
                       </Button>

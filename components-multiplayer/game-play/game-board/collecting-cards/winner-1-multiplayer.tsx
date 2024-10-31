@@ -47,7 +47,7 @@ const Winner1Multiplayer = () => {
 
             {myCard && (
               <motion.div
-                className="flex justify-center items-center"
+                className="flex justify-center items-center z-20"
                 animate={{
                   scale: [1, 1.5, 1.5, 1, 1],
                   // rotate: [0, 0, 180, 180, 0],

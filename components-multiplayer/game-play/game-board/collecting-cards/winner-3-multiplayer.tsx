@@ -34,7 +34,7 @@ const Winner3Multiplayer = () => {
             </motion.div>
           )}
 
-          <div className="flex flex-col justify-between h-full gap-10 w-full">
+          <div className="flex flex-col justify-between h-full gap-10 w-full z-20">
             {teammateCard && (
               <motion.div
                 className="flex justify-center items-center"

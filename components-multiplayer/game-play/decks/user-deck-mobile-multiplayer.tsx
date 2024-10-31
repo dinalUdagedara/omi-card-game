@@ -1,7 +1,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/state";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -9,11 +9,7 @@ import { cardMultiplayer } from "@/utils/types-multiplayer";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
 import { checkIfViolationOccured } from "@/utils/multiplayer/game-logic-multiplayer";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import {
-  useHoverSound,
-  useClickSound,
-  useCardSelectSound,
-} from "@/utils/play-sounds";
+import { useHoverSound } from "@/utils/play-sounds";
 
 interface UserDeckProps {
   userID: Id<"players">;
@@ -28,9 +24,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
   const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
   const muted = useStore((state) => state.muted);
-  const { playCardSelect } = useCardSelectSound();
+  // const { playCardSelect } = useCardSelectSound();
   const { playHoverSound } = useHoverSound();
-  const { playClickButton } = useClickSound();
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
     playerId: userID,
@@ -73,9 +68,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
-    console.log("Card Selected", muted);
-    playCardSelect(muted);
-
     // update this player status to "playing"
     updatePlayerStatus({
       status: "playing",

@@ -55,8 +55,7 @@ const PenaltycardsMultiplayer = ({
         setGameOver(true);
         // game lose sound
         playRoundLose(muted);
-      }
-      if (opponentInfo?.penaltyCards === 0) {
+      } else if (opponentInfo?.penaltyCards === 0) {
         console.log("I Won");
         setGameWon(true);
         setGameOver(true);

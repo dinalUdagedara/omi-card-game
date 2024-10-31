@@ -4,7 +4,7 @@ import useSound from "use-sound";
 // to play mouse hover sound
 export const useHoverSound = () => {
   const [playHoverSound] = useSound("/assets/audio-files/select.mp3", {
-    volume: 1,
+    volume: 0.2,
   });
 
   const playHoverSoundWithCheck = useCallback(
@@ -22,7 +22,7 @@ export const useHoverSound = () => {
 // to play Click sound
 export const useClickSound = () => {
   const [playClickButton] = useSound("/assets/audio-files/click-button.mp3", {
-    volume: 1,
+    volume: 0.6,
   });
 
   const playClickSoundWithCheck = useCallback(
@@ -39,7 +39,9 @@ export const useClickSound = () => {
 
 // to play sound when collecting cards
 export const useCollectingCardSound = () => {
-  const [playCollectCards] = useSound("/assets/audio-files/woosh.mp3");
+  const [playCollectCards] = useSound("/assets/audio-files/woosh.mp3", {
+    volume: 0.5,
+  });
 
   const playCollectingCardSound = useCallback(
     (muted: boolean) => {
@@ -54,7 +56,9 @@ export const useCollectingCardSound = () => {
 
 // to play when round won
 export const useRoundWonSound = () => {
-  const [playRoundWon] = useSound("/assets/audio-files/game-won.mp3");
+  const [playRoundWon] = useSound("/assets/audio-files/game-won.mp3", {
+    volume: 0.6,
+  });
 
   const playRoundOverMusic = useCallback(
     (muted: boolean) => {
@@ -69,7 +73,9 @@ export const useRoundWonSound = () => {
 
 // to play when round lose
 export const useRoundLoseSound = () => {
-  const [playRoundLose] = useSound("/assets/audio-files/game-lose.mp3");
+  const [playRoundLose] = useSound("/assets/audio-files/game-lose.mp3", {
+    volume: 0.6,
+  });
 
   const playRoundLoseMusic = useCallback(
     (muted: boolean) => {

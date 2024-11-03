@@ -11,7 +11,7 @@ const ScoreBoardMobile = () => {
   const roundsWonbyTeam1 = useStore((state) => state.roundsWonbyTeam1);
   const roundsWonbyTeam2 = useStore((state) => state.roundsWonbyTeam2);
   return (
-    <div className="flex justify-center gap-10 items-center bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 text-white w-full py-3 rounded-b-full shadow-lg  hover:scale-105  duration-300 ease-in-out">
+    <div className="flex justify-center gap-10 items-center bg-gradient-to-t from-black via-amber-950 to-amber-900 text-white w-full py-3 rounded-b-full shadow-lg  hover:scale-105  duration-300 ease-in-out">
       <div className="flex flex-col justify-center items-center space-y-2">
         <div className="text-4xl font-bold">{team1Points}</div>
         <div className="text-sm uppercase tracking-wide">Ours</div>

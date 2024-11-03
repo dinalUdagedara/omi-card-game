@@ -371,14 +371,13 @@ const GamePlayMobile = () => {
     const trumpSetterCycle = [2, 1]; // Alternating between team 2 and team 1
     const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
     const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
-    const starterPlayer = playerCycle[playerIndex];  
+    const starterPlayer = playerCycle[playerIndex];
     const trumpSetterNumber = trumpSetterCycle[trumpSetterIndex];
 
     setTrumpSetter(trumpSetterNumber);
     handleLastWinner(starterPlayer);
     setRandomSuit();
-}
-
+  }
 
   function resetTeamPoints() {
     setTeam1Points(0);
@@ -474,8 +473,8 @@ const GamePlayMobile = () => {
     // Reset the points for both teams
     resetTeamPoints();
     setRoundsWonbyTeam1(0);
-    setTeam_1_penaltyCards(10)
-    setTeam_2_penaltyCards(10)
+    setTeam_1_penaltyCards(10);
+    setTeam_2_penaltyCards(10);
     setRoundsWonbyTeam2(0);
 
     // Set round and turn numbers back to the first round and turn
@@ -572,12 +571,12 @@ const GamePlayMobile = () => {
       }
   }, [isSubmitted]);
 
-  useEffect(()=>{
-    checkWinner()
-  },[team1PenaltyCards,team2PenaltyCards,gameWinner])
+  useEffect(() => {
+    checkWinner();
+  }, [team1PenaltyCards, team2PenaltyCards, gameWinner]);
 
   return (
-    <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
+    <div className="w-full h-full min-h-screen flex flex-col z-20 ">
       {/* Dialog after a Round  */}
 
       {isDialogOpen && (
@@ -662,7 +661,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white z-20"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -670,7 +669,7 @@ const GamePlayMobile = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full h-full justify-center  items-center  ">
+            <div className="w-full h-full justify-center  items-center  z-20">
               <GameBoardMobile
                 onRestart={restartGame}
                 onStart={handleSelectOtherHands}
@@ -715,7 +714,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
       <div className="mt-auto relative min-mt-28">
-        <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative mt-20">
+        <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900 rounded-t-full relative mt-20">
           <div className="flex w-full justify-center items-center">
             <div className="">
               {dealtHands.length > 0 && dealtHands[0]?.hand ? (

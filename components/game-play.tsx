@@ -639,8 +639,24 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md rounded-full">
+                  {/* <Avatar className="w-14 h-14 shadow-md rounded-full">
                     <AvatarImage src={`/assets/player3.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar> */}
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
@@ -716,8 +732,24 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
+                  {/* <Avatar className="w-14 h-14 shadow-md">
                     <AvatarImage src={`/assets/player4.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar> */}
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
@@ -736,8 +768,9 @@ export default function Board() {
           </div>
 
           {/* Game Board */}
+
           <div
-            className="flex w-full justify-center items-center rounded-3xl m-4 p-6 shadow-lg bg-opacity-75 min-h-80 z-20"
+            className="flex w-full justify-center items-center  m-4 p-6 shadow-lg bg-black rounded-2xl bg-opacity-75 min-h-80 z-20 border-8 border-black"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -745,7 +778,7 @@ export default function Board() {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full justify-center items-center  z-20">
+            <div className="w-full justify-center items-center z-20">
               {/* <Button onClick={handleInitialStart}>Start</Button> */}
               <GameBoard
                 onRestart={restartGame}
@@ -795,8 +828,24 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
+                  {/* <Avatar className="w-14 h-14 shadow-md">
                     <AvatarImage src={`/assets/player2.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar> */}
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
@@ -856,7 +905,7 @@ export default function Board() {
           <div className="flex flex-col gap-2 justify-center items-center p-5 mt-10">
             <div>
               {turnSuit ? (
-                <Avatar className="w-14 h-14 bg-slate-500 shadow-md">
+                <Avatar className="w-14 h-14 bg-white shadow-md">
                   <AvatarImage
                     className="p-2"
                     src={`/assets/suits/${turnSuit}.png`}
@@ -888,18 +937,25 @@ export default function Board() {
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  lastWinner === 0
-                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-                    : "none", // No shadow when it's not user's turn
-              }}
+              // animate={{
+              //   boxShadow:
+              //     lastWinner === 0
+              //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+              //       : "none", // No shadow when it's not user's turn
+              // }}
               transition={{
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-16 h-16 ">
+              {/* <Avatar className="w-16 h-16 ">
                 <AvatarImage src={`/assets/user.jpg`} />
+                <AvatarFallback>
+                  <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
+                </AvatarFallback>
+              </Avatar>
+               */}
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={`/assets/user-avatars/player1.png`} />
                 <AvatarFallback>
                   <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
                 </AvatarFallback>
@@ -912,7 +968,7 @@ export default function Board() {
           <div className="flex gap-2 flex-col justify-center items-center p-5 mt-10">
             <div>
               {trumpSuit ? (
-                <Avatar className="w-14 h-14 bg-slate-500 shadow-md">
+                <Avatar className="w-14 h-14 bg-white shadow-md">
                   <AvatarImage
                     className="p-2"
                     src={`/assets/suits/${trumpSuit}.png`}

@@ -9,6 +9,8 @@ import Header from "@/components/header";
 import { ConvexClientProvider } from "@/components-multiplayer/ConvexClientProvider";
 import NextProvider from "./next-provider";
 import MusicPlayer from "./multiplayer/music/background-music";
+import background from "@/public/assets/images/background.png";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 const cormorant = Cormorant({ subsets: ["latin"] });
@@ -38,8 +40,22 @@ export default function RootLayout({
         >
           <ConvexClientProvider>
             <NextProvider>
-              {/* Music Player */}
+              <div className="absolute inset-0">
+                <Image
+                  alt="Mountains"
+                  src={background}
+                  placeholder="blur"
+                  quality={100}
+                  fill
+                  sizes="100vw"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-100" />
+              </div>
 
+              {/* Music Player */}
               <MusicPlayer />
 
               {children}

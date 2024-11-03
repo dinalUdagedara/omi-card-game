@@ -368,14 +368,15 @@ const GamePlayMultiplayer = () => {
         )
       }
 
-      {roomId && isRoomActive && userID && (
+      {roomId && isRoomActive && userID ? (
         <div className="flex justify-center items-center flex-col">
-          {/* <div className="w-full">
-            <ScoreBoardMobileMultiplayer userID={userID} roomName={roomId} />
-          </div> */}
           <div className="w-full">
             <PenaltycardsMultiplayer userID={userID} roomName={roomId} />
           </div>
+        </div>
+      ) : (
+        <div className="w-full my-2 flex justify-center">
+          <Skeleton className="min-h-[90px] min-w-[330px] lg:w-[470px] lg:h-[100px]  inv-rad inv-rad-12" />
         </div>
       )}
 
@@ -523,7 +524,7 @@ const GamePlayMultiplayer = () => {
       <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900  relative mt-20  rounded-t-full">
         <div className="flex w-full justify-center items-center">
           <div className="">
-            {roomId && userID && isRoomActive ? (
+            {roomId && userID && isRoomActive && (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer
@@ -531,10 +532,6 @@ const GamePlayMultiplayer = () => {
                     roomName={roomId}
                   />
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-row justify-center w-full items-center mt-14">
-                <Skeleton className="h-[125px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
               </div>
             )}
           </div>

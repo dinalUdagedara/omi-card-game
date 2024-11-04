@@ -767,7 +767,7 @@ const GamePlayMobile = () => {
                 </div>
               ) : (
                 <div className="flex flex-row justify-center w-full items-center mt-14">
-                  <Skeleton className="h-[125px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
+                  <Skeleton className="h-[85px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
                 </div>
               )}
             </div>
@@ -777,18 +777,18 @@ const GamePlayMobile = () => {
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  lastWinner === 0
-                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-                    : "none", // No shadow when it's not user's turn
-              }}
+              // animate={{
+              //   boxShadow:
+              //     lastWinner === 0
+              //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+              //       : "none", // No shadow when it's not user's turn
+              // }}
               transition={{
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-16 h-16 ">
-                <AvatarImage src={`/assets/user.jpg`} />
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={`/assets/user-avatars/player1.png`} />
                 <AvatarFallback>
                   <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
                 </AvatarFallback>

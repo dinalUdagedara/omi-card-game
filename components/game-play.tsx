@@ -600,8 +600,9 @@ export default function Board() {
         {/* All the other things */}
         <div className="flex justify-end gap-4">
           {/* Player 3 and scoreboard */}
-          <div className="relative col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4 rounded-lg  shadow-md z-20 ">
+          <div className="relative col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4  shadow-md z-20 ">
             <Image
+              className="rounded-xl"
               alt="Mountains"
               src={modeCardBackground}
               fill
@@ -612,7 +613,7 @@ export default function Board() {
             />
 
             <Image
-              className="p-3"
+              className="p-3  rounded-2xl"
               alt="Mountains"
               src={notificaitonBackGround}
               fill
@@ -693,9 +694,9 @@ export default function Board() {
         {/* Players 4, Game Board, Player 2 */}
         <div className="flex justify-between gap-4 h-full w-full mt-4">
           {/* Player 4 */}
-          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 rounded-lg shadow-md z-20">
+          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10 ">
             <Image
-              className="py-6"
+              className="rounded-2xl"
               alt="Mountains"
               src={modeCardBackground}
               fill
@@ -706,7 +707,7 @@ export default function Board() {
             />
 
             <Image
-              className="p-3 py-9"
+              className="p-3 rounded-2xl"
               alt="Mountains"
               src={notificaitonBackGround}
               fill
@@ -770,7 +771,7 @@ export default function Board() {
           {/* Game Board */}
 
           <div
-            className="flex w-full justify-center items-center  m-4 p-6 shadow-lg bg-black rounded-2xl bg-opacity-75 min-h-80 z-20 border-8 border-black"
+            className="flex w-full justify-center items-center  m-4 p-6 shadow-lg bg-black rounded-2xl bg-opacity-75 min-h-[350px] z-20 border-8 border-black"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -790,9 +791,9 @@ export default function Board() {
           </div>
 
           {/* Player 2 */}
-          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20">
+          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10">
             <Image
-              className="py-6 rounded-xl"
+              className="rounded-xl"
               alt="Mountains"
               src={modeCardBackground}
               fill
@@ -803,7 +804,7 @@ export default function Board() {
             />
 
             <Image
-              className="p-3 py-9 rounded-xl"
+              className="p-3  rounded-2xl"
               alt="Mountains"
               src={notificaitonBackGround}
               fill

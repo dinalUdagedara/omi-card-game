@@ -54,11 +54,11 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
       {isGameOver ? (
         <>
           <div className="flex justify-center gap-10">
-          {gameWinner === 1 ? (
-                <GameOverDialog onRestart={onRestart} />
-              ) : (
-                <GameOverDialogLose onRestart={onRestart}  />
-              )}
+            {gameWinner === 1 ? (
+              <GameOverDialog onRestart={onRestart} />
+            ) : (
+              <GameOverDialogLose onRestart={onRestart} />
+            )}
           </div>
         </>
       ) : (
@@ -96,7 +96,7 @@ const GameBoardMobile: React.FC<GameBoardProps> = ({
               </div>
             ) : (
               <div className="flex flex-row w-full justify-between items-center min-h-72 gap-5">
-                <div className="w-1/3 min-w-16">
+                <div className="w-1/3">
                   {player_4_card && !winningCard && (
                     <motion.div
                       className="flex justify-center items-center"

@@ -26,21 +26,6 @@ const ModeSelector = () => {
 
   return (
     <div className="flex flex-col  justify-start gap-[4vh] pt-10">
-      <div className="absolute inset-0">
-        <Image
-          alt="Mountains"
-          src={background}
-          placeholder="blur"
-          quality={100}
-          fill
-          sizes="100vw"
-          style={{
-            objectFit: "cover",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-100" />
-      </div>
-
       <div className="flex flex-col items-center justify-center z-20 gap-2 w-full">
         <div className={`h-full font ${spicy_rice.className} text-7xl t-10 `}>
           Omi

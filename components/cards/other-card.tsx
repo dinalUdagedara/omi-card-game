@@ -2,11 +2,11 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import card from "./card";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
-import cardBack from "@/public/assets/cards/card-back.jpg";
+import cardBack from "@/public/assets/cards-vintage/card-back.png";
 
 const OtherCardComponent = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
-  const imgUrl = `/assets/cards/card-back.jpg`;
+  const imgUrl = `/assets/cards-vintage/card-back.png`;
 
   // Fetch the blurHash asynchronously when the component mounts
   useEffect(() => {

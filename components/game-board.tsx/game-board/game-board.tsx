@@ -14,6 +14,11 @@ import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import { GameOverDialog } from "../game-over/game-over-win";
 import { GameOverDialogLose } from "../game-over/game-over-lose";
+import {
+  useCardSelectSound,
+  useHoverSound,
+  useCollectingCardSound,
+} from "@/utils/play-sounds";
 
 interface GameBoardProps {
   onRestart: () => void;
@@ -39,6 +44,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isGameOver = useStore((state) => state.isGameOver);
   const gameWinner = useStore((state) => state.gameWinner);
+  const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
+  const { playCardSelect } = useCardSelectSound();
 
   useEffect(() => {
     setIsCardsGone(false);
@@ -60,7 +68,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               {gameWinner === 1 ? (
                 <GameOverDialog onRestart={onRestart} />
               ) : (
-                <GameOverDialogLose onRestart={onRestart}  />
+                <GameOverDialogLose onRestart={onRestart} />
               )}
             </div>
           </div>
@@ -99,27 +107,39 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 )}
               </div>
             ) : (
-              <div className="flex flex-row w-full h-full justify-between items-center px-20 ">
+              <div className="flex flex-row w-full h-full justify-between items-center px-20">
                 <div className="w-1/3">
                   {player_4_card && !winningCard && (
                     <motion.div
                       className="flex justify-center items-center"
                       initial={{ opacity: 0, x: -100 }} // Start  values
-                      animate={{ opacity: 1, x: 0 }} // end to these values
+                      animate={{ opacity: 1, x: 0 }} // End values
                       transition={{ duration: 0.8, delay: 1.6 }} // Animation duration
+                      onAnimationStart={() => {
+                        const duration = 1.0 * 1000; // Convert seconds to milliseconds
+                        setTimeout(() => {
+                          playCardSelect(muted); // Play the sound just before animation ends
+                        }, duration - 100); // 100ms before animation ends
+                      }}
                     >
                       <CardComponent card={player_4_card} />
                     </motion.div>
                   )}
                 </div>
 
-                <div className="flex flex-col justify-between gap-10  w-1/3 ">
+                <div className="flex flex-col justify-between gap-10  w-1/3">
                   <div className="">
                     {player_3_card && !winningCard && (
                       <motion.div
                         initial={{ opacity: 0, y: -50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 1.2 }} // Adding delay for animation
+                        onAnimationStart={() => {
+                          const duration = 0.8 * 1000;
+                          setTimeout(() => {
+                            playCardSelect(muted);
+                          }, duration - 100);
+                        }}
                       >
                         <CardComponent card={player_3_card} />
                       </motion.div>
@@ -137,6 +157,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                     )}
                   </div>
                 </div>
+
                 <div className="w-1/3">
                   {player_2_card && !winningCard && (
                     <motion.div
@@ -144,6 +165,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
                       initial={{ opacity: 0, x: 50 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: 0.8 }}
+                      onAnimationStart={() => {
+                        const duration = 0.5 * 1000;
+                        setTimeout(() => {
+                          playCardSelect(muted);
+                        }, duration - 100);
+                      }}
                     >
                       <CardComponent card={player_2_card} />
                     </motion.div>

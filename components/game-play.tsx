@@ -33,6 +33,9 @@ import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
 import { motion } from "framer-motion";
+import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import { useCollectingCardSound } from "@/utils/play-sounds";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -134,6 +137,8 @@ export default function Board() {
   );
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const { playCollectCards } = useCollectingCardSound();
+  const muted = useStore((state) => state.muted);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -396,6 +401,7 @@ export default function Board() {
     if (cardSet.length > 0) {
       const winningCard: Card = determineTrickWinner(cardSet);
       setWinningCard(winningCard);
+      playCollectCards(muted);
       console.log("Winning Card:", winningCard);
     }
   }
@@ -433,12 +439,12 @@ export default function Board() {
   function checkWinner() {
     if (team1PenaltyCards === 0) {
       toast("Your Team lost");
-      setGameWinner(2)
+      setGameWinner(2);
       setIsGameOver(true);
     }
     if (team2PenaltyCards === 0) {
       toast("Congratulations Your Team wons the Game");
-      setGameWinner(1)
+      setGameWinner(1);
       setIsGameOver(true);
     }
 
@@ -482,8 +488,8 @@ export default function Board() {
     resetTeamPoints();
     setRoundsWonbyTeam1(0);
     setRoundsWonbyTeam2(0);
-    setTeam_1_penaltyCards(10)
-    setTeam_2_penaltyCards(10)
+    setTeam_1_penaltyCards(10);
+    setTeam_2_penaltyCards(10);
 
     // Set round and turn numbers back to the first round and turn
     setRoundNumber(1);
@@ -581,9 +587,9 @@ export default function Board() {
       }
   }, [isSubmitted]);
 
-  useEffect(()=>{
-   if(!isMobile) checkWinner()
-  },[team1PenaltyCards,team2PenaltyCards,gameWinner])
+  useEffect(() => {
+    if (!isMobile) checkWinner();
+  }, [team1PenaltyCards, team2PenaltyCards, gameWinner]);
   return (
     <div className="hidden  w-full h-screen sm:flex flex-col ">
       {/* Dialog after a Round  */}
@@ -594,14 +600,36 @@ export default function Board() {
         </div>
       )}
 
-      <div className="flex flex-col bg-gradient-to-br from-slate-500 via-gray-600 to-slate-700 h-full w-full shadow-lg  p-4">
+      <div className="flex flex-col  h-full w-full shadow-lg  p-4">
         {/* All the other things */}
         <div className="flex justify-end gap-4">
           {/* Player 3 and scoreboard */}
-          <div className="col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 bg-white shadow-md ">
+          <div className="relative col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4  shadow-md z-20 ">
+            <Image
+              className="rounded-xl"
+              alt="Mountains"
+              src={modeCardBackground}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "fill",
+              }}
+            />
+
+            <Image
+              className="p-3  rounded-2xl"
+              alt="Mountains"
+              src={notificaitonBackGround}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "fill",
+              }}
+            />
+
             {dealtHands.length > 0 && dealtHands[2]?.hand ? (
-              <div className="flex flex-row justify-center items-center ">
-                <OtherDecks userHand={dealtHands[2].hand} /> 
+              <div className="flex flex-row justify-center items-center z-20">
+                <OtherDecks userHand={dealtHands[2].hand} />
 
                 <motion.div
                   className=" rounded-full"
@@ -616,14 +644,30 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md rounded-full">
+                  {/* <Avatar className="w-14 h-14 shadow-md rounded-full">
                     <AvatarImage src={`/assets/player3.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar> */}
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
 
-                <div className="font-bold text-gray-100 tracking-wide m-2">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
+                <div className="font-bold text-gray-100 tracking-wide m-2 z-20">
+                  <span className="text-black bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 3
                   </span>
                 </div>
@@ -654,9 +698,31 @@ export default function Board() {
         {/* Players 4, Game Board, Player 2 */}
         <div className="flex justify-between gap-4 h-full w-full mt-4">
           {/* Player 4 */}
-          <div className="col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 shadow-md">
+          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10 ">
+            <Image
+              className="rounded-2xl"
+              alt="Mountains"
+              src={modeCardBackground}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "fill",
+              }}
+            />
+
+            <Image
+              className="p-3 rounded-2xl"
+              alt="Mountains"
+              src={notificaitonBackGround}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "fill",
+              }}
+            />
+
             {dealtHands.length > 0 && dealtHands[3]?.hand ? (
-              <div className="flex flex-col justify-center items-center">
+              <div className="flex flex-col justify-center items-center z-20">
                 <OtherDecks userHand={dealtHands[3].hand} />
                 <motion.div
                   className=" rounded-full"
@@ -671,13 +737,29 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
+                  {/* <Avatar className="w-14 h-14 shadow-md">
                     <AvatarImage src={`/assets/player4.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar> */}
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
-                <div className="font-bold text-gray-100 tracking-wide m-2">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
+                <div className="font-bold text-gray-100 tracking-wide m-2 z-20">
+                  <span className="text-black bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 4
                   </span>
                 </div>
@@ -691,8 +773,9 @@ export default function Board() {
           </div>
 
           {/* Game Board */}
+
           <div
-            className="flex w-full justify-center items-center rounded-3xl m-4 p-6 shadow-lg bg-opacity-75 min-h-80"
+            className="flex w-full justify-center items-center  m-4 p-6 shadow-lg bg-black rounded-2xl bg-opacity-75 min-h-[350px] z-20 border-8 border-black"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -700,7 +783,7 @@ export default function Board() {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full justify-center items-center ">
+            <div className="w-full justify-center items-center z-20">
               {/* <Button onClick={handleInitialStart}>Start</Button> */}
               <GameBoard
                 onRestart={restartGame}
@@ -712,9 +795,30 @@ export default function Board() {
           </div>
 
           {/* Player 2 */}
-          <div className="col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 shadow-md">
+          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10">
+            <Image
+              className="rounded-xl"
+              alt="Mountains"
+              src={modeCardBackground}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "cover",
+              }}
+            />
+
+            <Image
+              className="p-3  rounded-2xl"
+              alt="Mountains"
+              src={notificaitonBackGround}
+              fill
+              sizes="(min-width: 808px) 50vw, 100vw"
+              style={{
+                objectFit: "cover",
+              }}
+            />
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
-              <div className="flex flex-col justify-center items-center ">
+              <div className="flex flex-col justify-center items-center z-20">
                 <OtherDecks userHand={dealtHands[1].hand} />
                 <motion.div
                   className=" rounded-full"
@@ -729,13 +833,29 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
+                  {/* <Avatar className="w-14 h-14 shadow-md">
                     <AvatarImage src={`/assets/player2.png`} />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar> */}
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
-                <div className="font-bold text-gray-100 tracking-wide m-2">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
+                <div className="font-bold text-gray-100 tracking-wide m-2  z-20">
+                  <span className="text-black bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
                     Player 2
                   </span>
                 </div>
@@ -750,7 +870,7 @@ export default function Board() {
         </div>
       </div>
 
-      <div className="flex h-1/3 w-full justify-between bg-gradient-to-br from-slate-800 via-gray-800 to-slate-600 shadow-lg">
+      <div className="flex h-1/3 w-full justify-between bg-gradient-to-b from-black via-amber-950 to-amber-900 rounded-t-3xl shadow-lg z-20">
         {/* User hand Flex */}
         <div className="w-full flex justify-center items-center">
           <div>
@@ -786,11 +906,11 @@ export default function Board() {
         </div>
 
         {/* Middle Section */}
-        <div className="flex w-2/4 m-5">
+        <div className="flex w-2/4 m-5 ">
           <div className="flex flex-col gap-2 justify-center items-center p-5 mt-10">
             <div>
               {turnSuit ? (
-                <Avatar className="w-14 h-14 bg-slate-500 shadow-md">
+                <Avatar className="w-14 h-14 bg-white shadow-md">
                   <AvatarImage
                     className="p-2"
                     src={`/assets/suits/${turnSuit}.png`}
@@ -811,7 +931,7 @@ export default function Board() {
               )}
             </div>
             <div className="font-bold text-gray-300 tracking-wide mt-2">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600  z-20">
                 This Round
               </span>
             </div>
@@ -822,18 +942,25 @@ export default function Board() {
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  lastWinner === 0
-                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-                    : "none", // No shadow when it's not user's turn
-              }}
+              // animate={{
+              //   boxShadow:
+              //     lastWinner === 0
+              //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+              //       : "none", // No shadow when it's not user's turn
+              // }}
               transition={{
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-16 h-16 ">
+              {/* <Avatar className="w-16 h-16 ">
                 <AvatarImage src={`/assets/user.jpg`} />
+                <AvatarFallback>
+                  <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
+                </AvatarFallback>
+              </Avatar>
+               */}
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={`/assets/user-avatars/player1.png`} />
                 <AvatarFallback>
                   <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
                 </AvatarFallback>
@@ -846,7 +973,7 @@ export default function Board() {
           <div className="flex gap-2 flex-col justify-center items-center p-5 mt-10">
             <div>
               {trumpSuit ? (
-                <Avatar className="w-14 h-14 bg-slate-500 shadow-md">
+                <Avatar className="w-14 h-14 bg-white shadow-md">
                   <AvatarImage
                     className="p-2"
                     src={`/assets/suits/${trumpSuit}.png`}

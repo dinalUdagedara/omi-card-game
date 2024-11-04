@@ -6,6 +6,7 @@ import OtherCardComponent from "../cards/other-card";
 import { motion } from "framer-motion";
 import CardComponentUserDeck from "../cards/card-user-deck";
 import OtherCardComponentUserDeck from "../cards/other-card-user-deck";
+import { useHoverSound } from "@/utils/play-sounds";
 
 interface UserDeckProps {
   userHand: Card[];
@@ -18,6 +19,8 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
   const selectedCardByUser = useStore((state) => state.selectedCardByUser);
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isUserTurn = useStore((state) => state.isUserTurn);
+  const { playHoverSound } = useHoverSound();
+  const muted = useStore((state) => state.muted);
 
   return (
     <div className="w-full flex justify-center ">
@@ -29,7 +32,10 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
               marginLeft: index === 0 ? "0" : "-2rem",
             }}
             disabled={!!selectedCardByUser || !isCardsGenerated || !trumpSuit}
-            onClick={() => onCardSelect(index)}
+            onClick={() => {
+              playHoverSound(muted);
+              onCardSelect(index);
+            }}
             className="mx-2 transform transition-transform duration-200 hover:scale-110 hover:z-10 hover:shadow-lg"
           >
             {trumpSuit ? (
@@ -40,11 +46,11 @@ export function UserDeckStraight({ userHand, onCardSelect }: UserDeckProps) {
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div
-                className="rounded-lg"
+                  className="rounded-lg"
                   initial={{ boxShadow: "none" }}
                   animate={{
                     boxShadow: isUserTurn
-                      ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
+                      ? "0 0 12px rgba(254 , 250 ,224 ,1)" // Glowing effect
                       : "none", // No shadow when it's not user's turn
                   }}
                   transition={{

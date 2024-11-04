@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import card from "./card";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
-import cardBack from "@/public/assets/cards/card-back.jpg";
+import cardBack from "@/public/assets/cards-vintage/card-back.png";
 
 const OtherCardComponentMobile = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import cardBack from "@/public/assets/cards/card-back.jpg";
+import cardBack from "@/public/assets/cards-vintage/card-back.png";
 
 const PenaltyCardMobile = () => {
   return (

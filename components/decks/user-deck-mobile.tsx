@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/utils/types";
 import { useStore } from "@/store/state";
 import CardComponentMobile from "../cards/card-mobile";
+import { useHoverSound } from "@/utils/play-sounds";
 
 interface UserDeckProps {
   userHand: Card[];
@@ -14,6 +15,8 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
   const selectedCardByUser = useStore((state) => state.selectedCardByUser);
   const isCardsGenerated = useStore((state) => state.isCardsGenerated);
   const isUserTurn = useStore((state) => state.isUserTurn);
+  const muted = useStore((state) => state.muted);
+  const { playHoverSound } = useHoverSound();
 
   return (
     <div className="h-16 w-60 flex justify-center mr-5">
@@ -45,7 +48,10 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
                   disabled={
                     !!selectedCardByUser || !isCardsGenerated || !trumpSuit
                   }
-                  onClick={() => onCardSelect(index)}
+                  onClick={() => {
+                    playHoverSound(muted);
+                    onCardSelect(index);
+                  }}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none"
                 >
                   {" "}
@@ -53,7 +59,7 @@ export function UserDeckMobile({ userHand, onCardSelect }: UserDeckProps) {
                     initial={{ boxShadow: "none" }}
                     animate={{
                       boxShadow: isUserTurn
-                        ? "0 0 12px rgba(255, 255, 0, 0.8)" // Glowing effect
+                        ? "0 0 12px rgba(254 , 250 ,224 ,1)" // Glowing effect
                         : "none", // No shadow when it's not user's turn
                     }}
                     transition={{

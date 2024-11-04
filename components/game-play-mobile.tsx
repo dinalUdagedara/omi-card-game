@@ -28,6 +28,10 @@ import Penaltycards from "./game-board.tsx/penalty-cards/penalty-cards-mobile";
 import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import { useCollectingCardSound } from "@/utils/play-sounds";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -143,6 +147,8 @@ const GamePlayMobile = () => {
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const setRoundOver = FinishStateStore((state) => state.setRoundOver);
   const isRoundOver = FinishStateStore((state) => state.isRoundOver);
+  const { playCollectCards } = useCollectingCardSound();
+  const muted = useStore((state) => state.muted);
 
   const playerXp = getPlayerXP();
 
@@ -371,14 +377,13 @@ const GamePlayMobile = () => {
     const trumpSetterCycle = [2, 1]; // Alternating between team 2 and team 1
     const playerIndex = (roundNumber - 1) % 4; // Cycles through the players
     const trumpSetterIndex = (roundNumber - 1) % 2; // Alternates between trump setters
-    const starterPlayer = playerCycle[playerIndex];  
+    const starterPlayer = playerCycle[playerIndex];
     const trumpSetterNumber = trumpSetterCycle[trumpSetterIndex];
 
     setTrumpSetter(trumpSetterNumber);
     handleLastWinner(starterPlayer);
     setRandomSuit();
-}
-
+  }
 
   function resetTeamPoints() {
     setTeam1Points(0);
@@ -474,8 +479,8 @@ const GamePlayMobile = () => {
     // Reset the points for both teams
     resetTeamPoints();
     setRoundsWonbyTeam1(0);
-    setTeam_1_penaltyCards(10)
-    setTeam_2_penaltyCards(10)
+    setTeam_1_penaltyCards(10);
+    setTeam_2_penaltyCards(10);
     setRoundsWonbyTeam2(0);
 
     // Set round and turn numbers back to the first round and turn
@@ -572,12 +577,12 @@ const GamePlayMobile = () => {
       }
   }, [isSubmitted]);
 
-  useEffect(()=>{
-    checkWinner()
-  },[team1PenaltyCards,team2PenaltyCards,gameWinner])
+  useEffect(() => {
+    checkWinner();
+  }, [team1PenaltyCards, team2PenaltyCards, gameWinner]);
 
   return (
-    <div className="w-full h-full min-h-screen flex flex-col bg-gradient-to-r from-gray-700 to-gray-900">
+    <div className="w-full h-full min-h-screen flex flex-col  ">
       {/* Dialog after a Round  */}
 
       {isDialogOpen && (
@@ -587,7 +592,7 @@ const GamePlayMobile = () => {
       )}
 
       <div>
-        <div>
+        <div className="bg-white z-20 mx-20">
           {/* player Xp : {playerXp} */}
           <ScoreBoardMobile />
         </div>
@@ -596,7 +601,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
 
-      <div className="w-full flex justify-center min-h-24">
+      <div className="w-full flex justify-center min-h-24 mt-5 z-20">
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
@@ -614,8 +619,20 @@ const GamePlayMobile = () => {
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-14 h-14 shadow-md rounded-full">
-                <AvatarImage src={`/assets/player3.png`} />
+              <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                <Image
+                  alt="Mountains"
+                  src={notificaitonBackGround}
+                  fill
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  style={{
+                    objectFit: "cover", // cover, contain, none
+                  }}
+                />
+                <AvatarImage
+                  className="z-20"
+                  src={`/assets/images/user-avatars/person8.png`}
+                />
                 <AvatarFallback>Dp</AvatarFallback>
               </Avatar>
             </motion.div>
@@ -628,7 +645,7 @@ const GamePlayMobile = () => {
         )}
       </div>
 
-      <div className="w-full h-full  flex justify-between mt-5 ">
+      <div className="w-full h-full  flex justify-between mt-5 z-20">
         <div className="flex justify-center items-center">
           {dealtHands.length > 0 && dealtHands[3]?.hand ? (
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
@@ -645,8 +662,20 @@ const GamePlayMobile = () => {
                   duration: 0.8,
                 }}
               >
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player4.png`} />
+                <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                  <Image
+                    alt="Mountains"
+                    src={notificaitonBackGround}
+                    fill
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    style={{
+                      objectFit: "cover", // cover, contain, none
+                    }}
+                  />
+                  <AvatarImage
+                    className="z-20"
+                    src={`/assets/images/user-avatars/person8.png`}
+                  />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
@@ -662,7 +691,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white"
+            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 border-8 border-black z-20"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -670,7 +699,7 @@ const GamePlayMobile = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="w-full h-full justify-center  items-center  ">
+            <div className="w-full h-full justify-center  items-center  z-20">
               <GameBoardMobile
                 onRestart={restartGame}
                 onStart={handleSelectOtherHands}
@@ -699,8 +728,20 @@ const GamePlayMobile = () => {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
-                    <AvatarImage src={`/assets/player2.png`} />
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
@@ -715,7 +756,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
       <div className="mt-auto relative min-mt-28">
-        <div className="bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-500 rounded-t-full relative mt-20">
+        <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900 rounded-t-full relative mt-20">
           <div className="flex w-full justify-center items-center">
             <div className="">
               {dealtHands.length > 0 && dealtHands[0]?.hand ? (
@@ -729,7 +770,7 @@ const GamePlayMobile = () => {
                 </div>
               ) : (
                 <div className="flex flex-row justify-center w-full items-center mt-14">
-                  <Skeleton className="h-[125px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
+                  <Skeleton className="h-[85px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
                 </div>
               )}
             </div>
@@ -739,18 +780,18 @@ const GamePlayMobile = () => {
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  lastWinner === 0
-                    ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-                    : "none", // No shadow when it's not user's turn
-              }}
+              // animate={{
+              //   boxShadow:
+              //     lastWinner === 0
+              //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
+              //       : "none", // No shadow when it's not user's turn
+              // }}
               transition={{
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-16 h-16 ">
-                <AvatarImage src={`/assets/user.jpg`} />
+              <Avatar className="w-24 h-24">
+                <AvatarImage src={`/assets/user-avatars/player1.png`} />
                 <AvatarFallback>
                   <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
                 </AvatarFallback>

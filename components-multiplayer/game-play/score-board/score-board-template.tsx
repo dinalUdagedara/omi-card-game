@@ -6,14 +6,9 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
-import ScoreBoardCover from "@/public/assets/images/backgrounds/file.png";
 import { useEffect } from "react";
-import NotificationCardTemplate from "@/components-multiplayer/game-play/game-board/game-board-template";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
-import logoIcon from "@/public/assets/images/logo-icon.png";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 interface ScoreBoardTemplateProps {
   userID: Id<"players">;

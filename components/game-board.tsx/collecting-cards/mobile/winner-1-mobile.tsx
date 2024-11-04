@@ -13,7 +13,7 @@ const Winner1Mobile = () => {
     <div className="flex flex-row justify-between">
       {player_4_card && (
         <div className="flex flex-row w-full justify-between items-center min-h-72 gap-5">
-          <div className="w-1/3 min-w-16">
+          <div className="w-1/3">
             {player_4_card && (
               <motion.div
                 initial={{ opacity: 1, y: 0 }}

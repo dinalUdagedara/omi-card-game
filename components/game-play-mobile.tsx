@@ -28,6 +28,9 @@ import Penaltycards from "./game-board.tsx/penalty-cards/penalty-cards-mobile";
 import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -595,7 +598,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
 
-      <div className="w-full flex justify-center min-h-24">
+      <div className="w-full flex justify-center min-h-24 mt-5">
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
@@ -613,8 +616,20 @@ const GamePlayMobile = () => {
                 duration: 0.8,
               }}
             >
-              <Avatar className="w-14 h-14 shadow-md rounded-full">
-                <AvatarImage src={`/assets/player3.png`} />
+              <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                <Image
+                  alt="Mountains"
+                  src={notificaitonBackGround}
+                  fill
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  style={{
+                    objectFit: "cover", // cover, contain, none
+                  }}
+                />
+                <AvatarImage
+                  className="z-20"
+                  src={`/assets/images/user-avatars/person8.png`}
+                />
                 <AvatarFallback>Dp</AvatarFallback>
               </Avatar>
             </motion.div>
@@ -644,8 +659,20 @@ const GamePlayMobile = () => {
                   duration: 0.8,
                 }}
               >
-                <Avatar className="w-14 h-14 shadow-md">
-                  <AvatarImage src={`/assets/player4.png`} />
+                <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                  <Image
+                    alt="Mountains"
+                    src={notificaitonBackGround}
+                    fill
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    style={{
+                      objectFit: "cover", // cover, contain, none
+                    }}
+                  />
+                  <AvatarImage
+                    className="z-20"
+                    src={`/assets/images/user-avatars/person8.png`}
+                  />
                   <AvatarFallback>Dp</AvatarFallback>
                 </Avatar>
               </motion.div>
@@ -661,7 +688,7 @@ const GamePlayMobile = () => {
 
         <div>
           <div
-            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 bg-white z-20"
+            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 border-8 border-black z-20"
             style={{
               backgroundImage: `url('/assets/background.png')`,
               backgroundRepeat: "no-repeat",
@@ -698,8 +725,20 @@ const GamePlayMobile = () => {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="w-14 h-14 shadow-md">
-                    <AvatarImage src={`/assets/player2.png`} />
+                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover", // cover, contain, none
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>

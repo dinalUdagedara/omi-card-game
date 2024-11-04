@@ -26,19 +26,19 @@ export function RoundOverDialogMobile() {
   const lostWithoutCallingTrumps = FinishStateStore(
     (state) => state.lostWithoutCallingTrumps
   );
-  const gameTied = FinishStateStore(
-    (state) => state.gameTied
-  );
+  const gameTied = FinishStateStore((state) => state.gameTied);
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const setRoundOverPractise = FinishStateStore((state) => state.setRoundOver);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const handleClose = () => {
+    setRoundOver(false);
     setAllFalse(false);
     setDialogOpen(false);
-    setRoundOver(false);
+    setRoundOverPractise(false);
     setNewRound(true);
   };
 
@@ -52,7 +52,7 @@ export function RoundOverDialogMobile() {
     message = roundFinishMessages.find((msg) => msg.value === 3) || message;
   } else if (lostCallingTrumps) {
     message = roundFinishMessages.find((msg) => msg.value === 4) || message;
-  } else if(gameTied){
+  } else if (gameTied) {
     message = roundFinishMessages.find((msg) => msg.value === 5) || message;
   }
 

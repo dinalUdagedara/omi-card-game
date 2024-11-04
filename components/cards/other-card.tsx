@@ -6,7 +6,7 @@ import cardBack from "@/public/assets/cards-vintage/card-back.png";
 
 const OtherCardComponent = () => {
   const [blurHash, setBlurHash] = useState<string | undefined>(undefined);
-  const imgUrl = `/assets/assets/cards-vintage/card-back.png`;
+  const imgUrl = `/assets/cards-vintage/card-back.png`;
 
   // Fetch the blurHash asynchronously when the component mounts
   useEffect(() => {

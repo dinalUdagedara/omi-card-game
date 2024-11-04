@@ -35,6 +35,7 @@ import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialo
 import { motion } from "framer-motion";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import { useCollectingCardSound } from "@/utils/play-sounds";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -136,6 +137,8 @@ export default function Board() {
   );
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
+  const { playCollectCards } = useCollectingCardSound();
+  const muted = useStore((state) => state.muted);
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -398,6 +401,7 @@ export default function Board() {
     if (cardSet.length > 0) {
       const winningCard: Card = determineTrickWinner(cardSet);
       setWinningCard(winningCard);
+      playCollectCards(muted);
       console.log("Winning Card:", winningCard);
     }
   }

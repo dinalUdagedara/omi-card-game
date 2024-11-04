@@ -31,6 +31,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import { useCollectingCardSound } from "@/utils/play-sounds";
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -146,6 +147,8 @@ const GamePlayMobile = () => {
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const setRoundOver = FinishStateStore((state) => state.setRoundOver);
   const isRoundOver = FinishStateStore((state) => state.isRoundOver);
+  const { playCollectCards } = useCollectingCardSound();
+  const muted = useStore((state) => state.muted);
 
   const playerXp = getPlayerXP();
 
@@ -579,7 +582,7 @@ const GamePlayMobile = () => {
   }, [team1PenaltyCards, team2PenaltyCards, gameWinner]);
 
   return (
-    <div className="w-full h-full min-h-screen flex flex-col z-20 ">
+    <div className="w-full h-full min-h-screen flex flex-col  ">
       {/* Dialog after a Round  */}
 
       {isDialogOpen && (
@@ -589,7 +592,7 @@ const GamePlayMobile = () => {
       )}
 
       <div>
-        <div>
+        <div className="bg-white z-20 mx-20">
           {/* player Xp : {playerXp} */}
           <ScoreBoardMobile />
         </div>
@@ -598,7 +601,7 @@ const GamePlayMobile = () => {
         </div>
       </div>
 
-      <div className="w-full flex justify-center min-h-24 mt-5">
+      <div className="w-full flex justify-center min-h-24 mt-5 z-20">
         {dealtHands.length > 0 && dealtHands[2]?.hand ? (
           <div className="flex flex-row justify-center items-center">
             <OtherDecksMobile userHand={dealtHands[2].hand} />
@@ -642,7 +645,7 @@ const GamePlayMobile = () => {
         )}
       </div>
 
-      <div className="w-full h-full  flex justify-between mt-5 ">
+      <div className="w-full h-full  flex justify-between mt-5 z-20">
         <div className="flex justify-center items-center">
           {dealtHands.length > 0 && dealtHands[3]?.hand ? (
             <div className="flex flex-col justify-center items-center  min-w-[70px]">

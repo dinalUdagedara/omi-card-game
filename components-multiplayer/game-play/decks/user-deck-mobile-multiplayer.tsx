@@ -24,7 +24,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
   const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
   const muted = useStore((state) => state.muted);
-  // const { playCardSelect } = useCardSelectSound();
   const { playHoverSound } = useHoverSound();
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
@@ -130,7 +129,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
                   // }}
                   onClick={() => {
                     playHoverSound(muted);
-                    // playCardSelect(muted);
                     handleCardSelect(card);
                   }}
                   className="transform transition-transform duration-200 hover:scale-110 hover:z-10 focus:outline-none rounded-lg"

@@ -14,6 +14,8 @@ import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import Image from "next/image";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import { useHoverSound, useClickSound } from "@/utils/play-sounds";
+import { useStore } from "@/store/state";
 
 export function RoundOverDialogMobile() {
   const [isOpen, setIsOpen] = useState(true);
@@ -35,9 +37,14 @@ export function RoundOverDialogMobile() {
   const setRoundOverPractise = FinishStateStore((state) => state.setRoundOver);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
+  const { playHoverSound } = useHoverSound();
+  const { playClickButton } = useClickSound();
+
+  const muted = useStore((state) => state.muted);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const handleClose = () => {
+    playClickButton(muted);
     setRoundOver(false);
     setAllFalse(false);
     setDialogOpen(false);
@@ -77,6 +84,9 @@ export function RoundOverDialogMobile() {
                 className="bg-white text-gray-700 hover:bg-gray-400 w-full py-2 rounded-lg font-semibold shadow-lg md:mx-8"
                 type="button"
                 onClick={handleClose}
+                onMouseEnter={() => {
+                  playHoverSound(muted);
+                }}
               >
                 Ok
               </Button>

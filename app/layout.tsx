@@ -55,8 +55,10 @@ export default function RootLayout({
                 <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-100" />
               </div>
 
-              {/* Music Player */}
-              <MusicPlayer />
+              <div className="z-20">
+                {/* Music Player */}
+                <MusicPlayer />
+              </div>
 
               {children}
             </NextProvider>

@@ -22,7 +22,7 @@ export const updateTrumpSuit = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      throw new Error("gameState no found");
     }
 
     const id = gameState?._id;

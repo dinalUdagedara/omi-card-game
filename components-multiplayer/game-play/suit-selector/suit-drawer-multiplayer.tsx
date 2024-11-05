@@ -17,7 +17,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
-import { SuitSelectorMobileMultiplayer } from "./suit-selector-mobile-multiplayer";
+import { SuitSelectorMobileMultiplayer } from "./suit-selector-multiplayer";
 
 import Image from "next/image";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";

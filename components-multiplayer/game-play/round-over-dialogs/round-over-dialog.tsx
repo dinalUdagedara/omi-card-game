@@ -80,6 +80,7 @@ export function RoundOverDialogMultiplayer({
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
   const resetViolation = useMutation(api.gameStates.resetViolations);
+  // const setTrumptoNul = useMutation(api.gameStates.resetViolations);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const { playHoverSound } = useHoverSound();
@@ -185,18 +186,23 @@ export function RoundOverDialogMultiplayer({
     }
   }
 
+  const removeTrump = async () => {
+    console.log("removing trump");
+    await removeTrumpSuit({
+      roomName: roomName,
+    });
+  };
+
   const handleClose = async () => {
     playClickButton(muted);
     setAllFalse(false);
+    await removeTrump();
+    setTrumpSuit(null);
     if (userName === roomdataFromDB?.playerUserNames[0]) {
       await decrementValues();
       await updateTrumpSetter({
         roomName: roomName,
       });
-      await removeTrumpSuit({
-        roomName: roomName,
-      });
-      setTrumpSuit(null);
     }
     setDialogOpen(false);
     setRoundOver(false);

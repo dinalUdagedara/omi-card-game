@@ -28,8 +28,8 @@ export function dealCards(deck: Card[], numberOfPlayers: number): Player[] {
   const hands: Player[] = Array(numberOfPlayers)
     .fill({ hand: [] })
     .map(() => ({ hand: [] }));
-  const deckLength = deck.length / 4;
-  // const deckLength = 3;
+  // const deckLength = deck.length / 4;
+  const deckLength = 3;
   for (let i = 0; i < deckLength; i++) {
     hands.forEach((hand) => hand.hand.push(deck.pop() as Card));
   }

@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import PenaltycardsMultiplayer from "./penalty-cards/score-and-penalty-card-component";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
-import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer";
+import { UserDeckMobileMultiplayer } from "./decks/user-deck-multiplayer";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import {

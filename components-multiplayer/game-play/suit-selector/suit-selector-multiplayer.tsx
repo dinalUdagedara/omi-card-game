@@ -22,6 +22,7 @@ import {
   useSuitSelectSound,
 } from "@/utils/play-sounds";
 
+
 interface SuitSelectorProps {
   roomName: string;
   userID: Id<"players">;
@@ -35,8 +36,10 @@ export function SuitSelectorMobileMultiplayer({
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
   const updateTrumpSetter = useMutation(api.gameLogic.updateTrumpSetter);
+  const replacePlayerTurn = useMutation(api.gameLogic.replacePlayerTurn);
   const muted = useStore((state) => state.muted);
   const { playSuitSelected } = useSuitSelectSound();
+
 
   function handleSuitSelected(suit: Suit) {
     console.log("Suit selcted");
@@ -53,6 +56,11 @@ export function SuitSelectorMobileMultiplayer({
       updateTrumpSetter({
         roomName,
         userID,
+      });
+
+      replacePlayerTurn({
+        roomName: roomName,
+        userId: userID,
       });
     }
   }

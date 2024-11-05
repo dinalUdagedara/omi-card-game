@@ -22,8 +22,8 @@ const OtherCardComponent = () => {
         <Image
           className="rounded-md"
           src={cardBack}
-          width={80}
-          height={80}
+          width={75}
+          height={75}
           alt="card"
           placeholder={blurHash ? "blur" : "empty"}
           blurDataURL={blurHash}

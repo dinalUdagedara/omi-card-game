@@ -2,7 +2,6 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-
 import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -37,13 +36,15 @@ const GamePlayMultiplayer = () => {
     null
   );
   const [isRoomActive, setRoomActive] = useState(false);
-  const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
   const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
   const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
 
+  const [teamMember, setTeamMember] = useState<string>();
+  const [opponent_1, setOpponent_1] = useState<string>();
+  const [opponent_2, setOpponent_2] = useState<string>();
+
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
-  const isTrumpSelected = useStore((state) => state.trumpSelected);
   const setTrumpSelected = useStore((state) => state.setTrumpSelected);
   const trumpSuit = useStore((state) => state.trumpSuit);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
@@ -85,7 +86,6 @@ const GamePlayMultiplayer = () => {
   const resetTeamPoints = useMutation(api.gameLogic.resetTeamPoints);
 
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
-  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
@@ -112,10 +112,6 @@ const GamePlayMultiplayer = () => {
   const playerTurnUserName = useQuery(api.gameLogic.getPlayerTurnName, {
     roomName: roomId || "",
   });
-
-  const [teamMember, setTeamMember] = useState<string>();
-  const [opponent_1, setOpponent_1] = useState<string>();
-  const [opponent_2, setOpponent_2] = useState<string>();
 
   const createGameInstanceDB = async () => {
     if (isRoomCreator && playersInRoom) {

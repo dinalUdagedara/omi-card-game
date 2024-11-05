@@ -36,6 +36,7 @@ import { motion } from "framer-motion";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import { useCollectingCardSound } from "@/utils/play-sounds";
+import NameCardTemplate from "@/components-multiplayer/game-play/name-card/name-card-template";
 
 export default function Board() {
   const isMobile = useIsMobile();
@@ -605,28 +606,6 @@ export default function Board() {
         <div className="flex justify-end gap-4">
           {/* Player 3 and scoreboard */}
           <div className="relative col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4  shadow-md z-20 ">
-            <Image
-              className="rounded-xl"
-              alt="Mountains"
-              src={modeCardBackground}
-              fill
-              sizes="(min-width: 808px) 50vw, 100vw"
-              style={{
-                objectFit: "fill",
-              }}
-            />
-
-            <Image
-              className="p-3  rounded-2xl"
-              alt="Mountains"
-              src={notificaitonBackGround}
-              fill
-              sizes="(min-width: 808px) 50vw, 100vw"
-              style={{
-                objectFit: "fill",
-              }}
-            />
-
             {dealtHands.length > 0 && dealtHands[2]?.hand ? (
               <div className="flex flex-row justify-center items-center z-20">
                 <OtherDecks userHand={dealtHands[2].hand} />
@@ -644,11 +623,7 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  {/* <Avatar className="w-14 h-14 shadow-md rounded-full">
-                    <AvatarImage src={`/assets/player3.png`} />
-                    <AvatarFallback>Dp</AvatarFallback>
-                  </Avatar> */}
-                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                  <Avatar className="relative w-16 h-16 lg:w-24 lg:h-24 shadow-md ">
                     <Image
                       alt="Mountains"
                       src={notificaitonBackGround}
@@ -666,10 +641,8 @@ export default function Board() {
                   </Avatar>
                 </motion.div>
 
-                <div className="font-bold text-gray-100 tracking-wide m-2 z-20">
-                  <span className="text-black bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
-                    Player 3
-                  </span>
+                <div className="text-center py-2 w-full">
+                  <NameCardTemplate>Player 3</NameCardTemplate>
                 </div>
               </div>
             ) : (
@@ -698,32 +671,9 @@ export default function Board() {
         {/* Players 4, Game Board, Player 2 */}
         <div className="flex justify-between gap-4 h-full w-full mt-4">
           {/* Player 4 */}
-          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10 ">
-            <Image
-              className="rounded-2xl"
-              alt="Mountains"
-              src={modeCardBackground}
-              fill
-              sizes="(min-width: 808px) 50vw, 100vw"
-              style={{
-                objectFit: "fill",
-              }}
-            />
-
-            <Image
-              className="p-3 rounded-2xl"
-              alt="Mountains"
-              src={notificaitonBackGround}
-              fill
-              sizes="(min-width: 808px) 50vw, 100vw"
-              style={{
-                objectFit: "fill",
-              }}
-            />
-
+          <div className=" col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10 ">
             {dealtHands.length > 0 && dealtHands[3]?.hand ? (
-              <div className="flex flex-col justify-center items-center z-20">
-                <OtherDecks userHand={dealtHands[3].hand} />
+              <div className="flex flex-col justify-center items-center z-20 w-full">
                 <motion.div
                   className=" rounded-full"
                   initial={{ boxShadow: "none" }}
@@ -737,32 +687,30 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  {/* <Avatar className="w-14 h-14 shadow-md">
-                    <AvatarImage src={`/assets/player4.png`} />
-                    <AvatarFallback>Dp</AvatarFallback>
-                  </Avatar> */}
-                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
-                    <Image
-                      alt="Mountains"
-                      src={notificaitonBackGround}
-                      fill
-                      sizes="(min-width: 808px) 50vw, 100vw"
-                      style={{
-                        objectFit: "cover", // cover, contain, none
-                      }}
-                    />
-                    <AvatarImage
-                      className="z-20"
-                      src={`/assets/images/user-avatars/person8.png`}
-                    />
-                    <AvatarFallback>Dp</AvatarFallback>
-                  </Avatar>
+                  <div className="text-center py-2 w-full">
+                    <NameCardTemplate>Player 4</NameCardTemplate>
+                  </div>
+                  <div className="w-full flex justify-center">
+                    <Avatar className="relative w-16 h-16 lg:w-24 lg:h-24 shadow-md z-20">
+                      <Image
+                        alt="Mountains"
+                        src={notificaitonBackGround}
+                        fill
+                        sizes="(min-width: 808px) 50vw, 100vw"
+                        style={{
+                          objectFit: "cover",
+                        }}
+                      />
+                      <AvatarImage
+                        className="z-20"
+                        src={`/assets/images/user-avatars/person8.png`}
+                      />
+                      <AvatarFallback>Dp</AvatarFallback>
+                    </Avatar>
+                  </div>
                 </motion.div>
-                <div className="font-bold text-gray-100 tracking-wide m-2 z-20">
-                  <span className="text-black bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
-                    Player 4
-                  </span>
-                </div>
+
+                <OtherDecks userHand={dealtHands[3].hand} />
               </div>
             ) : (
               <div className="flex flex-col justify-center gap-6 items-center ">
@@ -796,27 +744,6 @@ export default function Board() {
 
           {/* Player 2 */}
           <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10">
-            <Image
-              className="rounded-xl"
-              alt="Mountains"
-              src={modeCardBackground}
-              fill
-              sizes="(min-width: 808px) 50vw, 100vw"
-              style={{
-                objectFit: "cover",
-              }}
-            />
-
-            <Image
-              className="p-3  rounded-2xl"
-              alt="Mountains"
-              src={notificaitonBackGround}
-              fill
-              sizes="(min-width: 808px) 50vw, 100vw"
-              style={{
-                objectFit: "cover",
-              }}
-            />
             {dealtHands.length > 0 && dealtHands[1]?.hand ? (
               <div className="flex flex-col justify-center items-center z-20">
                 <OtherDecks userHand={dealtHands[1].hand} />
@@ -833,18 +760,14 @@ export default function Board() {
                     duration: 0.8,
                   }}
                 >
-                  {/* <Avatar className="w-14 h-14 shadow-md">
-                    <AvatarImage src={`/assets/player2.png`} />
-                    <AvatarFallback>Dp</AvatarFallback>
-                  </Avatar> */}
-                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                  <Avatar className="relative w-16 h-16 lg:w-24 lg:h-24 shadow-md ">
                     <Image
                       alt="Mountains"
                       src={notificaitonBackGround}
                       fill
                       sizes="(min-width: 808px) 50vw, 100vw"
                       style={{
-                        objectFit: "cover", // cover, contain, none
+                        objectFit: "cover",
                       }}
                     />
                     <AvatarImage
@@ -854,10 +777,9 @@ export default function Board() {
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
-                <div className="font-bold text-gray-100 tracking-wide m-2  z-20">
-                  <span className="text-black bg-clip-text bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500">
-                    Player 2
-                  </span>
+
+                <div className="text-center py-2">
+                  <NameCardTemplate>Player 2</NameCardTemplate>
                 </div>
               </div>
             ) : (
@@ -942,23 +864,10 @@ export default function Board() {
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              // animate={{
-              //   boxShadow:
-              //     lastWinner === 0
-              //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-              //       : "none", // No shadow when it's not user's turn
-              // }}
               transition={{
                 duration: 0.8,
               }}
             >
-              {/* <Avatar className="w-16 h-16 ">
-                <AvatarImage src={`/assets/user.jpg`} />
-                <AvatarFallback>
-                  <Skeleton className="h-40 w-40 rounded-full bg-slate-600" />
-                </AvatarFallback>
-              </Avatar>
-               */}
               <Avatar className="w-24 h-24">
                 <AvatarImage src={`/assets/user-avatars/player1.png`} />
                 <AvatarFallback>

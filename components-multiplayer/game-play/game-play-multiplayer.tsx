@@ -6,7 +6,7 @@ import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
+import PenaltycardsMultiplayer from "./penalty-cards/score-and-penalty-card-component";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
 import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer";

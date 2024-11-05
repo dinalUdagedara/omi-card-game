@@ -9,15 +9,15 @@ import ScoreBoardTemplate from "../score-board/score-board-template";
 import { useRoundLoseSound, useRoundWonSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 
-interface PenaltycardsMultiplayerProps {
+interface ScoreAndPenaltyProps {
   roomName: string;
   userID: Id<"players">;
 }
 
-const PenaltycardsMultiplayer = ({
+const ScoreAndPenalty = ({
   roomName,
   userID,
-}: PenaltycardsMultiplayerProps) => {
+}: ScoreAndPenaltyProps) => {
   const myTeam = useQuery(api.gameLogic.getMyTeam, {
     userId: userID,
     roomName: roomName,
@@ -84,4 +84,4 @@ const PenaltycardsMultiplayer = ({
   );
 };
 
-export default PenaltycardsMultiplayer;
+export default ScoreAndPenalty;

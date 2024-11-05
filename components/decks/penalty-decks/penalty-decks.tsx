@@ -34,7 +34,7 @@ export function PenaltyDeckMobile({ penaltyCardNumber }: UserDeckProps) {
                   {/* Cross mark overlay */}
                   {shouldMarkCard && (
                     <div className="absolute inset-0 flex justify-center items-center">
-                      <span className="text-red-600 text-1xl font-bold">✕</span>
+                      <span className="text-black text-xl font-bold">✕</span>
                     </div>
                   )}
                 </div>

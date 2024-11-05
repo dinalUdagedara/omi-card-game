@@ -14,10 +14,7 @@ interface ScoreAndPenaltyProps {
   userID: Id<"players">;
 }
 
-const ScoreAndPenalty = ({
-  roomName,
-  userID,
-}: ScoreAndPenaltyProps) => {
+const ScoreAndPenalty = ({ roomName, userID }: ScoreAndPenaltyProps) => {
   const myTeam = useQuery(api.gameLogic.getMyTeam, {
     userId: userID,
     roomName: roomName,
@@ -71,13 +68,13 @@ const ScoreAndPenalty = ({
         <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
         {/* <ScoreBoardMobileMultiplayer userID={userID} roomName={roomName} /> */}
         <ScoreBoardTemplate userID={userID} roomName={roomName} />
-        <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+        <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} reverse />
       </div>
       <div className="flex lg:hidden flex-col mt-2">
         <ScoreBoardTemplate userID={userID} roomName={roomName} />
         <div className="flex">
           <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
-          <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+          <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} reverse />
         </div>
       </div>
     </div>

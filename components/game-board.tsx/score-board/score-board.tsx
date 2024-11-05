@@ -75,7 +75,7 @@ const Scoreboard = () => {
           <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
         </div>
         <div className="w-full">
-          <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
+          <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} reverse />
         </div>
       </div>
     </div>

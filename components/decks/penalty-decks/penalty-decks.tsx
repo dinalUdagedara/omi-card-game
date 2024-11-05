@@ -4,17 +4,21 @@ import PenaltyCardMobile from "@/components/cards/penalty-cards/penalty-card-mob
 
 interface UserDeckProps {
   penaltyCardNumber: number;
+  reverse?: boolean; //reverse prop
 }
 
-export function PenaltyDeckMobile({ penaltyCardNumber }: UserDeckProps) {
-  const displayedCards = exampleCardSet;
+export function PenaltyDeckMobile({ penaltyCardNumber, reverse = false }: UserDeckProps) {
+  // Conditionally reverse the order of the cards if reverse is true
+  const displayedCards = reverse ? [...exampleCardSet].reverse() : exampleCardSet;
 
   return (
     <div className="h-full w-full flex justify-center items-center p-4 rounded-lg">
       <div className="relative flex justify-center items-center">
         {displayedCards.map((card, index) => {
-          const shouldMarkCard =
-            index < displayedCards.length - penaltyCardNumber;
+          // Calculate index for "X" mark depending on reverse
+          const cardIndex = reverse ? displayedCards.length - 1 - index : index;
+          const shouldMarkCard = cardIndex < displayedCards.length - penaltyCardNumber;
+
           return (
             <div
               key={index}

@@ -11,7 +11,7 @@ const Penaltycards = () => {
     <div>
       <div className="flex gap-5 mx-5">
         <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
-        <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
+        <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} reverse />
       </div>
     </div>
   );

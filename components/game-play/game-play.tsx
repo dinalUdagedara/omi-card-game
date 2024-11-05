@@ -11,27 +11,27 @@ import {
   setTurnSuit,
   shuffleDeck,
   setLastWinner,
-} from "@/utils/game-logic";
-import { Player, Card, Suit, suits } from "@/utils/types";
+} from "@/utils/practise/game-logic";
+import { Player, Card, Suit, suits } from "@/utils/practise/types";
 import { useState, useEffect } from "react";
-import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
+import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/practise/game-play";
 import { toast } from "sonner";
-import { SuitDrawer } from "./drawer/trump-suit-selector";
+import { SuitDrawer } from "../drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
-import { OtherDecks } from "./decks/other-decks";
-import GameBoard from "./game-board.tsx/game-board/game-board";
+import { OtherDecks } from "../decks/other-decks";
+import GameBoard from "../game-board.tsx/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserDeckStraight } from "./decks/user-deck-straight";
-import Scoreboard from "./game-board.tsx/score-board/score-board";
+import { UserDeckStraight } from "../decks/user-deck-straight";
+import Scoreboard from "../game-board.tsx/score-board/score-board";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useIsMobile } from "./game-play-mobile";
-import { PenaltyDeckMobile } from "./decks/penalty-decks/penalty-decks";
-import { SuitDrawerMobile } from "./drawer/mobile/trump-suit-selector-mobile";
+import { PenaltyDeckMobile } from "../decks/penalty-decks/penalty-decks";
+import { SuitDrawerMobile } from "../drawer/mobile/trump-suit-selector-mobile";
 import { FinishStateStore } from "@/store/finish-round-state";
-import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
+import { RoundOverDialogMobile } from "../game-board.tsx/dialogs/round-over-dialog-mobile";
 import { motion } from "framer-motion";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";

@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
+import { Card, exampleCardSet, Player, Suit } from "@/utils/practise/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import OtherCardComponent from "../cards/other-card";
 import { motion } from "framer-motion";
 

@@ -1,4 +1,4 @@
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import Image from "next/image";
 
 const CardComponentUserDeck = ({ card }: { card: Card }) => {

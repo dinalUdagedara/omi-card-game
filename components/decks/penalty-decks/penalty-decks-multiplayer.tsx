@@ -1,4 +1,4 @@
-import { Card, exampleCardSet } from "@/utils/types";
+import { Card, exampleCardSet } from "@/utils/practise/types";
 import { motion } from "framer-motion";
 import PenaltyCard from "@/components-multiplayer/cards/penalty-cards/penalty-cards-multiplayer";
 import PenaltyCardMultiplayerMobile from "@/components-multiplayer/cards/penalty-cards/penalty-cards-mobile-multiplayer";

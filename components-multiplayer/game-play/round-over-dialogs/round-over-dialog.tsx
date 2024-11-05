@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { roundFinishMessages } from "@/utils/types";
+import { roundFinishMessages } from "@/utils/practise/types";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";

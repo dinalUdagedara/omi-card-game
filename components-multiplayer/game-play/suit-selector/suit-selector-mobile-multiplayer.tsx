@@ -7,7 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { isValidSuit, Suit, suits, suitsWithLogos } from "@/utils/types";
+import { isValidSuit, Suit, suits, suitsWithLogos } from "@/utils/practise/types";
 import { useStore } from "@/store/state";
 import { useEffect, useState } from "react";
 import Image from "next/image";

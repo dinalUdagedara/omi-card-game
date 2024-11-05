@@ -1,4 +1,4 @@
-import Board from "@/components/board";
+import Board from "@/components/game-board.tsx/board";
 
 import GamePlay from "@/components/game-play";
 

@@ -11,10 +11,10 @@ import {
   setLastWinner,
   checkTurnSuitCards,
   getPlayerXP,
-} from "@/utils/game-logic";
-import { Card, Suit, suits } from "@/utils/types";
+} from "@/utils/practise/game-logic";
+import { Card, Suit, suits } from "@/utils/practise/types";
 import { useState, useEffect } from "react";
-import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
+import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/practise/game-play";
 import { toast } from "sonner";
 import { useStore } from "@/store/state";
 import { CardStore } from "@/store/player-card-state";

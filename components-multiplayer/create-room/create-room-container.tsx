@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { generateRandomName } from "@/utils/types-multiplayer";
+import { generateRandomName } from "@/utils/multiplayer/types-multiplayer";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";

@@ -2,10 +2,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import background from "@/public/assets/images/background.png";
-import GameModeCard from "./mode-selector/game-mode-card";
+import GameModeCard from "./game-mode-card";
 import { Spicy_Rice } from "next/font/google";
 import textArea from "@/public/assets/images/text-area.png";
-import { ParticlesComponent } from "./particles/particles";
+import { ParticlesComponent } from "../particles/particles";
 import { motion } from "framer-motion";
 import ParticlesComponentExample from "@/components-multiplayer/particles/winner-particles";
 import { useHoverSound, useClickSound } from "@/utils/play-sounds";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { useStore } from "@/store/state";
 import CardComponentMobile from "../cards/card-mobile";
 import { useHoverSound } from "@/utils/play-sounds";

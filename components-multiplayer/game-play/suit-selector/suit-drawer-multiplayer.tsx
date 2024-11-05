@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { useStore } from "@/store/state";
 import { motion } from "framer-motion";
 import { SuitSelectorMobile } from "@/components/drawer/mobile/suit-selector-mobile";

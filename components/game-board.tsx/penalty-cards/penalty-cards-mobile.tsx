@@ -1,7 +1,7 @@
 "use client";
 import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-decks";
 import { useStore } from "@/store/state";
-import { exampleCardSet } from "@/utils/types";
+import { exampleCardSet } from "@/utils/practise/types";
 
 const Penaltycards = () => {
   const team1PenaltyCards = useStore((state) => state.team_1_penaltyCards);

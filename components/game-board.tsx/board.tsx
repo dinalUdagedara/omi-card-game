@@ -13,17 +13,17 @@ import {
   setTurnSuit,
   shuffleDeck,
   setLastWinner,
-} from "@/utils/game-logic";
-import { Player, Card, Suit, suits } from "@/utils/types";
+} from "@/utils/practise/game-logic";
+import { Player, Card, Suit, suits } from "@/utils/practise/types";
 import { useState, useEffect } from "react";
-import { chooseCard } from "@/utils/game-play";
-import CardComponent from "./cards/card";
+import { chooseCard } from "@/utils/practise/game-play";
+import CardComponent from "../cards/card";
 import { toast } from "sonner";
-import { SuitDrawer } from "./drawer/trump-suit-selector";
+import { SuitDrawer } from "../drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
-import { UserDeckMobile } from "./decks/user-deck-mobile";
-import { OtherDecks } from "./decks/other-decks";
-import GameBoard from "./game-board.tsx/game-board/game-board";
+import { UserDeckMobile } from "../decks/user-deck-mobile";
+import { OtherDecks } from "../decks/other-decks";
+import GameBoard from "./game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
 
 export default function Board() {

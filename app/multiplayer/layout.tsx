@@ -1,5 +1,5 @@
 // app/multiplayer/layout.tsx
-import Header from "@/components/header";
+import Header from "@/components/mode-selectors/header";
 import background from "@/public/assets/images/background.png";
 import Image from "next/image";
 import MusicPlayer from "./music/background-music";

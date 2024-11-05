@@ -1,6 +1,6 @@
-import { Suit, Value, Card, Player, TrumpSuit } from "../types";
-import { suits, values } from "../game-logic";
-import { cardMultiplayer } from "../types-multiplayer";
+import { Suit, Value, Card, Player, TrumpSuit } from "../practise/types";
+import { suits, values } from "../practise/game-logic";
+import { cardMultiplayer } from "./types-multiplayer";
 
 let trumpSuit: TrumpSuit = null;
 let turnSuit: TrumpSuit = null;

@@ -2,7 +2,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import OtherCardComponentMultiplayer from "./other-card-multiplayer";
-import { cardMultiplayer } from "@/utils/types-multiplayer";
+import { cardMultiplayer } from "@/utils/multiplayer/types-multiplayer";
 import { useDealtingCardSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 import { useEffect } from "react";

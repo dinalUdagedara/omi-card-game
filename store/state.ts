@@ -1,4 +1,4 @@
-import { Suit, Card, Player } from "@/utils/types";
+import { Suit, Card, Player } from "@/utils/practise/types";
 import { create } from "zustand";
 
 interface UseState {

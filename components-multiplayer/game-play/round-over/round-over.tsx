@@ -42,10 +42,6 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
     roomName: roomName,
   });
 
-  const incrementPenaltyCards = useMutation(
-    api.gameLogic.incrementPenaltyCards
-  );
-
   const setTrumpSetterWon = MultiplayerStateStore(
     (state) => state.setTrumpSetterWon
   );

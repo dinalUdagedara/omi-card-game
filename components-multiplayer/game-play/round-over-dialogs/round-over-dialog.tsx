@@ -88,7 +88,24 @@ export function RoundOverDialogMultiplayer({
 
   const muted = useStore((state) => state.muted);
 
+  const deductPenaltyForViolation = async () => {
+    console.log("Deductiong for violation");
+    // Check If Violation Done and decrement  in here
+    if (violations && violations?.length > 0) {
+      console.log("violations caught");
+      await decrementPenaltycards({
+        decrementValue: 1,
+        roomName,
+        userID,
+      });
+      resetViolation({
+        roomName: roomName,
+      });
+    }
+  };
+
   async function decrementValues() {
+    deductPenaltyForViolation();
     if (lostCallingTrumps && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
@@ -97,19 +114,6 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
-
-        console.log("violations ", violations);
-        // Check If Violation Done and decrement  in here
-        if (violations && violations?.length > 0) {
-          await decrementPenaltycards({
-            decrementValue: 1,
-            roomName,
-            userID,
-          });
-          await resetViolation({
-            roomName: roomName,
-          });
-        }
       }
     }
     if (lostWithoutCallingTrumps) {
@@ -121,19 +125,6 @@ export function RoundOverDialogMultiplayer({
             roomName,
             userID,
           });
-
-          // Check If Violation Done and decrement  in here
-          if (violations && violations?.length > 0) {
-            console.log("violations caught");
-            await decrementPenaltycards({
-              decrementValue: 1,
-              roomName,
-              userID,
-            });
-            resetViolation({
-              roomName: roomName,
-            });
-          }
         }
       }
     }
@@ -146,19 +137,6 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
-
-        // Check If Violation Done and decrement  in here
-        if (violations && violations?.length > 0) {
-          console.log("violations caught");
-          await decrementPenaltycards({
-            decrementValue: 1,
-            roomName,
-            userID,
-          });
-          resetViolation({
-            roomName: roomName,
-          });
-        }
       }
     }
     if (wonWithoutCallingTrumps) {
@@ -169,19 +147,6 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
-
-        // Check If Violation Done and decrement  in here
-        if (violations && violations?.length > 0) {
-          console.log("violations caught", violations);
-          await decrementPenaltycards({
-            decrementValue: 1,
-            roomName,
-            userID,
-          });
-          await resetViolation({
-            roomName: roomName,
-          });
-        }
       }
     }
   }

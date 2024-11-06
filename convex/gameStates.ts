@@ -33,13 +33,59 @@ export const createGameState = mutation({
       .filter((q) => q.eq(q.field("roomId"), roomInfo._id))
       .first();
 
-    // If a game state already exists, return an error or the existing game state ID
+    // If a game state already exists
     if (existingGameState) {
-      console.log("existing gamestate");
-      return {
-        error: "Game state already exists for this room",
-        gameStateID: existingGameState._id,
-      };
+      console.log("Existing game state found");
+      console.log("gamestate.status", existingGameState.status);
+      throw new Error("There is a game state already in play for this room");
+      // Check if the status is 'game-over'
+      // if (existingGameState.status == "game-over") {
+      //   // If the game state is 'game-over', allow creating a new game state
+      //   console.log("Previous game state was over, creating a new one.");
+      //   //remove the existing gamestate
+
+      //   await ctx.db.delete(existingGameState._id);
+
+      //   // create a new gamestate here
+      //   // Assign players to teams
+      //   const playersWithTeams = args.players.map((playerId, index) => ({
+      //     playerId,
+      //     teamNumber: index % 2 === 0 ? 1 : 2, // Team 1 for indices 0 and 2, Team 2 for 1 and 3
+      //   }));
+
+      //   // Initialize penalty cards for each team with default value
+      //   const penaltyCards = [
+      //     { teamNo: 1, penaltyCards: 10 }, // Team 1
+      //     { teamNo: 2, penaltyCards: 10 }, // Team 2
+      //   ];
+
+      //   const gameStateID = await ctx.db.insert("gameStates", {
+      //     roomId: roomInfo._id, // Use the room ID fetched from the query
+      //     players: playersWithTeams,
+      //     penaltyCards: penaltyCards,
+      //     playersDecks: args.playersDecks,
+      //     playersCards: [],
+      //     teamPoints: { team1: 0, team2: 0 },
+      //     playerTurn: args.playerTurn,
+      //     roundWinner: null,
+      //     winner: null,
+      //     currentRound: 1,
+      //     points: [],
+      //     trump: null,
+      //     trumpSetter: args.trumpSetter,
+      //     turnSuit: null,
+      //     violationOccured: [],
+      //     status: "started",
+      //   });
+
+      //   if (gameStateID) {
+      //     await ctx.db.patch(roomInfo._id, {
+      //       status: "started",
+      //     });
+      //   }
+      // } else {
+      //   throw new Error("There is a game state already in play for this room");
+      // }
     }
 
     // Assign players to teams
@@ -70,6 +116,7 @@ export const createGameState = mutation({
       trumpSetter: args.trumpSetter,
       turnSuit: null,
       violationOccured: [],
+      status: "started",
     });
 
     if (gameStateID) {
@@ -351,6 +398,50 @@ export const getViolations = query({
 
       // Return the violation
       return violationInfo;
+    }
+  },
+});
+
+export const updateGameStateStatus = mutation({
+  args: {
+    userid: v.id("players"),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch game states where the roomId equals the given roomID and status is not "game-over"
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter(
+          (q) =>
+            q.eq(q.field("roomId"), roomID) &&
+            q.neq(q.field("status"), "game-over")
+        )
+        .first();
+
+      if (!gameState) {
+        return null;
+      }
+
+      if (gameState) {
+        await ctx.db.patch(gameState._id, {
+          status: "game-over",
+        });
+      }
+
+      console.log(gameState);
     }
   },
 });

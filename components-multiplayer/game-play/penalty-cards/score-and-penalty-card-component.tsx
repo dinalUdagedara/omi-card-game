@@ -3,7 +3,7 @@ import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-deck
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import ScoreBoardTemplate from "../score-board/score-board-template";
 import { useRoundLoseSound, useRoundWonSound } from "@/utils/play-sounds";
@@ -23,6 +23,9 @@ const ScoreAndPenalty = ({ roomName, userID }: ScoreAndPenaltyProps) => {
   const penaltyCards = useQuery(api.gameLogic.getPenaltyCards, {
     roomName: roomName,
   });
+  const updateGameStateStatus = useMutation(
+    api.gameStates.updateGameStateStatus
+  );
   const [myTeamPenaltyCards, setMyTeamPenaltyCards] = useState<number>(0);
   const [opponentPenaltyCards, setOpponentPenaltyCards] = useState<number>(0);
 
@@ -50,12 +53,17 @@ const ScoreAndPenalty = ({ roomName, userID }: ScoreAndPenaltyProps) => {
         console.log("I lost");
         setGameWon(false);
         setGameOver(true);
+        // Update the field status in the game states in here
+        updateGameStateStatus({ roomName: roomName, userid: userID });
         // game lose sound
         playRoundLose(muted);
       } else if (opponentInfo?.penaltyCards === 0) {
         console.log("I Won");
         setGameWon(true);
         setGameOver(true);
+
+        // Update the field status in the game states in here
+        updateGameStateStatus({ roomName: roomName, userid: userID });
         // game won sound
         playRoundWon(muted);
       }

@@ -86,7 +86,7 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
     <div>
       {gameOver ? (
         <>
-          <GameOverDialogMultiplayer />
+          <GameOverDialogMultiplayer roomName={roomName} />
         </>
       ) : (
         <>

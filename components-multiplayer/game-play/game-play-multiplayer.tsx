@@ -114,6 +114,8 @@ const GamePlayMultiplayer = () => {
   });
 
   const createGameInstanceDB = async () => {
+    console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
+    console.log("dewalhands", dealtHands);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -161,6 +163,7 @@ const GamePlayMultiplayer = () => {
   };
 
   function initialSetup() {
+    console.log("Initial setup", isRoomCreator);
     //Creating and Shuffling the Deck
     const deck = createDeck();
     const shuffledDeck = shuffleDeck(deck);
@@ -349,7 +352,7 @@ const GamePlayMultiplayer = () => {
 
   useEffect(() => {
     if (isRoomCreator) createGameInstanceDB();
-  }, [isRoomCreator]);
+  }, [roomdataFromDB]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
@@ -520,7 +523,8 @@ const GamePlayMultiplayer = () => {
       <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900  relative mt-20  rounded-t-full">
         <div className="flex w-full justify-center items-center">
           <div className="">
-            {roomId && userID && isRoomActive && (
+          {roomId && userID && isRoomActive && (
+            // {roomId && userID && (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer

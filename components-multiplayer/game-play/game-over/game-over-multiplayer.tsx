@@ -14,7 +14,13 @@ import Image from "next/image";
 import ParticlesComponentWinner from "@/components-multiplayer/particles/winner-particles";
 import ParticlesComponentLoser from "@/components-multiplayer/particles/loser-particles";
 
-export const GameOverDialogMultiplayer = () => {
+interface GameOverDialogMultiplayerProps {
+  roomName: string;
+}
+
+export const GameOverDialogMultiplayer: React.FC<
+  GameOverDialogMultiplayerProps
+> = ({ roomName }) => {
   const [isOpen, setIsOpen] = useState(true);
   const gameWon = MultiplayerStateStore((state) => state.gameWon);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
@@ -112,7 +118,9 @@ export const GameOverDialogMultiplayer = () => {
                       }}
                       className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md"
                     >
-                      <Link href={"/multiplayer"}>Back to Lobby</Link>
+                      <Link href={`/multiplayer/start/public/${roomName}`}>
+                        Back to Lobby
+                      </Link>
                     </Button>
                   </DialogClose>
                 </div>

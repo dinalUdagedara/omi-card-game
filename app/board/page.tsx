@@ -1,6 +1,4 @@
-import Board from "@/components/game-board.tsx/board";
-
-import GamePlay from "@/components/game-play";
+import Board from "@/components/game-board/board";
 
 export default function Home() {
   return (

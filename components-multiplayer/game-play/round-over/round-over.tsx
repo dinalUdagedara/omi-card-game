@@ -1,10 +1,9 @@
-import { RoundOverDialogMobile } from "@/components/game-board.tsx/dialogs/round-over-dialog-mobile";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RoundOverDialogMultiplayer } from "../round-over-dialogs/round-over-dialog";
 import { useStore } from "@/store/state";
 import { useRoundLoseSound, useRoundWonSound } from "@/utils/play-sounds";

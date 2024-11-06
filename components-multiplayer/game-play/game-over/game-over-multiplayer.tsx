@@ -11,7 +11,8 @@ import Link from "next/link";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import Image from "next/image";
-import ParticlesComponentExample from "@/components-multiplayer/particles/winner-particles";
+import ParticlesComponentWinner from "@/components-multiplayer/particles/winner-particles";
+import ParticlesComponentLoser from "@/components-multiplayer/particles/loser-particles";
 
 export const GameOverDialogMultiplayer = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -22,7 +23,8 @@ export const GameOverDialogMultiplayer = () => {
       {gameWon === true ? (
         <>
           {/* Winner Particles */}
-          <ParticlesComponentExample />
+          <ParticlesComponentWinner />
+
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image
@@ -69,6 +71,7 @@ export const GameOverDialogMultiplayer = () => {
         </>
       ) : (
         <>
+          <ParticlesComponentLoser />
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image

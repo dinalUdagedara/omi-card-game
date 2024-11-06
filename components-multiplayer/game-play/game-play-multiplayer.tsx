@@ -378,7 +378,7 @@ const GamePlayMultiplayer = () => {
 
       <div className="lg:mt-3">
         <div className="flex justify-center z-20">
-          <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
+          <div className=" flex  gap-4 justify-center items-center mb-4 ">
             <div className="">
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
@@ -396,7 +396,7 @@ const GamePlayMultiplayer = () => {
                 duration: 0.8,
               }}
             >
-              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md z-20 ">
                 <Image
                   alt="Mountains"
                   src={notificaitonBackGround}

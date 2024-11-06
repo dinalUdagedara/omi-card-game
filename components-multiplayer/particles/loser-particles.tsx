@@ -2,7 +2,7 @@ import { tsParticles } from "@tsparticles/engine";
 import { useEffect } from "react";
 import { loadFull } from "tsparticles";
 
-const ParticlesComponentWinner = () => {
+const ParticlesComponentLose = () => {
   useEffect(() => {
     async function loadParticles(options: any) {
       await loadFull(tsParticles);
@@ -10,8 +10,8 @@ const ParticlesComponentWinner = () => {
     }
 
     const emitterRate = {
-      delay: 0.1,
-      quantity: 2,
+      delay: 0.8,
+      quantity: 1,
     };
 
     const options = {
@@ -29,8 +29,9 @@ const ParticlesComponentWinner = () => {
           enable: true,
           gravity: {
             enable: true,
+            acceleration: 0.4,
           },
-          speed: 15,
+          speed: 6,
           outModes: {
             default: "destroy",
             top: "none",
@@ -39,13 +40,13 @@ const ParticlesComponentWinner = () => {
         rotate: {
           value: {
             min: 0,
-            max: 360,
+            max: 90,
           },
           direction: "random",
           move: true,
           animation: {
             enable: true,
-            speed: 60,
+            speed: 30,
           },
         },
         tilt: {
@@ -58,34 +59,34 @@ const ParticlesComponentWinner = () => {
           },
           animation: {
             enable: true,
-            speed: 60,
+            speed: 20,
           },
         },
-        roll: {
-          darken: {
-            enable: true,
-            value: 30,
-          },
-          enlighten: {
-            enable: true,
-            value: 30,
-          },
-          enable: true,
-          mode: "both",
-          speed: {
-            min: 15,
-            max: 25,
-          },
-        },
-        wobble: {
-          distance: 30,
-          enable: true,
-          move: true,
-          speed: {
-            min: -15,
-            max: 15,
-          },
-        },
+        // roll: {
+        //   darken: {
+        //     enable: true,
+        //     value: 30,
+        //   },
+        //   enlighten: {
+        //     enable: true,
+        //     value: 30,
+        //   },
+        //   enable: true,
+        //   mode: "both",
+        //   speed: {
+        //     min: 15,
+        //     max: 25,
+        //   },
+        // },
+        // wobble: {
+        //   distance: 30,
+        //   enable: true,
+        //   move: true,
+        //   speed: {
+        //     min: -15,
+        //     max: 15,
+        //   },
+        // },
       },
       background: {
         color: "#",
@@ -97,8 +98,7 @@ const ParticlesComponentWinner = () => {
           particles: {
             move: { direction: "top-right" },
             shape: {
-              type: "emoji",
-              options: { emoji: { value: "♠️" } },
+              type: "circle", // Change shape to "circle"
             },
           },
         },
@@ -108,8 +108,7 @@ const ParticlesComponentWinner = () => {
           particles: {
             move: { direction: "top-right" },
             shape: {
-              type: "emoji",
-              options: { emoji: { value: "♥️" } },
+              type: "circle", // Change shape to "circle"
             },
           },
         },
@@ -119,8 +118,7 @@ const ParticlesComponentWinner = () => {
           particles: {
             move: { direction: "top-left" },
             shape: {
-              type: "emoji",
-              options: { emoji: { value: "♣️" } },
+              type: "circle", // Change shape to "circle"
             },
           },
         },
@@ -130,8 +128,7 @@ const ParticlesComponentWinner = () => {
           particles: {
             move: { direction: "top-left" },
             shape: {
-              type: "emoji",
-              options: { emoji: { value: "♦️" } },
+              type: "circle", // Change shape to "circle"
             },
           },
         },
@@ -151,4 +148,4 @@ const ParticlesComponentWinner = () => {
   return <div id="tsparticles"></div>;
 };
 
-export default ParticlesComponentWinner;
+export default ParticlesComponentLose;

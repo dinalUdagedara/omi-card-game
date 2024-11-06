@@ -11,6 +11,7 @@ import Link from "next/link";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import Image from "next/image";
+import ParticlesComponentExample from "@/components-multiplayer/particles/winner-particles";
 
 export const GameOverDialogMultiplayer = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -20,9 +21,12 @@ export const GameOverDialogMultiplayer = () => {
     <>
       {gameWon === true ? (
         <>
+          {/* Winner Particles */}
+          <ParticlesComponentExample />
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-green-500 via-purple-500 to-blue-400  text-gray-800 p-6 rounded-xl shadow-lg">
+            <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image
+                className="inv-rad inv-rad-6"
                 alt="BorderImage"
                 src={modeCardBackground}
                 fill
@@ -33,7 +37,7 @@ export const GameOverDialogMultiplayer = () => {
               />
 
               <Image
-                className="p-3"
+                className="p-3 inv-rad inv-rad-9"
                 alt="BgImage"
                 src={notificaitonBackGround}
                 fill
@@ -66,8 +70,9 @@ export const GameOverDialogMultiplayer = () => {
       ) : (
         <>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-green-500 via-purple-500 to-blue-400  text-gray-800 p-6 rounded-xl shadow-lg">
+            <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image
+                className="inv-rad inv-rad-6"
                 alt="BorderImage"
                 src={modeCardBackground}
                 fill
@@ -78,7 +83,7 @@ export const GameOverDialogMultiplayer = () => {
               />
 
               <Image
-                className="p-3"
+                className="p-3  inv-rad inv-rad-9"
                 alt="BgImage"
                 src={notificaitonBackGround}
                 fill

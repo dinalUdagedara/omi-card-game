@@ -153,9 +153,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     <div className="h-2 w-96 flex justify-center mr-5 ">
       <div className="">
         <Dialog open={isViolation}>
-          {/* <Dialog> */}
           {/* <DialogTrigger className=" h-20 w-20">Open</DialogTrigger> */}
-          <DialogContent className="real w-[360px] lg:w-full max-w-[450px] inv-rad inv-rad-6">
+          <DialogContent className="w-[360px] lg:w-full max-w-[450px] inv-rad inv-rad-6">
             <Image
               className="inv-rad inv-rad-6"
               alt="Mountains"

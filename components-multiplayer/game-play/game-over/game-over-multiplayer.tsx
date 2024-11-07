@@ -42,6 +42,7 @@ export const GameOverDialogMultiplayer: React.FC<
       userid: userID,
     });
     router.push(`/multiplayer/start/public/${roomName}`);
+    // setIsOpen(false);
   };
 
   const handleQuitGame = async () => {
@@ -50,6 +51,7 @@ export const GameOverDialogMultiplayer: React.FC<
       userid: userID,
     });
     router.push(`/multiplayer`);
+    // setIsOpen(false);
   };
 
   return (
@@ -59,7 +61,10 @@ export const GameOverDialogMultiplayer: React.FC<
           {/* Winner Particles */}
           <ParticlesComponentWinner />
 
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <Dialog
+            open={isOpen}
+            // onOpenChange={setIsOpen}
+          >
             <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image
                 className="inv-rad inv-rad-6"
@@ -93,22 +98,20 @@ export const GameOverDialogMultiplayer: React.FC<
               </div>
               <DialogFooter>
                 <div className="flex justify-center items-center w-full z-20">
-                  <DialogClose asChild>
-                    <div className="flex w-full justify-end gap-3">
-                      <Button
-                        onClick={handlePlayAgain}
-                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
-                      >
-                        Play Again
-                      </Button>
-                      <Button
-                        onClick={handleQuitGame}
-                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
-                      >
-                        Back to Lobby
-                      </Button>
-                    </div>
-                  </DialogClose>
+                  <div className="flex w-full justify-end gap-3">
+                    <Button
+                      onClick={handlePlayAgain}
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      Play Again
+                    </Button>
+                    <Button
+                      onClick={handleQuitGame}
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      Back to Lobby
+                    </Button>
+                  </div>
                 </div>
               </DialogFooter>
             </DialogContent>
@@ -150,22 +153,20 @@ export const GameOverDialogMultiplayer: React.FC<
               </div>
               <DialogFooter>
                 <div className="flex justify-center items-center w-full  z-20">
-                  <DialogClose asChild>
-                    <div className="flex w-full justify-end gap-3">
-                      <Button
-                        onClick={handlePlayAgain}
-                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
-                      >
-                        Play Again
-                      </Button>
-                      <Button
-                        onClick={handleQuitGame}
-                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
-                      >
-                        Back to Lobby
-                      </Button>
-                    </div>
-                  </DialogClose>
+                  <div className="flex w-full justify-end gap-3">
+                    <Button
+                      onClick={handlePlayAgain}
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      Play Again
+                    </Button>
+                    <Button
+                      onClick={handleQuitGame}
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      Back to Lobby
+                    </Button>
+                  </div>
                 </div>
               </DialogFooter>
             </DialogContent>

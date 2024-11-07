@@ -38,54 +38,6 @@ export const createGameState = mutation({
       console.log("Existing game state found");
       console.log("gamestate.status", existingGameState.status);
       return null;
-      // Check if the status is 'game-over'
-      // if (existingGameState.status == "game-over") {
-      //   // If the game state is 'game-over', allow creating a new game state
-      //   console.log("Previous game state was over, creating a new one.");
-      //   //remove the existing gamestate
-
-      //   await ctx.db.delete(existingGameState._id);
-
-      //   // create a new gamestate here
-      //   // Assign players to teams
-      //   const playersWithTeams = args.players.map((playerId, index) => ({
-      //     playerId,
-      //     teamNumber: index % 2 === 0 ? 1 : 2, // Team 1 for indices 0 and 2, Team 2 for 1 and 3
-      //   }));
-
-      //   // Initialize penalty cards for each team with default value
-      //   const penaltyCards = [
-      //     { teamNo: 1, penaltyCards: 10 }, // Team 1
-      //     { teamNo: 2, penaltyCards: 10 }, // Team 2
-      //   ];
-
-      //   const gameStateID = await ctx.db.insert("gameStates", {
-      //     roomId: roomInfo._id, // Use the room ID fetched from the query
-      //     players: playersWithTeams,
-      //     penaltyCards: penaltyCards,
-      //     playersDecks: args.playersDecks,
-      //     playersCards: [],
-      //     teamPoints: { team1: 0, team2: 0 },
-      //     playerTurn: args.playerTurn,
-      //     roundWinner: null,
-      //     winner: null,
-      //     currentRound: 1,
-      //     points: [],
-      //     trump: null,
-      //     trumpSetter: args.trumpSetter,
-      //     turnSuit: null,
-      //     violationOccured: [],
-      //     status: "started",
-      //   });
-
-      //   if (gameStateID) {
-      //     await ctx.db.patch(roomInfo._id, {
-      //       status: "started",
-      //     });
-      //   }
-      // } else {
-      //   throw new Error("There is a game state already in play for this room");
-      // }
     }
 
     // Assign players to teams

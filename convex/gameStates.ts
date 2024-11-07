@@ -24,7 +24,7 @@ export const createGameState = mutation({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Check if a game state already exists for the room
@@ -37,7 +37,7 @@ export const createGameState = mutation({
     if (existingGameState) {
       console.log("Existing game state found");
       console.log("gamestate.status", existingGameState.status);
-      throw new Error("There is a game state already in play for this room");
+      return null;
       // Check if the status is 'game-over'
       // if (existingGameState.status == "game-over") {
       //   // If the game state is 'game-over', allow creating a new game state
@@ -162,7 +162,7 @@ export const getMyCardSet = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -176,7 +176,7 @@ export const getMyCardSet = query({
 
       // Check if a game state exists for the player
       if (!gameState) {
-        throw new Error("Game state not found for the player");
+        return null;
       }
 
       // Find the player's card set from playersCards
@@ -186,7 +186,7 @@ export const getMyCardSet = query({
 
       // Check if the player has a card set
       if (!playerCardSet) {
-        throw new Error("Player's card set not found");
+        return null;
       }
 
       // Return the player's card set (cards)
@@ -207,7 +207,7 @@ export const checkRoomStatus = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     return room.status;
@@ -233,7 +233,7 @@ export const updateGameStateAfterRound = mutation({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Check if a game state exists for the room
@@ -294,7 +294,7 @@ export const updateViolationOccured = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -303,7 +303,7 @@ export const updateViolationOccured = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const newViolation = {
@@ -336,7 +336,7 @@ export const resetViolations = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -345,7 +345,7 @@ export const resetViolations = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const id = gameState?._id;
@@ -369,7 +369,7 @@ export const getViolations = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -383,7 +383,7 @@ export const getViolations = query({
 
       // Check if a game state exists for the player
       if (!gameState) {
-        throw new Error("Game state not found for the player");
+        return null;
       }
 
       // Find the violation from violations
@@ -415,7 +415,7 @@ export const updateGameStateStatus = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -446,7 +446,7 @@ export const updateGameStateStatus = mutation({
   },
 });
 
-export const getGameStateStatus = mutation({
+export const isGameOver = query({
   args: {
     userid: v.id("players"),
     roomName: v.string(),
@@ -459,7 +459,7 @@ export const getGameStateStatus = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -468,11 +468,7 @@ export const getGameStateStatus = mutation({
       // Fetch game states where the roomId equals the given roomID and status is not "game-over"
       const gameState = await ctx.db
         .query("gameStates")
-        .filter(
-          (q) =>
-            q.eq(q.field("roomId"), roomID) &&
-            q.neq(q.field("status"), "game-over")
-        )
+        .filter((q) => q.eq(q.field("roomId"), roomID))
         .first();
 
       if (!gameState) {
@@ -502,7 +498,7 @@ export const removeUserFromGameState = mutation({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the game state associated with the room
@@ -513,7 +509,7 @@ export const removeUserFromGameState = mutation({
 
     // Check if a game state exists for the room
     if (!gameState) {
-      throw new Error("Game state not found");
+      return null;
     }
 
     // Find the player in the game state and remove them
@@ -524,6 +520,12 @@ export const removeUserFromGameState = mutation({
     // If no players remain, delete the game state
     if (updatedPlayers.length === 0) {
       await ctx.db.delete(gameState._id);
+      if (roomInfo._id) {
+        // Update the rooms's status in the players table to "waiting"
+        await ctx.db.patch(roomInfo._id, {
+          status: "waiting",
+        });
+      }
       return { message: "Game state deleted because no players are left." };
     }
 
@@ -536,11 +538,6 @@ export const removeUserFromGameState = mutation({
     await ctx.db.patch(args.userid, {
       status: "waiting",
     });
-
-    // //update room status to be shown to other players
-    // await ctx.db.patch(roomInfo._id, {
-    //   status: "waiting",
-    // });
 
     return {
       message: "User removed from game state and status updated to 'waiting'.",
@@ -563,7 +560,7 @@ export const removeUserFromGameStateAndRoom = mutation({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomId = roomInfo._id;

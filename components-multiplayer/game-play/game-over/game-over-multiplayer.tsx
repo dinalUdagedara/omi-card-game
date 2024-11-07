@@ -13,17 +13,45 @@ import notificaitonBackGround from "@/public/assets/images/cover-notification.pn
 import Image from "next/image";
 import ParticlesComponentWinner from "@/components-multiplayer/particles/winner-particles";
 import ParticlesComponentLoser from "@/components-multiplayer/particles/loser-particles";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 interface GameOverDialogMultiplayerProps {
   roomName: string;
+  userID: Id<"players">;
 }
 
 export const GameOverDialogMultiplayer: React.FC<
   GameOverDialogMultiplayerProps
-> = ({ roomName }) => {
+> = ({ roomName, userID }) => {
   const [isOpen, setIsOpen] = useState(true);
   const gameWon = MultiplayerStateStore((state) => state.gameWon);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+  const removeUserFromGameState = useMutation(
+    api.gameStates.removeUserFromGameState
+  );
+  const removeUserFromGameStateAndRoom = useMutation(
+    api.gameStates.removeUserFromGameStateAndRoom
+  );
+  const router = useRouter();
+  const handlePlayAgain = async () => {
+    await removeUserFromGameState({
+      roomName: roomName,
+      userid: userID,
+    });
+    router.push(`/multiplayer/start/public/${roomName}`);
+  };
+
+  const handleQuitGame = async () => {
+    await removeUserFromGameStateAndRoom({
+      roomName: roomName,
+      userid: userID,
+    });
+    router.push(`/multiplayer`);
+  };
+
   return (
     <>
       {gameWon === true ? (
@@ -66,9 +94,20 @@ export const GameOverDialogMultiplayer: React.FC<
               <DialogFooter>
                 <div className="flex justify-center items-center w-full z-20">
                   <DialogClose asChild>
-                    <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
-                      <Link href={"/multiplayer"}>Back to Lobby</Link>
-                    </Button>
+                    <div className="flex w-full justify-end gap-3">
+                      <Button
+                        onClick={handlePlayAgain}
+                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                      >
+                        Play Again
+                      </Button>
+                      <Button
+                        onClick={handleQuitGame}
+                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                      >
+                        Back to Lobby
+                      </Button>
+                    </div>
                   </DialogClose>
                 </div>
               </DialogFooter>
@@ -112,16 +151,20 @@ export const GameOverDialogMultiplayer: React.FC<
               <DialogFooter>
                 <div className="flex justify-center items-center w-full  z-20">
                   <DialogClose asChild>
-                    <Button
-                      onClick={() => {
-                        setGameWon(false);
-                      }}
-                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md"
-                    >
-                      <Link href={`/multiplayer/start/public/${roomName}`}>
+                    <div className="flex w-full justify-end gap-3">
+                      <Button
+                        onClick={handlePlayAgain}
+                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                      >
+                        Play Again
+                      </Button>
+                      <Button
+                        onClick={handleQuitGame}
+                        className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                      >
                         Back to Lobby
-                      </Link>
-                    </Button>
+                      </Button>
+                    </div>
                   </DialogClose>
                 </div>
               </DialogFooter>

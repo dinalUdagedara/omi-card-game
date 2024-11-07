@@ -3,21 +3,18 @@ import { PenaltyDeckMobile } from "@/components/decks/penalty-decks/penalty-deck
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import ScoreBoardTemplate from "../score-board/score-board-template";
 import { useRoundLoseSound, useRoundWonSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 
-interface PenaltycardsMultiplayerProps {
+interface ScoreAndPenaltyProps {
   roomName: string;
   userID: Id<"players">;
 }
 
-const PenaltycardsMultiplayer = ({
-  roomName,
-  userID,
-}: PenaltycardsMultiplayerProps) => {
+const ScoreAndPenalty = ({ roomName, userID }: ScoreAndPenaltyProps) => {
   const myTeam = useQuery(api.gameLogic.getMyTeam, {
     userId: userID,
     roomName: roomName,
@@ -26,11 +23,16 @@ const PenaltycardsMultiplayer = ({
   const penaltyCards = useQuery(api.gameLogic.getPenaltyCards, {
     roomName: roomName,
   });
+  const updateGameStateStatus = useMutation(
+    api.gameStates.updateGameStateStatus
+  );
   const [myTeamPenaltyCards, setMyTeamPenaltyCards] = useState<number>(0);
   const [opponentPenaltyCards, setOpponentPenaltyCards] = useState<number>(0);
 
   const setGameOver = MultiplayerStateStore((state) => state.setGameOver);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+  const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
+  const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const { playRoundWon } = useRoundWonSound();
   const { playRoundLose } = useRoundLoseSound();
   const muted = useStore((state) => state.muted);
@@ -52,18 +54,28 @@ const PenaltycardsMultiplayer = ({
       if (myCards?.penaltyCards === 0) {
         console.log("I lost");
         setGameWon(false);
-        setGameOver(true);
+        resettingStates();
+
         // game lose sound
         playRoundLose(muted);
       } else if (opponentInfo?.penaltyCards === 0) {
         console.log("I Won");
         setGameWon(true);
-        setGameOver(true);
+        resettingStates();
+
         // game won sound
         playRoundWon(muted);
       }
     }
   }, [penaltyCards, userID]); // Run effect when playersInRoom or userID changes
+
+  function resettingStates() {
+    setRoundOver(false);
+    setTrumpSuit(null);
+    setGameOver(true);
+    // Update the field status in the game states in here
+    updateGameStateStatus({ roomName: roomName, userid: userID });
+  }
 
   return (
     <div>
@@ -71,17 +83,17 @@ const PenaltycardsMultiplayer = ({
         <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
         {/* <ScoreBoardMobileMultiplayer userID={userID} roomName={roomName} /> */}
         <ScoreBoardTemplate userID={userID} roomName={roomName} />
-        <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+        <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} reverse />
       </div>
       <div className="flex lg:hidden flex-col mt-2">
         <ScoreBoardTemplate userID={userID} roomName={roomName} />
         <div className="flex">
           <PenaltyDeckMobile penaltyCardNumber={myTeamPenaltyCards} />
-          <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} />
+          <PenaltyDeckMobile penaltyCardNumber={opponentPenaltyCards} reverse />
         </div>
       </div>
     </div>
   );
 };
 
-export default PenaltycardsMultiplayer;
+export default ScoreAndPenalty;

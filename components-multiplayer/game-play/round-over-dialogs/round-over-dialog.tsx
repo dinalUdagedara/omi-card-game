@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { roundFinishMessages } from "@/utils/types";
+import { roundFinishMessages } from "@/utils/practise/types";
 import { FinishStateStore } from "@/store/finish-round-state";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
@@ -80,6 +80,7 @@ export function RoundOverDialogMultiplayer({
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
   const resetViolation = useMutation(api.gameStates.resetViolations);
+  // const setTrumptoNul = useMutation(api.gameStates.resetViolations);
 
   const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const { playHoverSound } = useHoverSound();
@@ -87,7 +88,24 @@ export function RoundOverDialogMultiplayer({
 
   const muted = useStore((state) => state.muted);
 
+  const deductPenaltyForViolation = async () => {
+    console.log("Deductiong for violation");
+    // Check If Violation Done and decrement  in here
+    if (violations && violations?.length > 0) {
+      console.log("violations caught");
+      await decrementPenaltycards({
+        decrementValue: 1,
+        roomName,
+        userID,
+      });
+      resetViolation({
+        roomName: roomName,
+      });
+    }
+  };
+
   async function decrementValues() {
+    deductPenaltyForViolation();
     if (lostCallingTrumps && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
@@ -96,19 +114,6 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
-
-        console.log("violations ", violations);
-        // Check If Violation Done and decrement  in here
-        if (violations && violations?.length > 0) {
-          await decrementPenaltycards({
-            decrementValue: 1,
-            roomName,
-            userID,
-          });
-          await resetViolation({
-            roomName: roomName,
-          });
-        }
       }
     }
     if (lostWithoutCallingTrumps) {
@@ -120,19 +125,6 @@ export function RoundOverDialogMultiplayer({
             roomName,
             userID,
           });
-
-          // Check If Violation Done and decrement  in here
-          if (violations && violations?.length > 0) {
-            console.log("violations caught");
-            await decrementPenaltycards({
-              decrementValue: 1,
-              roomName,
-              userID,
-            });
-            resetViolation({
-              roomName: roomName,
-            });
-          }
         }
       }
     }
@@ -145,19 +137,6 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
-
-        // Check If Violation Done and decrement  in here
-        if (violations && violations?.length > 0) {
-          console.log("violations caught");
-          await decrementPenaltycards({
-            decrementValue: 1,
-            roomName,
-            userID,
-          });
-          resetViolation({
-            roomName: roomName,
-          });
-        }
       }
     }
     if (wonWithoutCallingTrumps) {
@@ -168,35 +147,27 @@ export function RoundOverDialogMultiplayer({
           roomName,
           userID,
         });
-
-        // Check If Violation Done and decrement  in here
-        if (violations && violations?.length > 0) {
-          console.log("violations caught", violations);
-          await decrementPenaltycards({
-            decrementValue: 1,
-            roomName,
-            userID,
-          });
-          await resetViolation({
-            roomName: roomName,
-          });
-        }
       }
     }
   }
 
+  const removeTrump = async () => {
+    console.log("removing trump");
+    await removeTrumpSuit({
+      roomName: roomName,
+    });
+  };
+
   const handleClose = async () => {
     playClickButton(muted);
     setAllFalse(false);
+    await removeTrump();
+    setTrumpSuit(null);
     if (userName === roomdataFromDB?.playerUserNames[0]) {
       await decrementValues();
       await updateTrumpSetter({
         roomName: roomName,
       });
-      await removeTrumpSuit({
-        roomName: roomName,
-      });
-      setTrumpSuit(null);
     }
     setDialogOpen(false);
     setRoundOver(false);

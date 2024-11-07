@@ -1,4 +1,4 @@
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { useState, useEffect } from "react";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
 import Image from "next/image";

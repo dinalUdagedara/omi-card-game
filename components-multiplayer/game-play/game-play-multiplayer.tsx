@@ -2,15 +2,14 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-
-import { Card, exampleCardSet, Player, Suit } from "@/utils/types";
+import { Card, exampleCardSet, Player, Suit } from "@/utils/practise/types";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import PenaltycardsMultiplayer from "./penalty-cards/penalty-cards-multiplayer";
+import PenaltycardsMultiplayer from "./penalty-cards/score-and-penalty-card-component";
 import GameBoardMobileMultiplayer from "./game-board/game-board-multiplayer";
 import { useStore } from "@/store/state";
-import { UserDeckMobileMultiplayer } from "./decks/user-deck-mobile-multiplayer";
+import { UserDeckMobileMultiplayer } from "./decks/user-deck-multiplayer";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import {
@@ -37,13 +36,15 @@ const GamePlayMultiplayer = () => {
     null
   );
   const [isRoomActive, setRoomActive] = useState(false);
-  const [opponentPlayerDB, setOpponentPlayerDB] = useState<string>();
   const [playersIDs, setPlayersIDs] = useState<string[] | null>(null);
   const [dealtHands, setDealtHands] = useState<Player[] | null>(null);
 
+  const [teamMember, setTeamMember] = useState<string>();
+  const [opponent_1, setOpponent_1] = useState<string>();
+  const [opponent_2, setOpponent_2] = useState<string>();
+
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
-  const isTrumpSelected = useStore((state) => state.trumpSelected);
   const setTrumpSelected = useStore((state) => state.setTrumpSelected);
   const trumpSuit = useStore((state) => state.trumpSuit);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
@@ -85,7 +86,6 @@ const GamePlayMultiplayer = () => {
   const resetTeamPoints = useMutation(api.gameLogic.resetTeamPoints);
 
   const updateTrump = useMutation(api.gameLogic.updateTrumpSuit);
-  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
@@ -113,11 +113,14 @@ const GamePlayMultiplayer = () => {
     roomName: roomId || "",
   });
 
-  const [teamMember, setTeamMember] = useState<string>();
-  const [opponent_1, setOpponent_1] = useState<string>();
-  const [opponent_2, setOpponent_2] = useState<string>();
+  const isGameOver = useQuery(api.gameStates.isGameOver, {
+    roomName: roomId || "",
+    userid: userID || null,
+  });
 
   const createGameInstanceDB = async () => {
+    console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
+    console.log("dewalhands", dealtHands);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -165,6 +168,7 @@ const GamePlayMultiplayer = () => {
   };
 
   function initialSetup() {
+    console.log("Initial setup", isRoomCreator);
     //Creating and Shuffling the Deck
     const deck = createDeck();
     const shuffledDeck = shuffleDeck(deck);
@@ -353,19 +357,24 @@ const GamePlayMultiplayer = () => {
 
   useEffect(() => {
     if (isRoomCreator) createGameInstanceDB();
-  }, [isRoomCreator]);
+  }, [roomdataFromDB]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
       {
         // !isTrumpSelected &&
-        !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (
-          <SuitDrawerMultiplayer
-            userID={userID}
-            roomName={roomId}
-            onClose={handleCloseDrawer}
-          />
-        )
+        !isGameOver &&
+          !trumpSuit &&
+          isRoomCreator &&
+          userID &&
+          roomId &&
+          isRoomActive && (
+            <SuitDrawerMultiplayer
+              userID={userID}
+              roomName={roomId}
+              onClose={handleCloseDrawer}
+            />
+          )
       }
 
       {roomId && isRoomActive && userID ? (
@@ -382,7 +391,7 @@ const GamePlayMultiplayer = () => {
 
       <div className="lg:mt-3">
         <div className="flex justify-center z-20">
-          <div className=" flex  gap-4 justify-center items-center mb-4 z-20">
+          <div className=" flex  gap-4 justify-center items-center mb-4 ">
             <div className="">
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
@@ -400,7 +409,7 @@ const GamePlayMultiplayer = () => {
                 duration: 0.8,
               }}
             >
-              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md z-20 ">
                 <Image
                   alt="Mountains"
                   src={notificaitonBackGround}
@@ -525,6 +534,7 @@ const GamePlayMultiplayer = () => {
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive && (
+              // {roomId && userID && (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer

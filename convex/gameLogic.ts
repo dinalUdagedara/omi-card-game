@@ -13,7 +13,7 @@ export const updateTrumpSuit = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return { error: "Room not found" };
     }
 
     const gameState = await ctx.db
@@ -22,7 +22,7 @@ export const updateTrumpSuit = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return { error: "Game state not found" };
     }
 
     const id = gameState?._id;
@@ -46,7 +46,7 @@ export const removeTrumpSuit = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return { error: "Room not found" };
     }
 
     const gameState = await ctx.db
@@ -55,7 +55,7 @@ export const removeTrumpSuit = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const id = gameState?._id;
@@ -85,7 +85,7 @@ export const updatePlayingCards = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the gameState for the room
@@ -95,7 +95,7 @@ export const updatePlayingCards = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("GameState not found");
+      return null;
     }
 
     const id = gameState._id;
@@ -176,7 +176,7 @@ export const getPlayerTurn = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -190,7 +190,7 @@ export const getPlayerTurn = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // get the whose turn it is to play
@@ -214,7 +214,7 @@ export const getPlayerTurnName = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -234,7 +234,7 @@ export const getPlayerTurnName = query({
       const turnPlayerId = gameState.playerTurn;
 
       if (!turnPlayerId) {
-        throw new Error("Player turn not found");
+        return null;
       }
 
       // Fetch the player's username using the player ID
@@ -244,7 +244,7 @@ export const getPlayerTurnName = query({
         .first();
 
       if (!player) {
-        throw new Error("Player not found");
+        return null;
       }
 
       // Return the player's username
@@ -264,7 +264,7 @@ export const noOfPlayingCards = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -278,7 +278,7 @@ export const noOfPlayingCards = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // get the number of cards in the playersCards (playing cards)
@@ -303,7 +303,7 @@ export const updateTrumpSetter = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -312,7 +312,7 @@ export const updateTrumpSetter = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     // Update the trumpSetter
@@ -335,7 +335,7 @@ export const clearPlayingCards = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -344,7 +344,7 @@ export const clearPlayingCards = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const id = gameState?._id;
@@ -369,7 +369,7 @@ export const getPlayingCards = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -383,14 +383,14 @@ export const getPlayingCards = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the cards on play in the room current turn
       const cardsOnPlay = gameState.playersCards;
 
       if (!cardsOnPlay) {
-        throw new Error("No cards in Play");
+        return null;
       }
 
       // Return the cards on play
@@ -410,7 +410,7 @@ export const getPlayersDecks = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -424,14 +424,14 @@ export const getPlayersDecks = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the cards on play in the room current turn
       const playersDecks = gameState.playersDecks;
 
       if (!playersDecks) {
-        throw new Error("No cards in Play");
+        return null;
       }
 
       // Return the cards on play
@@ -451,7 +451,7 @@ export const getTurnSuit = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -465,7 +465,7 @@ export const getTurnSuit = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the turn suit for the current turn
@@ -492,7 +492,7 @@ export const getTrumpSuit = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -506,7 +506,7 @@ export const getTrumpSuit = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // get the trump of the selected room
@@ -534,7 +534,7 @@ export const resetStates = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -543,7 +543,7 @@ export const resetStates = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const id = gameState?._id;
@@ -577,7 +577,7 @@ export const updatePlayerPoints = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the gameState for the room
@@ -587,7 +587,7 @@ export const updatePlayerPoints = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("GameState not found");
+      return null;
     }
 
     const id = gameState._id;
@@ -634,7 +634,7 @@ export const incrementPlayerPoints = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the gameState for the room
@@ -644,7 +644,7 @@ export const incrementPlayerPoints = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("GameState not found");
+      return null;
     }
 
     const id = gameState._id;
@@ -668,7 +668,7 @@ export const incrementPlayerPoints = mutation({
       // Identify the team for the userId
       const player = gameState.players.find((p) => p.playerId === args.userId);
       if (!player) {
-        throw new Error("Player not found in gameState");
+        return null;
       }
 
       // Update the team points based on the player's team
@@ -699,7 +699,7 @@ export const getTeamPoints = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -713,14 +713,14 @@ export const getTeamPoints = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the points
       const playersPoints = gameState.teamPoints;
 
       if (!playersPoints) {
-        throw new Error("No cards in Play");
+        return null;
       }
 
       // Return points
@@ -741,7 +741,7 @@ export const getMyTeam = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -755,7 +755,7 @@ export const getMyTeam = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the player's information and get the team number
@@ -781,7 +781,7 @@ export const getTrumpSetter = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -795,7 +795,7 @@ export const getTrumpSetter = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the trump setter
@@ -805,7 +805,7 @@ export const getTrumpSetter = query({
         (player) => player.playerId == trumpSetter
       );
       if (!trumpSetterInfo) {
-        throw new Error("No cards in Play");
+        return null;
       }
 
       // Return points
@@ -829,7 +829,7 @@ export const decrementPenaltyCards = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the gameState for the room
@@ -839,7 +839,7 @@ export const decrementPenaltyCards = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("GameState not found");
+      return null;
     }
 
     // Find the player's team
@@ -848,7 +848,7 @@ export const decrementPenaltyCards = mutation({
     );
 
     if (!playerTeamInfo) {
-      throw new Error("Player not found in game state");
+      return null;
     }
 
     const teamNumber = playerTeamInfo.teamNumber;
@@ -858,7 +858,10 @@ export const decrementPenaltyCards = mutation({
       if (penaltyCard.teamNo === teamNumber) {
         return {
           ...penaltyCard,
-          penaltyCards: penaltyCard.penaltyCards - args.decrementValue,
+          penaltyCards: Math.max(
+            0,
+            penaltyCard.penaltyCards - args.decrementValue
+          ), // Ensure value doesn't go below zero
         };
       }
       return penaltyCard;
@@ -889,7 +892,7 @@ export const decrementFromOpponents = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the gameState for the room
@@ -899,7 +902,7 @@ export const decrementFromOpponents = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("GameState not found");
+      return null;
     }
 
     // Find the player's team
@@ -908,7 +911,7 @@ export const decrementFromOpponents = mutation({
     );
 
     if (!playerTeamInfo) {
-      throw new Error("Player not found in game state");
+      return null;
     }
 
     const teamNumber = playerTeamInfo.teamNumber;
@@ -918,7 +921,10 @@ export const decrementFromOpponents = mutation({
       if (penaltyCard.teamNo !== teamNumber) {
         return {
           ...penaltyCard,
-          penaltyCards: penaltyCard.penaltyCards - args.decrementValue,
+          penaltyCards: Math.max(
+            0,
+            penaltyCard.penaltyCards - args.decrementValue
+          ), // Ensure value doesn't go below zero
         };
       }
       return penaltyCard;
@@ -949,7 +955,7 @@ export const incrementPenaltyCards = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Fetch the gameState for the room
@@ -959,7 +965,7 @@ export const incrementPenaltyCards = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("GameState not found");
+      return null;
     }
 
     // Find the player's team
@@ -968,7 +974,7 @@ export const incrementPenaltyCards = mutation({
     );
 
     if (!playerTeamInfo) {
-      throw new Error("Player not found in game state");
+      return null;
     }
 
     const teamNumber = playerTeamInfo.teamNumber;
@@ -1005,7 +1011,7 @@ export const getPenaltyCards = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -1019,7 +1025,7 @@ export const getPenaltyCards = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // Find the penaltyCards
@@ -1048,7 +1054,7 @@ export const updateTurnWinner = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -1057,7 +1063,7 @@ export const updateTurnWinner = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const id = gameState?._id;
@@ -1082,7 +1088,7 @@ export const updatePlayerTurn = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -1091,7 +1097,7 @@ export const updatePlayerTurn = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     if (gameState.winner) {
@@ -1116,7 +1122,7 @@ export const replacePlayerTurn = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -1125,7 +1131,7 @@ export const replacePlayerTurn = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     if (gameState.winner) {
@@ -1149,7 +1155,7 @@ export const resetTeamPoints = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -1158,7 +1164,7 @@ export const resetTeamPoints = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     if (gameState.teamPoints) {
@@ -1181,7 +1187,7 @@ export const getTurnWinner = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -1195,7 +1201,7 @@ export const getTurnWinner = query({
 
       // Check if a game state exists for the room
       if (!gameState) {
-        throw new Error("Game state not found for the room");
+        return null;
       }
 
       // get the whose turn it is to play

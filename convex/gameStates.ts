@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, MutationCtx, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const createGameState = mutation({
@@ -24,7 +24,7 @@ export const createGameState = mutation({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Check if a game state already exists for the room
@@ -33,13 +33,11 @@ export const createGameState = mutation({
       .filter((q) => q.eq(q.field("roomId"), roomInfo._id))
       .first();
 
-    // If a game state already exists, return an error or the existing game state ID
+    // If a game state already exists
     if (existingGameState) {
-      console.log("existing gamestate");
-      return {
-        error: "Game state already exists for this room",
-        gameStateID: existingGameState._id,
-      };
+      console.log("Existing game state found");
+      console.log("gamestate.status", existingGameState.status);
+      return null;
     }
 
     // Assign players to teams
@@ -70,6 +68,7 @@ export const createGameState = mutation({
       trumpSetter: args.trumpSetter,
       turnSuit: null,
       violationOccured: [],
+      status: "started",
     });
 
     if (gameStateID) {
@@ -115,7 +114,7 @@ export const getMyCardSet = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -129,7 +128,7 @@ export const getMyCardSet = query({
 
       // Check if a game state exists for the player
       if (!gameState) {
-        throw new Error("Game state not found for the player");
+        return null;
       }
 
       // Find the player's card set from playersCards
@@ -139,7 +138,7 @@ export const getMyCardSet = query({
 
       // Check if the player has a card set
       if (!playerCardSet) {
-        throw new Error("Player's card set not found");
+        return null;
       }
 
       // Return the player's card set (cards)
@@ -160,7 +159,7 @@ export const checkRoomStatus = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     return room.status;
@@ -186,7 +185,7 @@ export const updateGameStateAfterRound = mutation({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Check if a game state exists for the room
@@ -247,7 +246,7 @@ export const updateViolationOccured = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -256,7 +255,7 @@ export const updateViolationOccured = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const newViolation = {
@@ -289,7 +288,7 @@ export const resetViolations = mutation({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const gameState = await ctx.db
@@ -298,7 +297,7 @@ export const resetViolations = mutation({
       .first();
 
     if (!gameState) {
-      throw new Error("gameState not found");
+      return null;
     }
 
     const id = gameState?._id;
@@ -322,7 +321,7 @@ export const getViolations = query({
       .first();
 
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     const roomID = room?._id;
@@ -336,7 +335,7 @@ export const getViolations = query({
 
       // Check if a game state exists for the player
       if (!gameState) {
-        throw new Error("Game state not found for the player");
+        return null;
       }
 
       // Find the violation from violations
@@ -352,5 +351,231 @@ export const getViolations = query({
       // Return the violation
       return violationInfo;
     }
+  },
+});
+
+export const updateGameStateStatus = mutation({
+  args: {
+    userid: v.id("players"),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch game states where the roomId equals the given roomID and status is not "game-over"
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter(
+          (q) =>
+            q.eq(q.field("roomId"), roomID) &&
+            q.neq(q.field("status"), "game-over")
+        )
+        .first();
+
+      if (!gameState) {
+        return null;
+      }
+
+      if (gameState) {
+        await ctx.db.patch(gameState._id, {
+          status: "game-over",
+        });
+      }
+
+      console.log(gameState);
+    }
+  },
+});
+
+export const isGameOver = query({
+  args: {
+    userid: v.union(v.id("players"), v.null()),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+
+    const roomID = room?._id;
+
+    if (roomID) {
+      // Fetch game states where the roomId equals the given roomID and status is not "game-over"
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), roomID))
+        .first();
+
+      if (!gameState) {
+        return null;
+      }
+
+      if (gameState.status === "game-over") {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+});
+
+export const removeUserFromGameState = mutation({
+  args: {
+    userid: v.id("players"),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch room data using the room name
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    // Check if the room exists
+    if (!roomInfo) {
+      return null;
+    }
+
+    // Fetch the game state associated with the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), roomInfo._id))
+      .first();
+
+    // Check if a game state exists for the room
+    if (!gameState) {
+      return null;
+    }
+
+    // Find the player in the game state and remove them
+    const updatedPlayers = gameState.players.filter(
+      (player) => player.playerId !== args.userid
+    );
+
+    // If no players remain, delete the game state
+    if (updatedPlayers.length === 0) {
+      await ctx.db.delete(gameState._id);
+      if (roomInfo._id) {
+        // Update the rooms's status in the players table to "waiting"
+        await ctx.db.patch(roomInfo._id, {
+          status: "waiting",
+        });
+      }
+      return { message: "Game state deleted because no players are left." };
+    }
+
+    // Update the game state with the new players array
+    await ctx.db.patch(gameState._id, {
+      players: updatedPlayers,
+    });
+
+    // Update the player's status to "waiting" in the players table
+    await ctx.db.patch(args.userid, {
+      status: "waiting",
+    });
+
+    return {
+      message: "User removed from game state and status updated to 'waiting'.",
+      updatedPlayers,
+    };
+  },
+});
+
+export const removeUserFromGameStateAndRoom = mutation({
+  args: {
+    userid: v.id("players"),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch room data using the room name
+    const roomInfo = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    // Check if the room exists
+    if (!roomInfo) {
+      return null;
+    }
+
+    const roomId = roomInfo._id;
+
+    // Fetch the game state associated with the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), roomId))
+      .first();
+
+    // Check if the game state exists
+    if (gameState) {
+      // Remove the player from the game state players list
+      const updatedGameStatePlayers = gameState.players.filter(
+        (player) => player.playerId !== args.userid
+      );
+
+      // If no players are left in the game state, delete it
+      if (updatedGameStatePlayers.length === 0) {
+        await ctx.db.delete(gameState._id);
+
+        if (roomInfo._id) {
+          // Update the rooms's status in the players table to "waiting"
+          await ctx.db.patch(roomInfo._id, {
+            status: "waiting",
+          });
+        }
+      } else {
+        // Update the game state if players remain
+        await ctx.db.patch(gameState._id, {
+          players: updatedGameStatePlayers,
+        });
+      }
+    }
+
+    // Remove the player from the room's players list
+    const updatedRoomPlayers = roomInfo.players.filter(
+      (playerId) => playerId !== args.userid
+    );
+
+    const updatedPlayerUserNames = roomInfo.playerUserNames.filter(
+      (userName, index) => roomInfo.players[index] !== args.userid
+    );
+
+    // If no players are left in the room, delete the room
+    if (updatedRoomPlayers.length === 0) {
+      await ctx.db.delete(roomInfo._id);
+    } else {
+      // Update the room with the new list of players and usernames
+      await ctx.db.patch(roomInfo._id, {
+        players: updatedRoomPlayers,
+        playerUserNames: updatedPlayerUserNames,
+      });
+    }
+
+    // Update the player's status in the players table to "waiting"
+    await ctx.db.patch(args.userid, {
+      status: "waiting",
+    });
+
+    return {
+      message:
+        "User removed from both game state and room. Player status updated to 'waiting'.",
+    };
   },
 });

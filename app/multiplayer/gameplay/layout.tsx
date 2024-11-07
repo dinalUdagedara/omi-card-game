@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/mode-selectors/header";
 import background from "@/public/assets/images/backgrounds/game-room-background.png";
 import Image from "next/image";
 export default function MultiplayerLayout({

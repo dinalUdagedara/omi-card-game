@@ -1,5 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
-import { cardMultiplayer } from "@/utils/types-multiplayer";
+import { cardMultiplayer } from "@/utils/multiplayer/types-multiplayer";
 import { create } from "zustand";
 
 interface MultiplayerState {

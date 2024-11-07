@@ -1,5 +1,5 @@
 "use client";
-import PoolUI from "@/components-multiplayer/pool-ui";
+import PoolUI from "@/components-multiplayer/pool-components/pool-ui";
 import Lottie from "lottie-react";
 import ProfileAnimation from "@/public/assets/lottie-animations/enter-name.json";
 import UserNameInput from "@/components-multiplayer/user-name-input/user-name-input";

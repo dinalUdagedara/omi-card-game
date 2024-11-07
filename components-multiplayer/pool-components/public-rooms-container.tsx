@@ -2,7 +2,7 @@
 import { Card, CardFooter } from "@nextui-org/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
@@ -17,6 +17,8 @@ import room3 from "@/public/assets/images/rooms/room3.png";
 import room4 from "@/public/assets/images/rooms/room4.png";
 import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const PublicRoomContainer = () => {
   const availableRooms = useQuery(api.rooms.getAllActivePublicRooms);
@@ -26,6 +28,14 @@ const PublicRoomContainer = () => {
   // Array of images
   const roomImages = [room1, room2, room3, room4];
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const createRoom = () => {
+    setLoading(true);
+    playClickButton(muted);
+    router.push(`/multiplayer/create-room`);
+  };
 
   useEffect(() => {
     // Ensure the code only runs in the browser
@@ -121,19 +131,24 @@ const PublicRoomContainer = () => {
           </div>
 
           <div className="flex items-center justify-center flex-grow  z-20">
-            <Link
-              onClick={() => {
-                playClickButton(muted);
-              }}
-              href={"/multiplayer/create-room"}
+            <Button
               onMouseEnter={() => {
                 playHoverSound(muted);
               }}
+              onClick={createRoom}
+              disabled={loading}
+              className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md"
             >
-              <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
-                Create a Room
-              </Button>
-            </Link>
+              {loading ? (
+                <div className="flex gap-2">
+                  <Loader2 className="animate-spin" />
+                  Please Wait..
+                </div>
+              ) : (
+                "Create a Room"
+              )}
+            </Button>
+            {/* </Link> */}
           </div>
         </div>
       </div>

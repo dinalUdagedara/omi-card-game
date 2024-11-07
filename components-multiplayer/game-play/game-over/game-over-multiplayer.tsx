@@ -11,18 +11,66 @@ import Link from "next/link";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import Image from "next/image";
+import ParticlesComponentWinner from "@/components-multiplayer/particles/winner-particles";
+import ParticlesComponentLoser from "@/components-multiplayer/particles/loser-particles";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
-export const GameOverDialogMultiplayer = () => {
+interface GameOverDialogMultiplayerProps {
+  roomName: string;
+  userID: Id<"players">;
+}
+
+export const GameOverDialogMultiplayer: React.FC<
+  GameOverDialogMultiplayerProps
+> = ({ roomName, userID }) => {
   const [isOpen, setIsOpen] = useState(true);
   const gameWon = MultiplayerStateStore((state) => state.gameWon);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingQuit, setisLoadingQuit] = useState(false);
+  const removeUserFromGameState = useMutation(
+    api.gameStates.removeUserFromGameState
+  );
+  const removeUserFromGameStateAndRoom = useMutation(
+    api.gameStates.removeUserFromGameStateAndRoom
+  );
+  const router = useRouter();
+  const handlePlayAgain = async () => {
+    setIsLoading(true);
+    await removeUserFromGameState({
+      roomName: roomName,
+      userid: userID,
+    });
+    router.push(`/multiplayer/start/public/${roomName}`);
+  };
+
+  const handleQuitGame = async () => {
+    setisLoadingQuit(true);
+    await removeUserFromGameStateAndRoom({
+      roomName: roomName,
+      userid: userID,
+    });
+    router.push(`/multiplayer`);
+  };
+
   return (
     <>
       {gameWon === true ? (
         <>
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-green-500 via-purple-500 to-blue-400  text-gray-800 p-6 rounded-xl shadow-lg">
+          {/* Winner Particles */}
+          <ParticlesComponentWinner />
+
+          <Dialog
+            open={isOpen}
+            // onOpenChange={setIsOpen}
+          >
+            <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image
+                className="inv-rad inv-rad-6"
                 alt="BorderImage"
                 src={modeCardBackground}
                 fill
@@ -33,7 +81,7 @@ export const GameOverDialogMultiplayer = () => {
               />
 
               <Image
-                className="p-3"
+                className="p-3 inv-rad inv-rad-9"
                 alt="BgImage"
                 src={notificaitonBackGround}
                 fill
@@ -53,11 +101,36 @@ export const GameOverDialogMultiplayer = () => {
               </div>
               <DialogFooter>
                 <div className="flex justify-center items-center w-full z-20">
-                  <DialogClose asChild>
-                    <Button className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md">
-                      <Link href={"/multiplayer"}>Back to Lobby</Link>
+                  <div className="flex w-full justify-end gap-3">
+                    <Button
+                      onClick={handlePlayAgain}
+                      disabled={isLoading}
+                      className="bg-amber-950 text-white hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      {isLoading ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Please wait
+                        </div>
+                      ) : (
+                        "Play Again"
+                      )}
                     </Button>
-                  </DialogClose>
+                    <Button
+                      onClick={handleQuitGame}
+                      disabled={isLoadingQuit}
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      {isLoadingQuit ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Redirecting
+                        </div>
+                      ) : (
+                        "Back to Lobby"
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </DialogFooter>
             </DialogContent>
@@ -65,9 +138,11 @@ export const GameOverDialogMultiplayer = () => {
         </>
       ) : (
         <>
+          <ParticlesComponentLoser />
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-green-500 via-purple-500 to-blue-400  text-gray-800 p-6 rounded-xl shadow-lg">
+            <DialogContent className=" w-[350px] lg:w-full px-10 inv-rad inv-rad-6">
               <Image
+                className="inv-rad inv-rad-6"
                 alt="BorderImage"
                 src={modeCardBackground}
                 fill
@@ -78,7 +153,7 @@ export const GameOverDialogMultiplayer = () => {
               />
 
               <Image
-                className="p-3"
+                className="p-3  inv-rad inv-rad-9"
                 alt="BgImage"
                 src={notificaitonBackGround}
                 fill
@@ -97,16 +172,36 @@ export const GameOverDialogMultiplayer = () => {
               </div>
               <DialogFooter>
                 <div className="flex justify-center items-center w-full  z-20">
-                  <DialogClose asChild>
+                  <div className="flex w-full justify-end gap-3">
                     <Button
-                      onClick={() => {
-                        setGameWon(false);
-                      }}
-                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md"
+                      onClick={handlePlayAgain}
+                      disabled={isLoading}
+                      className="bg-amber-950 text-white hover:bg-amber-800 p-5 text-md h-8"
                     >
-                      <Link href={"/multiplayer"}>Back to Lobby</Link>
+                      {isLoading ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Please wait
+                        </div>
+                      ) : (
+                        "Play Again"
+                      )}
                     </Button>
-                  </DialogClose>
+                    <Button
+                      onClick={handleQuitGame}
+                      disabled={isLoadingQuit}
+                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                    >
+                      {isLoadingQuit ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Redirecting
+                        </div>
+                      ) : (
+                        "Back to Lobby"
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </DialogFooter>
             </DialogContent>

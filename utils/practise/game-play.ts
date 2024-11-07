@@ -1,4 +1,4 @@
-import { getTrump } from "./game-logic";
+import { getTrump } from "../practise/game-logic";
 import { Suit, Card, valueRanking } from "./types";
 
 export function shuffleDeck(deck: Card[]): Card[] {

@@ -1,20 +1,24 @@
-import { Card, exampleCardSet } from "@/utils/types";
+import { Card, exampleCardSet } from "@/utils/practise/types";
 import { motion } from "framer-motion";
 import PenaltyCardMobile from "@/components/cards/penalty-cards/penalty-card-mobile";
 
 interface UserDeckProps {
   penaltyCardNumber: number;
+  reverse?: boolean; //reverse prop
 }
 
-export function PenaltyDeckMobile({ penaltyCardNumber }: UserDeckProps) {
-  const displayedCards = exampleCardSet;
+export function PenaltyDeckMobile({ penaltyCardNumber, reverse = false }: UserDeckProps) {
+  // Conditionally reverse the order of the cards if reverse is true
+  const displayedCards = reverse ? [...exampleCardSet].reverse() : exampleCardSet;
 
   return (
     <div className="h-full w-full flex justify-center items-center p-4 rounded-lg">
       <div className="relative flex justify-center items-center">
         {displayedCards.map((card, index) => {
-          const shouldMarkCard =
-            index < displayedCards.length - penaltyCardNumber;
+          // Calculate index for "X" mark depending on reverse
+          const cardIndex = reverse ? displayedCards.length - 1 - index : index;
+          const shouldMarkCard = cardIndex < displayedCards.length - penaltyCardNumber;
+
           return (
             <div
               key={index}
@@ -34,7 +38,7 @@ export function PenaltyDeckMobile({ penaltyCardNumber }: UserDeckProps) {
                   {/* Cross mark overlay */}
                   {shouldMarkCard && (
                     <div className="absolute inset-0 flex justify-center items-center">
-                      <span className="text-red-600 text-1xl font-bold">✕</span>
+                      <span className="text-black text-xl font-bold">✕</span>
                     </div>
                   )}
                 </div>

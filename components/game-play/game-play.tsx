@@ -4,53 +4,38 @@ import {
   createDeck,
   dealCards,
   determineTrickWinner,
+  getTrump,
+  getTurnSuit,
   getLastWinner,
   setTrump,
   setTurnSuit,
   shuffleDeck,
   setLastWinner,
-  checkTurnSuitCards,
-  getPlayerXP,
-} from "@/utils/game-logic";
-import { Card, Suit, suits } from "@/utils/types";
+} from "@/utils/practise/game-logic";
+import { Player, Card, Suit, suits } from "@/utils/practise/types";
 import { useState, useEffect } from "react";
-import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/game-play";
+import { chooseCard, chooseCardWithoutTurnSuit } from "@/utils/practise/game-play";
 import { toast } from "sonner";
+import { SuitDrawer } from "../drawer/trump-suit-selector";
 import { useStore } from "@/store/state";
+import { OtherDecks } from "../decks/other-decks";
+import GameBoard from "../game-board/game-board/game-board";
 import { CardStore } from "@/store/player-card-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import ScoreBoardMobile from "./game-board.tsx/score-board/score-board-mobile";
-import { OtherDecksMobile } from "./decks/mobile/other-decks-mobile";
-import GameBoardMobile from "./game-board.tsx/game-board/game-board-mobile";
-import { UserDeckMobile } from "./decks/user-deck-mobile";
-import Penaltycards from "./game-board.tsx/penalty-cards/penalty-cards-mobile";
-import { RoundOverDialogMobile } from "./game-board.tsx/dialogs/round-over-dialog-mobile";
-import { FinishStateStore } from "@/store/finish-round-state";
-import { motion } from "framer-motion";
+import { UserDeckStraight } from "../decks/user-deck-straight";
+import Scoreboard from "../game-board/score-board/score-board";
 import Image from "next/image";
-import modeCardBackground from "@/public/assets/images/mode-card-background.png";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "./game-play-mobile";
+import { SuitDrawerMobile } from "../drawer/mobile/trump-suit-selector-mobile";
+import { FinishStateStore } from "@/store/finish-round-state";
+import { RoundOverDialogMobile } from "../game-board/dialogs/round-over-dialog-mobile";
+import { motion } from "framer-motion";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import { useCollectingCardSound } from "@/utils/play-sounds";
+import NameCardTemplate from "@/components-multiplayer/game-play/name-card/name-card-template";
 
-export function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  return isMobile;
-}
-
-const GamePlayMobile = () => {
+export default function Board() {
   const isMobile = useIsMobile();
   const [turnSuit, setturnSuit] = useState<Suit | null>(null);
   const cardSet = useStore((state) => state.cardSet);
@@ -110,10 +95,12 @@ const GamePlayMobile = () => {
 
   const roundWinners = useStore((state) => state.roundWinners);
   const setRoundWinners = useStore((state) => state.setRoundWinners);
-  const gameWinner = useStore((state) => state.gameWinner);
 
   const isGameOver = useStore((state) => state.isGameOver);
   const setIsGameOver = useStore((state) => state.setIsGameOver);
+
+  const gameWinner = useStore((state) => state.gameWinner);
+  const setGameWinner = useStore((state) => state.setGameWinner);
 
   const roundNumber = useStore((state) => state.roundNumber);
   const setRoundNumber = useStore((state) => state.setRoundNumber);
@@ -131,6 +118,9 @@ const GamePlayMobile = () => {
   const setTrumpSetter = useStore((state) => state.setTrumpSetter);
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setIsUserTurn = useStore((state) => state.setIsUserTurn);
+  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
+  const isRoundOver = FinishStateStore((state) => state.isRoundOver);
+
   const setwonCallingTrumps = FinishStateStore(
     (state) => state.setwonCallingTrumps
   );
@@ -145,12 +135,8 @@ const GamePlayMobile = () => {
   );
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
-  const setRoundOver = FinishStateStore((state) => state.setRoundOver);
-  const isRoundOver = FinishStateStore((state) => state.isRoundOver);
   const { playCollectCards } = useCollectingCardSound();
   const muted = useStore((state) => state.muted);
-
-  const playerXp = getPlayerXP();
 
   function initailSetup() {
     //Creating and Shuffling the Deck
@@ -179,15 +165,13 @@ const GamePlayMobile = () => {
     );
     setSelectedCardByUser(selectedCard);
 
-    if (selectedCard && !generatedCards) {
+    if (selectedCard) {
       setTurnSuit(selectedCard.suit);
       setturnSuit(selectedCard.suit);
     }
   }
 
   function handleSubmit() {
-    if (turnSuit && selectedCardByUser)
-      checkTurnSuitCards(selectedCardByUser, dealtHands[0].hand, turnSuit);
     setIsSubmitted(true);
     selectWinningCard();
   }
@@ -214,6 +198,7 @@ const GamePlayMobile = () => {
         console.log("chosen card without the turnsuit", chosenCard);
       }
     }
+
     if (selectedCardByUser) {
       setIsUserTurn(false);
     } else {
@@ -414,6 +399,7 @@ const GamePlayMobile = () => {
     if (cardSet.length > 0) {
       const winningCard: Card = determineTrickWinner(cardSet);
       setWinningCard(winningCard);
+      playCollectCards(muted);
       console.log("Winning Card:", winningCard);
     }
   }
@@ -451,19 +437,39 @@ const GamePlayMobile = () => {
   function checkWinner() {
     if (team1PenaltyCards === 0) {
       toast("Your Team lost");
+      setGameWinner(2);
       setIsGameOver(true);
     }
     if (team2PenaltyCards === 0) {
       toast("Congratulations Your Team wons the Game");
+      setGameWinner(1);
       setIsGameOver(true);
     }
+
+    // if (roundsWonbyTeam1) {
+    //   if (roundsWonbyTeam1 >= 4) {
+    //     toast("Congratulations Your Team wons the Game");
+    //     setIsGameOver(true);
+    //   }
+    // }
+    // if (roundsWonbyTeam2) {
+    //   if (roundsWonbyTeam2 >= 4) {
+    //     toast("Your Team lost");
+    //     setIsGameOver(true);
+    //   }
+    // }
+  }
+
+  function handleCloseDrawer() {
+    handleSuitChange(trumpSuit);
+    setTrumpSelected(true);
   }
 
   function handleAutomaticSubmit() {
     if (!isSubmitted && isCardsGenerated && selectedCardByUser) {
       setTimeout(() => {
         handleSubmit();
-      }, 2000);
+      }, 3000);
     }
   }
 
@@ -471,7 +477,7 @@ const GamePlayMobile = () => {
     if (isSubmitted) {
       setTimeout(() => {
         handleNextTurn();
-      }, 2000);
+      }, 3000);
     }
   }
 
@@ -479,9 +485,9 @@ const GamePlayMobile = () => {
     // Reset the points for both teams
     resetTeamPoints();
     setRoundsWonbyTeam1(0);
+    setRoundsWonbyTeam2(0);
     setTeam_1_penaltyCards(10);
     setTeam_2_penaltyCards(10);
-    setRoundsWonbyTeam2(0);
 
     // Set round and turn numbers back to the first round and turn
     setRoundNumber(1);
@@ -504,19 +510,21 @@ const GamePlayMobile = () => {
     toast("Game has been restarted! Let's play again.");
   }
 
+  // uncomment these use effect to work
+  // // Automatically run handleSelectOtherHands (play button) when  or lastWinner changes
   useEffect(() => {
-    if (isMobile)
+    if (!isMobile)
       if (turnSuit || lastWinner !== null) {
         handleSelectOtherHands();
       }
   }, [turnNumber]);
 
   useEffect(() => {
-    if (isMobile) initailSetup();
+    if (!isMobile) initailSetup();
   }, []);
 
   useEffect(() => {
-    if (isMobile) console.log("generated cards", generatedCards);
+    if (!isMobile) console.log("generated cards", generatedCards);
     if (generatedCards)
       if (lastWinner === 1) {
         setTurnSuit(generatedCards[0].suit);
@@ -546,43 +554,42 @@ const GamePlayMobile = () => {
   }, [generatedCards, selectedCardByUser]);
 
   useEffect(() => {
-    if (isMobile)
+    if (!isMobile)
       if (cardSet.length > 2) {
         handleAutomaticSubmit();
       }
   }, [isCardsGenerated, isSubmitted, selectedCardByUser, cardSet]);
 
   useEffect(() => {
-    if (isMobile)
+    if (!isMobile)
       if (isSubmitted) {
         handleAutomaticNextRound();
       }
   }, [isSubmitted]);
 
   useEffect(() => {
-    if (isMobile) checkWinner();
+    if (!isMobile) checkWinner();
   }, [roundsWonbyTeam1, roundsWonbyTeam2]);
 
   useEffect(() => {
-    if (isMobile)
+    if (!isMobile)
       if (turnSuit && cardSet.length < 2) {
         handleSelectOtherHands();
       }
   }, [turnSuit, isCardsGenerated]);
 
   useEffect(() => {
-    if (isMobile)
+    if (!isMobile)
       if (isRoundOver) {
         handleNextTurnofShuffling();
       }
   }, [isSubmitted]);
 
   useEffect(() => {
-    checkWinner();
+    if (!isMobile) checkWinner();
   }, [team1PenaltyCards, team2PenaltyCards, gameWinner]);
-
   return (
-    <div className="w-full h-full min-h-screen flex flex-col  ">
+    <div className="hidden  w-full h-screen sm:flex flex-col ">
       {/* Dialog after a Round  */}
 
       {isDialogOpen && (
@@ -591,136 +598,21 @@ const GamePlayMobile = () => {
         </div>
       )}
 
-      <div>
-        <div className="bg-white z-20 mx-20">
-          {/* player Xp : {playerXp} */}
-          <ScoreBoardMobile />
-        </div>
-        <div>
-          <Penaltycards />
-        </div>
-      </div>
-
-      <div className="w-full flex justify-center min-h-24 mt-5 z-20">
-        {dealtHands.length > 0 && dealtHands[2]?.hand ? (
-          <div className="flex flex-row justify-center items-center">
-            <OtherDecksMobile userHand={dealtHands[2].hand} />
-
-            <motion.div
-              className=" rounded-full"
-              initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  lastWinner === 2
-                    ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                    : "none", // No shadow when it's not players's turn
-              }}
-              transition={{
-                duration: 0.8,
-              }}
-            >
-              <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
-                <Image
-                  alt="Mountains"
-                  src={notificaitonBackGround}
-                  fill
-                  sizes="(min-width: 808px) 50vw, 100vw"
-                  style={{
-                    objectFit: "cover", // cover, contain, none
-                  }}
-                />
-                <AvatarImage
-                  className="z-20"
-                  src={`/assets/images/user-avatars/person8.png`}
-                />
-                <AvatarFallback>Dp</AvatarFallback>
-              </Avatar>
-            </motion.div>
-          </div>
-        ) : (
-          <div className="flex flex-row justify-center w-full items-center gap-5">
-            <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
-            <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
-          </div>
-        )}
-      </div>
-
-      <div className="w-full h-full  flex justify-between mt-5 z-20">
-        <div className="flex justify-center items-center">
-          {dealtHands.length > 0 && dealtHands[3]?.hand ? (
-            <div className="flex flex-col justify-center items-center  min-w-[70px]">
-              <motion.div
-                className=" rounded-full"
-                initial={{ boxShadow: "none" }}
-                animate={{
-                  boxShadow:
-                    lastWinner === 3
-                      ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                      : "none", // No shadow when it's not players's turn
-                }}
-                transition={{
-                  duration: 0.8,
-                }}
-              >
-                <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
-                  <Image
-                    alt="Mountains"
-                    src={notificaitonBackGround}
-                    fill
-                    sizes="(min-width: 808px) 50vw, 100vw"
-                    style={{
-                      objectFit: "cover", // cover, contain, none
-                    }}
-                  />
-                  <AvatarImage
-                    className="z-20"
-                    src={`/assets/images/user-avatars/person8.png`}
-                  />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
-              </motion.div>
-              <OtherDecksMobile userHand={dealtHands[3].hand} />
-            </div>
-          ) : (
-            <div className="flex flex-col justify-center gap-6 items-center mx-1 ">
-              <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
-              <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
-            </div>
-          )}
-        </div>
-
-        <div>
-          <div
-            className="h-full  max-h-80 flex max-w-20  min-w-60 min-h-80 justify-center items-center rounded-3xl  p-4 shadow-lg bg-opacity-75 border-8 border-black z-20"
-            style={{
-              backgroundImage: `url('/assets/background.png')`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="w-full h-full justify-center  items-center  z-20">
-              <GameBoardMobile
-                onRestart={restartGame}
-                onStart={handleSelectOtherHands}
-                onNextStart={handleNextTurn}
-                onShuffleAgain={handleNextTurnofShuffling}
-              />
-            </div>
-          </div>
-        </div>
-        <div className=" flex justify-center items-center   ">
-          <div className="">
-            {dealtHands.length > 0 && dealtHands[1]?.hand ? (
-              <div className="flex flex-col justify-center items-center  min-w-[70px]">
-                <OtherDecksMobile userHand={dealtHands[1].hand} />
+      <div className="flex flex-col  h-full w-full shadow-lg  p-4">
+        {/* All the other things */}
+        <div className="flex justify-end gap-4">
+          {/* Player 3 and scoreboard */}
+          <div className="relative col-span-3 flex items-center  justify-center gap-4 w-1/3 p-4  shadow-md z-20 ">
+            {dealtHands.length > 0 && dealtHands[2]?.hand ? (
+              <div className="flex flex-row justify-center items-center z-20">
+                <OtherDecks userHand={dealtHands[2].hand} />
 
                 <motion.div
                   className=" rounded-full"
                   initial={{ boxShadow: "none" }}
                   animate={{
                     boxShadow:
-                      lastWinner === 1
+                      lastWinner === 2
                         ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
                         : "none", // No shadow when it's not players's turn
                   }}
@@ -728,7 +620,7 @@ const GamePlayMobile = () => {
                     duration: 0.8,
                   }}
                 >
-                  <Avatar className="relative w-16 h-16 lg:w-20 lg:h-20 shadow-md ">
+                  <Avatar className="relative w-16 h-16 lg:w-24 lg:h-24 shadow-md ">
                     <Image
                       alt="Mountains"
                       src={notificaitonBackGround}
@@ -745,47 +637,230 @@ const GamePlayMobile = () => {
                     <AvatarFallback>Dp</AvatarFallback>
                   </Avatar>
                 </motion.div>
+
+                <div className="text-center py-2 w-full">
+                  <NameCardTemplate>Player 3</NameCardTemplate>
+                </div>
               </div>
             ) : (
-              <div className=" w-full flex flex-col justify-center gap-6 items-center  mx-1">
-                <Skeleton className="h-[65px] w-[60px] rounded-xl bg-slate-600 " />
-                <Skeleton className="h-14 w-14 rounded-full bg-slate-600 " />
+              <div className="flex flex-row justify-between w-full ml-10 mr-5 items-center">
+                <Skeleton className="h-[125px] w-[250px] rounded-xl bg-slate-600 my-8" />
+                <Skeleton className="h-14 w-14 rounded-full bg-slate-600 mr-10" />
+              </div>
+            )}
+          </div>
+          {/* Scoreboard */}
+          <div className="flex flex-col w-1/3 ">
+            <div className="flex justify-center items-center w-full h-full">
+              <Scoreboard />
+            </div>
+            {/* <div className="flex flex-row justify-between w-full gap">
+              <div className="w-full">
+                <PenaltyDeckMobile penaltyCardNumber={team1PenaltyCards} />
+              </div>
+              <div className="w-full">
+                <PenaltyDeckMobile penaltyCardNumber={team2PenaltyCards} />
+              </div>
+            </div> */}
+          </div>
+        </div>
+
+        {/* Players 4, Game Board, Player 2 */}
+        <div className="flex justify-between gap-4 h-full w-full mt-4">
+          {/* Player 4 */}
+          <div className=" col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10 ">
+            {dealtHands.length > 0 && dealtHands[3]?.hand ? (
+              <div className="flex flex-col justify-center items-center z-20 w-full">
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 3
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <div className="text-center py-2 w-full">
+                    <NameCardTemplate>Player 4</NameCardTemplate>
+                  </div>
+                  <div className="w-full flex justify-center">
+                    <Avatar className="relative w-16 h-16 lg:w-24 lg:h-24 shadow-md z-20">
+                      <Image
+                        alt="Mountains"
+                        src={notificaitonBackGround}
+                        fill
+                        sizes="(min-width: 808px) 50vw, 100vw"
+                        style={{
+                          objectFit: "cover",
+                        }}
+                      />
+                      <AvatarImage
+                        className="z-20"
+                        src={`/assets/images/user-avatars/person8.png`}
+                      />
+                      <AvatarFallback>Dp</AvatarFallback>
+                    </Avatar>
+                  </div>
+                </motion.div>
+
+                <OtherDecks userHand={dealtHands[3].hand} />
+              </div>
+            ) : (
+              <div className="flex flex-col justify-center gap-6 items-center ">
+                <Skeleton className="h-[125px] w-[180px] rounded-xl bg-slate-600" />
+                <Skeleton className="h-14 w-14 rounded-full bg-slate-600" />
+              </div>
+            )}
+          </div>
+
+          {/* Game Board */}
+
+          <div
+            className="flex w-full justify-center items-center  m-4 p-6 shadow-lg bg-black rounded-2xl bg-opacity-75 min-h-[350px] z-20 border-8 border-black"
+            style={{
+              backgroundImage: `url('/assets/background.png')`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="w-full justify-center items-center z-20">
+              {/* <Button onClick={handleInitialStart}>Start</Button> */}
+              <GameBoard
+                onRestart={restartGame}
+                onStart={handleSelectOtherHands}
+                onNextStart={handleNextTurn}
+                onShuffleAgain={handleNextTurnofShuffling}
+              />
+            </div>
+          </div>
+
+          {/* Player 2 */}
+          <div className="relative col-span-3 flex items-center justify-center gap-4 w-1/4 p-4 shadow-md z-20 my-10">
+            {dealtHands.length > 0 && dealtHands[1]?.hand ? (
+              <div className="flex flex-col justify-center items-center z-20">
+                <OtherDecks userHand={dealtHands[1].hand} />
+                <motion.div
+                  className=" rounded-full"
+                  initial={{ boxShadow: "none" }}
+                  animate={{
+                    boxShadow:
+                      lastWinner === 1
+                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
+                        : "none", // No shadow when it's not players's turn
+                  }}
+                  transition={{
+                    duration: 0.8,
+                  }}
+                >
+                  <Avatar className="relative w-16 h-16 lg:w-24 lg:h-24 shadow-md ">
+                    <Image
+                      alt="Mountains"
+                      src={notificaitonBackGround}
+                      fill
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      style={{
+                        objectFit: "cover",
+                      }}
+                    />
+                    <AvatarImage
+                      className="z-20"
+                      src={`/assets/images/user-avatars/person8.png`}
+                    />
+                    <AvatarFallback>Dp</AvatarFallback>
+                  </Avatar>
+                </motion.div>
+
+                <div className="text-center py-2">
+                  <NameCardTemplate>Player 2</NameCardTemplate>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col justify-center gap-6 items-center ">
+                <Skeleton className="h-[125px] w-[180px] rounded-xl bg-slate-600" />
+                <Skeleton className="h-14 w-14 rounded-full bg-slate-600" />
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className="mt-auto relative min-mt-28">
-        <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900 rounded-t-full relative mt-20">
-          <div className="flex w-full justify-center items-center">
-            <div className="">
-              {dealtHands.length > 0 && dealtHands[0]?.hand ? (
-                <div className="relative w-full ">
-                  <div className="">
-                    <UserDeckMobile
-                      userHand={dealtHands[0].hand}
-                      onCardSelect={handleCardSelectDeck}
+
+      <div className="flex h-1/3 w-full justify-between bg-gradient-to-b from-black via-amber-950 to-amber-900 rounded-t-3xl shadow-lg z-20">
+        {/* User hand Flex */}
+        <div className="w-full flex justify-center items-center">
+          <div>
+            {dealtHands.length > 0 && dealtHands[0]?.hand ? (
+              <UserDeckStraight
+                userHand={dealtHands[0].hand}
+                onCardSelect={handleCardSelectDeck}
+              />
+            ) : (
+              <div className="flex flex-row justify-between w-full ml-10 mr-5 items-center">
+                <Skeleton className="h-[125px] w-[550px] rounded-xl bg-slate-600" />
+              </div>
+            )}
+          </div>
+
+          {lastWinner === 0 && dealtHands[0]?.hand.length > 7 ? (
+            <div>
+              {!isTrumpSelected &&
+                !isRoundOver &&
+                (isMobile ? (
+                  <SuitDrawerMobile
+                    userHand={dealtHands[0].hand}
+                    onClose={handleCloseDrawer}
+                  />
+                ) : (
+                  <SuitDrawer
+                    userHand={dealtHands[0].hand}
+                    onClose={handleCloseDrawer}
+                  />
+                ))}
+            </div>
+          ) : null}
+        </div>
+
+        {/* Middle Section */}
+        <div className="flex w-2/4 m-5 ">
+          <div className="flex flex-col gap-2 justify-center items-center p-5 mt-10">
+            <div>
+              {turnSuit ? (
+                <Avatar className="w-14 h-14 bg-white shadow-md">
+                  <AvatarImage
+                    className="p-2"
+                    src={`/assets/suits/${turnSuit}.png`}
+                  />
+                  <AvatarFallback>
+                    <Image
+                      src={`/assets/suits/all-suits.png`}
+                      alt="Fallback Suit"
+                      width={60}
+                      height={60}
                     />
-                  </div>
-                </div>
+                  </AvatarFallback>
+                </Avatar>
               ) : (
-                <div className="flex flex-row justify-center w-full items-center mt-14">
-                  <Skeleton className="h-[85px] w-[300px] rounded-t-full rounded-b-md bg-slate-600" />
+                <div className="flex flex-row justify-between w-full items-center">
+                  <Skeleton className="h-14 w-14 rounded-full bg-slate-600" />
                 </div>
               )}
             </div>
+            <div className="font-bold text-gray-300 tracking-wide mt-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600  z-20">
+                This Round
+              </span>
+            </div>
           </div>
 
-          <div className="flex w-full justify-center mt-5 pr-6 ">
+          {/* Player Avatar */}
+          <div className="flex justify-start items-start p-5">
             <motion.div
               className=" rounded-full"
               initial={{ boxShadow: "none" }}
-              // animate={{
-              //   boxShadow:
-              //     lastWinner === 0
-              //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-              //       : "none", // No shadow when it's not user's turn
-              // }}
               transition={{
                 duration: 0.8,
               }}
@@ -798,10 +873,83 @@ const GamePlayMobile = () => {
               </Avatar>
             </motion.div>
           </div>
+
+          {/* Trump Suit Section */}
+
+          <div className="flex gap-2 flex-col justify-center items-center p-5 mt-10">
+            <div>
+              {trumpSuit ? (
+                <Avatar className="w-14 h-14 bg-white shadow-md">
+                  <AvatarImage
+                    className="p-2"
+                    src={`/assets/suits/${trumpSuit}.png`}
+                  />
+                  <AvatarFallback>
+                    <Image
+                      src={`/assets/suits/all-suits.png`}
+                      alt="Fallback Suit"
+                      width={60}
+                      height={60}
+                    />
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <div className="flex flex-row justify-between w-full items-center">
+                  <Skeleton className="h-14 w-14 rounded-full bg-slate-600" />
+                </div>
+              )}
+            </div>
+            <div className="font-bold text-gray-300 tracking-wide mt-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600">
+                Trumps
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="w-1/4 mr-5">
+          <div>
+            {isGameOver ? (
+              <> Game Over </>
+            ) : (
+              <div className="w-full flex flex-col justify-center items-center">
+                {/*         
+                <div className="m-10">
+                  <Button
+                    onClick={handleSelectOtherHands}
+                    type="submit"
+                    disabled={isCardsGenerated}
+                    className="bg-gray-700 text-white hover:bg-gray-600"
+                  >
+                    Start
+                  </Button>
+                </div>
+                <div className="flex justify-center gap-10">
+                  <Button
+                    disabled={
+                      isSubmitted || !isCardsGenerated || !selectedCardByUser
+                    }
+                    onClick={handleSubmit}
+                    type="submit"
+                    className="bg-gray-700 text-white hover:bg-gray-600"
+                  >
+                    See Winner
+                  </Button>
+                  <Button
+                    disabled={!isSubmitted}
+                    onClick={handleNextTurn}
+                    type="submit"
+                    className="bg-gray-700 text-white hover:bg-gray-600"
+                  >
+                    Next Round
+                  </Button>
+                </div> */}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default GamePlayMobile;
+}

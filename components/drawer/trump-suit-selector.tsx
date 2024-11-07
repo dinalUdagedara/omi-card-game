@@ -9,7 +9,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import CardComponent from "../cards/card";
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { SuitSelector } from "./suit-selector";
 import { useStore } from "@/store/state";
 import { motion } from "framer-motion";

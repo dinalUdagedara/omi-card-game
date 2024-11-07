@@ -1,8 +1,8 @@
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { useState, useEffect } from "react";
 import { dynamicBlurDataUrl } from "@/utils/dynamicBlurdataUrl";
 import Image from "next/image";
-import { cardMultiplayer } from "@/utils/types-multiplayer";
+import { cardMultiplayer } from "@/utils/multiplayer/types-multiplayer";
 
 const CardComponentMobileMultiplayer = ({
   card,

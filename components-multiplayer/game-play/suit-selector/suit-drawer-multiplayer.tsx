@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { useStore } from "@/store/state";
 import { motion } from "framer-motion";
 import { SuitSelectorMobile } from "@/components/drawer/mobile/suit-selector-mobile";
@@ -17,7 +17,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import CardComponentMultiplayer from "@/components-multiplayer/cards/card-multiplayer";
-import { SuitSelectorMobileMultiplayer } from "./suit-selector-mobile-multiplayer";
+import { SuitSelectorMobileMultiplayer } from "./suit-selector-multiplayer";
 
 import Image from "next/image";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";

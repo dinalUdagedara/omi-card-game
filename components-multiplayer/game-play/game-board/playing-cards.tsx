@@ -5,7 +5,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import {
   cardMultiplayer,
   getWinnerMultiplayer,
-} from "@/utils/types-multiplayer";
+} from "@/utils/multiplayer/types-multiplayer";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Winner1Multiplayer from "./collecting-cards/winner-1-multiplayer";

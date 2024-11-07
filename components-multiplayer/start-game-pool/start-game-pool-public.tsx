@@ -3,7 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { MultiplayerStateStore } from "@/store/multiplayer-state";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import MyName from "./my-name";
 import OpponentsName from "./opponents-name";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   roomId: string;
@@ -51,6 +52,7 @@ const StartGamePoolPublicNew = (props: Props) => {
   const muted = useStore((state) => state.muted);
   const { playHoverSound } = useHoverSound();
   const { playClickButton } = useClickSound();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (PlayersJoined) {
@@ -91,6 +93,7 @@ const StartGamePoolPublicNew = (props: Props) => {
   };
 
   const handleStartGame = () => {
+    setLoading(true);
     playClickButton(muted);
     console.log("start");
     const roomName = roomId;
@@ -178,14 +181,21 @@ const StartGamePoolPublicNew = (props: Props) => {
                         className={`${isRoomCreatorDB ? "flex" : " hidden"}`}
                       >
                         <Button
-                          disabled={!isAllJoined}
+                          disabled={!isAllJoined || loading}
                           onMouseEnter={() => {
                             playHoverSound(muted);
                           }}
                           onClick={handleStartGame}
                           className=" h-16 w-72 sm:h-20 sm:w-80 inv-rad-10 inv-rad bg-amber-950 text-white hover:bg-amber-900 text-lg"
                         >
-                          Start Game
+                          {loading ? (
+                            <div className="flex gap-2 items-center">
+                              <Loader2 className="animate-spin" />
+                              Starting..
+                            </div>
+                          ) : (
+                            "Start Game"
+                          )}
                         </Button>
                       </div>
                     </div>

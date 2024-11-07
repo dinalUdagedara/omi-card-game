@@ -1,4 +1,4 @@
-import ModeSelector from "@/components/mode-selector";
+import ModeSelector from "@/components/mode-selectors/mode-selector";
 
 export default function Home() {
   return (

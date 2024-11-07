@@ -6,7 +6,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { isValidSuit, Suit } from "@/utils/types";
+import { isValidSuit, Suit } from "@/utils/practise/types";
 
 import PlayingCards from "./playing-cards";
 import RoundOverMultiplayer from "../round-over/round-over";
@@ -32,6 +32,7 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const gameOver = MultiplayerStateStore((state) => state.gameOver);
+
   const gameWon = MultiplayerStateStore((state) => state.gameWon);
 
   const playingCards = useQuery(api.gameLogic.getPlayingCards, {
@@ -46,6 +47,10 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
     roomName: roomName,
   });
 
+  const isGameOver = useQuery(api.gameStates.isGameOver, {
+    roomName: roomName,
+    userid: userID,
+  });
   useEffect(() => {
     if (trumpSuitInDB && isValidSuit(trumpSuitInDB)) {
       setSelectedSuit(trumpSuitInDB);
@@ -84,9 +89,9 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
 
   return (
     <div>
-      {gameOver ? (
+      {isGameOver ? (
         <>
-          <GameOverDialogMultiplayer />
+          <GameOverDialogMultiplayer roomName={roomName} userID={userID} />
         </>
       ) : (
         <>

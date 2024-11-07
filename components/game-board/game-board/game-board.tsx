@@ -11,7 +11,6 @@ import Winner1 from "../collecting-cards/winner-1";
 import ControllerStart from "../controller-start";
 import ControllerNextRound from "../controller-next-round";
 import { useEffect, useState } from "react";
-import { Button } from "../../ui/button";
 import { GameOverDialog } from "../game-over/game-over-win";
 import { GameOverDialogLose } from "../game-over/game-over-lose";
 import {

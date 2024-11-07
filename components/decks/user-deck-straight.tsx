@@ -1,6 +1,6 @@
 import * as React from "react";
 import CardComponent from "../cards/card";
-import { Card } from "@/utils/types";
+import { Card } from "@/utils/practise/types";
 import { useStore } from "@/store/state";
 import OtherCardComponent from "../cards/other-card";
 import { motion } from "framer-motion";

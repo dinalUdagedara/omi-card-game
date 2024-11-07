@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
-import { SocketData } from "@/utils/types-multiplayer";
-import { Card, Suit } from "@/utils/types";
+import { SocketData } from "@/utils/multiplayer/types-multiplayer";
+import { Card, Suit } from "@/utils/practise/types";
 
 class SocketManager {
   private socket: Socket | null = null;

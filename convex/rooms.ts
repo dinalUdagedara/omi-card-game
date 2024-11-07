@@ -98,7 +98,7 @@ export const getOpponentsName = query({
       .first();
 
     if (!myUserID) {
-      throw new Error("User not found"); // Handle case where user is not found
+      return null;
     }
 
     // Fetch room info based on room name
@@ -108,7 +108,7 @@ export const getOpponentsName = query({
       .first();
 
     if (!roomInfo) {
-      throw new Error("Room not found"); // Handle case where room is not found
+      return null; // Handle case where room is not found
     }
 
     // Find the opponent's ID (the only other player in the room)
@@ -117,7 +117,7 @@ export const getOpponentsName = query({
     );
 
     if (!opponentID) {
-      throw new Error("Opponent not found"); // Handle case where opponent is not found
+      return null; // Handle case where opponent is not found
     }
 
     // Fetch the opponent's name
@@ -189,7 +189,7 @@ export const joinRoom = mutation({
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
       .first();
 
-    if (!room) throw new Error("Room not found");
+    if (!room) return null;
 
     // Check if the player is already in the room
     const existingPlayer = await ctx.db
@@ -279,7 +279,7 @@ export const updateCreator = mutation({
       !room.playerUserNames ||
       room.playerUserNames.length < 4
     ) {
-      throw new Error("Room data is insufficient to update creator");
+      return null;
     }
 
     const players = room.playerUserNames; // Array of all player usernames
@@ -288,7 +288,7 @@ export const updateCreator = mutation({
     );
 
     if (currentCreatorIndex === -1) {
-      throw new Error("Current creator not found in players list");
+      return null;
     }
 
     // Calculate the index of the next player, cycling back to 0 after the last player
@@ -376,8 +376,6 @@ export const allPlayersWaiting = query({
         .filter((q) => q.eq(q.field("roomId"), room?._id))
         .collect();
 
-
-
       // Return false if no players are found
       if (players.length === 0) {
         console.log("No players found in the room.");
@@ -385,7 +383,6 @@ export const allPlayersWaiting = query({
       }
 
       const allStarted = players.every((player) => player.status === "waiting");
-
 
       return allStarted;
     } catch (error) {
@@ -440,7 +437,7 @@ export const getRoomCreator = query({
 
     // Check if the room exists
     if (!roomInfo) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Return the creator's userName
@@ -461,7 +458,7 @@ export const getPlayerIdByUserName = query({
 
     // Check if the player exists
     if (!playerInfo) {
-      throw new Error("Player not found");
+      return null;
     }
 
     // Return the player's ID
@@ -480,7 +477,7 @@ export const getAllPlayersIDInTheRoom = query({
       .first();
     // Check if the player exists
     if (!room) {
-      throw new Error("room not found");
+      return null;
     }
     return room?.players;
   },
@@ -498,7 +495,7 @@ export const getAllPlayersUsernamesInRoom = query({
 
     // Check if the room exists
     if (!room) {
-      throw new Error("Room not found");
+      return null;
     }
 
     // Filter out the userName and return the other players

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 
-const NotificationCard = () => {
+const NoRoomsComponent = () => {
   const muted = useStore((state) => state.muted);
   const { playHoverSound } = useHoverSound();
   const { playClickButton } = useClickSound();
@@ -76,4 +76,4 @@ const NotificationCard = () => {
   );
 };
 
-export default NotificationCard;
+export default NoRoomsComponent;

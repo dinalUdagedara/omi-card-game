@@ -74,5 +74,6 @@ export default defineSchema({
         teamNumber: v.number(),
       })
     ),
+    status : v.string()
   }),
 });

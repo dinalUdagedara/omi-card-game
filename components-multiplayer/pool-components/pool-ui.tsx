@@ -1,8 +1,8 @@
 "use client";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import NotificationCard from "./pool-components/no-rooms-card";
-import PublicRoomContainer from "./pool-components/public-rooms-container";
+import PublicRoomContainer from "./public-rooms-container";
+import NoRoomsComponent from "./no-rooms-card";
 import RoomsLoading from "@/components-multiplayer/pool-components/rooms-loading";
 
 const PoolUI = () => {
@@ -18,7 +18,7 @@ const PoolUI = () => {
           <PublicRoomContainer />
         ) : (
           <div>
-            <NotificationCard />
+            <NoRoomsComponent />
           </div>
         )}
       </div>

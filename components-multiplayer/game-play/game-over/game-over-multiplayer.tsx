@@ -17,6 +17,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 interface GameOverDialogMultiplayerProps {
   roomName: string;
@@ -29,6 +30,8 @@ export const GameOverDialogMultiplayer: React.FC<
   const [isOpen, setIsOpen] = useState(true);
   const gameWon = MultiplayerStateStore((state) => state.gameWon);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingQuit, setisLoadingQuit] = useState(false);
   const removeUserFromGameState = useMutation(
     api.gameStates.removeUserFromGameState
   );
@@ -37,21 +40,21 @@ export const GameOverDialogMultiplayer: React.FC<
   );
   const router = useRouter();
   const handlePlayAgain = async () => {
+    setIsLoading(true);
     await removeUserFromGameState({
       roomName: roomName,
       userid: userID,
     });
     router.push(`/multiplayer/start/public/${roomName}`);
-    // setIsOpen(false);
   };
 
   const handleQuitGame = async () => {
+    setisLoadingQuit(true);
     await removeUserFromGameStateAndRoom({
       roomName: roomName,
       userid: userID,
     });
     router.push(`/multiplayer`);
-    // setIsOpen(false);
   };
 
   return (
@@ -101,15 +104,31 @@ export const GameOverDialogMultiplayer: React.FC<
                   <div className="flex w-full justify-end gap-3">
                     <Button
                       onClick={handlePlayAgain}
-                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                      disabled={isLoading}
+                      className="bg-amber-950 text-white hover:bg-amber-800 p-5 text-md h-8"
                     >
-                      Play Again
+                      {isLoading ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Please wait
+                        </div>
+                      ) : (
+                        "Play Again"
+                      )}
                     </Button>
                     <Button
                       onClick={handleQuitGame}
+                      disabled={isLoadingQuit}
                       className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
                     >
-                      Back to Lobby
+                      {isLoadingQuit ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Redirecting
+                        </div>
+                      ) : (
+                        "Back to Lobby"
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -156,15 +175,31 @@ export const GameOverDialogMultiplayer: React.FC<
                   <div className="flex w-full justify-end gap-3">
                     <Button
                       onClick={handlePlayAgain}
-                      className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
+                      disabled={isLoading}
+                      className="bg-amber-950 text-white hover:bg-amber-800 p-5 text-md h-8"
                     >
-                      Play Again
+                      {isLoading ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Please wait
+                        </div>
+                      ) : (
+                        "Play Again"
+                      )}
                     </Button>
                     <Button
                       onClick={handleQuitGame}
+                      disabled={isLoadingQuit}
                       className="bg-amber-950 text-white  hover:bg-amber-800 p-5 text-md h-8"
                     >
-                      Back to Lobby
+                      {isLoadingQuit ? (
+                        <div className="flex gap-2">
+                          <Loader2 className="animate-spin" />
+                          Redirecting
+                        </div>
+                      ) : (
+                        "Back to Lobby"
+                      )}
                     </Button>
                   </div>
                 </div>

@@ -113,6 +113,11 @@ const GamePlayMultiplayer = () => {
     roomName: roomId || "",
   });
 
+  const isGameOver = useQuery(api.gameStates.isGameOver, {
+    roomName: roomId || "",
+    userid: userID || null,
+  });
+
   const createGameInstanceDB = async () => {
     console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
     console.log("dewalhands", dealtHands);
@@ -358,13 +363,18 @@ const GamePlayMultiplayer = () => {
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
       {
         // !isTrumpSelected &&
-        !trumpSuit && isRoomCreator && userID && roomId && isRoomActive && (
-          <SuitDrawerMultiplayer
-            userID={userID}
-            roomName={roomId}
-            onClose={handleCloseDrawer}
-          />
-        )
+        !isGameOver &&
+          !trumpSuit &&
+          isRoomCreator &&
+          userID &&
+          roomId &&
+          isRoomActive && (
+            <SuitDrawerMultiplayer
+              userID={userID}
+              roomName={roomId}
+              onClose={handleCloseDrawer}
+            />
+          )
       }
 
       {roomId && isRoomActive && userID ? (
@@ -523,8 +533,8 @@ const GamePlayMultiplayer = () => {
       <div className="bg-gradient-to-b from-black via-amber-950 to-amber-900  relative mt-20  rounded-t-full">
         <div className="flex w-full justify-center items-center">
           <div className="">
-          {roomId && userID && isRoomActive && (
-            // {roomId && userID && (
+            {roomId && userID && isRoomActive && (
+              // {roomId && userID && (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer

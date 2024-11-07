@@ -31,6 +31,8 @@ const ScoreAndPenalty = ({ roomName, userID }: ScoreAndPenaltyProps) => {
 
   const setGameOver = MultiplayerStateStore((state) => state.setGameOver);
   const setGameWon = MultiplayerStateStore((state) => state.setGameWon);
+  const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
+  const setTrumpSuit = useStore((state) => state.setTrumpSuit);
   const { playRoundWon } = useRoundWonSound();
   const { playRoundLose } = useRoundLoseSound();
   const muted = useStore((state) => state.muted);
@@ -52,23 +54,28 @@ const ScoreAndPenalty = ({ roomName, userID }: ScoreAndPenaltyProps) => {
       if (myCards?.penaltyCards === 0) {
         console.log("I lost");
         setGameWon(false);
-        setGameOver(true);
-        // Update the field status in the game states in here
-        updateGameStateStatus({ roomName: roomName, userid: userID });
+        resettingStates();
+
         // game lose sound
         playRoundLose(muted);
       } else if (opponentInfo?.penaltyCards === 0) {
         console.log("I Won");
         setGameWon(true);
-        setGameOver(true);
+        resettingStates();
 
-        // Update the field status in the game states in here
-        updateGameStateStatus({ roomName: roomName, userid: userID });
         // game won sound
         playRoundWon(muted);
       }
     }
   }, [penaltyCards, userID]); // Run effect when playersInRoom or userID changes
+
+  function resettingStates() {
+    setRoundOver(false);
+    setTrumpSuit(null);
+    setGameOver(true);
+    // Update the field status in the game states in here
+    updateGameStateStatus({ roomName: roomName, userid: userID });
+  }
 
   return (
     <div>

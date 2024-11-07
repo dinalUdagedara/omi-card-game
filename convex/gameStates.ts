@@ -400,7 +400,7 @@ export const updateGameStateStatus = mutation({
 
 export const isGameOver = query({
   args: {
-    userid: v.id("players"),
+    userid: v.union(v.id("players"), v.null()),
     roomName: v.string(),
   },
   handler: async (ctx, args) => {

@@ -20,10 +20,11 @@ import modeCardBackground from "@/public/assets/images/mode-card-background.png"
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import logoIcon from "@/public/assets/images/logo-icon.png";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const CreateRoomContainer = () => {
   const [roomName, setRoomName] = useState<string>(generateRandomName());
@@ -35,10 +36,12 @@ const CreateRoomContainer = () => {
   const userName = MultiplayerStateStore((state) => state.userName);
   const setUserName = MultiplayerStateStore((state) => state.setUsername);
   const createRoomsDB = useMutation(api.rooms.createRoom);
+  const [loading, setLoading] = useState(false);
 
   const muted = useStore((state) => state.muted);
   const { playHoverSound } = useHoverSound();
   const { playClickButton } = useClickSound();
+  const router = useRouter();
 
   const handleCreateRoom = () => {
     playClickButton(muted);
@@ -68,6 +71,17 @@ const CreateRoomContainer = () => {
   const createPrivateRoomLink = () => {
     const prvURL = `http://localhost:3000/multiplayer/start/private/${roomName}`;
     setPrivateLinkUrl(prvURL);
+  };
+
+  const redirectPublicRooms = () => {
+    setLoading(true);
+    playClickButton(muted);
+    router.push(`/multiplayer/start/public/${roomName}`);
+  };
+  const redirectPrivateRooms = () => {
+    setLoading(true);
+    playClickButton(muted);
+    router.push(`/multiplayer/start/private/${roomName}`);
   };
 
   useEffect(() => {
@@ -180,20 +194,21 @@ const CreateRoomContainer = () => {
                     </CardContent>
                     <CardFooter className="flex justify-end">
                       <Button
-                        disabled={!isRoomCreated}
+                        onClick={redirectPrivateRooms}
+                        disabled={!isRoomCreated || loading}
                         className="bg-amber-950 text-white hover:bg-amber-900"
                         onMouseEnter={() => {
                           playHoverSound(muted);
                         }}
                       >
-                        <Link
-                          onClick={() => {
-                            playClickButton(muted);
-                          }}
-                          href={`/multiplayer/start/private/${roomName}`}
-                        >
-                          Next
-                        </Link>
+                        {loading ? (
+                          <div className="flex gap-2">
+                            <Loader2 className="animate-spin" />
+                            Redirecting
+                          </div>
+                        ) : (
+                          "Next"
+                        )}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -222,20 +237,21 @@ const CreateRoomContainer = () => {
                     </CardContent>
                     <CardFooter className="flex justify-end">
                       <Button
-                        disabled={!isRoomCreated}
+                        onClick={redirectPublicRooms}
+                        disabled={!isRoomCreated || loading}
                         className="bg-amber-950 text-white hover:bg-amber-900"
                         onMouseEnter={() => {
                           playHoverSound(muted);
                         }}
                       >
-                        <Link
-                          onClick={() => {
-                            playClickButton(muted);
-                          }}
-                          href={`/multiplayer/start/public/${roomName}`}
-                        >
-                          Next
-                        </Link>{" "}
+                        {loading ? (
+                          <div className="flex gap-2">
+                            <Loader2 className="animate-spin" />
+                            Redirecting
+                          </div>
+                        ) : (
+                          "Next"
+                        )}
                       </Button>
                     </CardFooter>
                   </Card>

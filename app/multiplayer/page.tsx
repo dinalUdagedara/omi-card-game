@@ -19,7 +19,7 @@ const Multiplayer = () => {
   // };
 
   return (
-    <div>
+    <div className="">
       {userName ? (
         <PoolUI />
       ) : (

@@ -25,6 +25,8 @@ import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { IoArrowBackOutline } from "react-icons/io5";
+import Link from "next/link";
 
 const CreateRoomContainer = () => {
   const [roomName, setRoomName] = useState<string>(generateRandomName());
@@ -95,6 +97,11 @@ const CreateRoomContainer = () => {
   }, []);
   return (
     <div className="flex justify-center items-center  h-full min-h-screen w-full ">
+      <div className="absolute  top-5 left-5">
+        <Link href={"/multiplayer"}>
+          <IoArrowBackOutline />
+        </Link>
+      </div>
       <div className="relative w-[350px] h-[550px] sm:w-[400px] sm:h-[600px] rounded-lg  shadow-lg inv-rad inv-rad-8">
         <Image
           alt="Mountains"
@@ -202,7 +209,7 @@ const CreateRoomContainer = () => {
                         }}
                       >
                         {loading ? (
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 items-center justify-center">
                             <Loader2 className="animate-spin" />
                             Redirecting
                           </div>
@@ -245,7 +252,7 @@ const CreateRoomContainer = () => {
                         }}
                       >
                         {loading ? (
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 items-center justify-center">
                             <Loader2 className="animate-spin" />
                             Redirecting
                           </div>

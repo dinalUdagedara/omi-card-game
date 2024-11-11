@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 import { useStore } from "@/store/state";
 import { Loader2 } from "lucide-react";
+import { IoArrowBackOutline } from "react-icons/io5";
+import Link from "next/link";
 
 type Props = {
   roomId: string;
@@ -127,6 +129,11 @@ const StartGamePoolPublicNew = (props: Props) => {
   }, []);
   return (
     <div className="flex justify-center w-full items-center min-h-screen">
+      <div className="absolute  top-5 left-5">
+        <Link href={"/multiplayer/create-room"}>
+          <IoArrowBackOutline />
+        </Link>
+      </div>
       <div className=" relative w-[400px] md:w-[1000px] min-h-[680px] h-full rounded-lg  shadow-lg inv-rad inv-rad-8 ">
         <Image
           alt="Mountains"

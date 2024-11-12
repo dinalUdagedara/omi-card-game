@@ -23,11 +23,13 @@ import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 interface RoundOverDialogMobileProps {
   userID: Id<"players">;
   roomName: string;
+  status: string | null;
 }
 
 export function RoundOverDialogMultiplayer({
   userID,
   roomName,
+  status,
 }: RoundOverDialogMobileProps) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -106,7 +108,7 @@ export function RoundOverDialogMultiplayer({
 
   async function decrementValues() {
     deductPenaltyForViolation();
-    if (lostCallingTrumps && playersInRoom) {
+    if (status === "lostCallingTrumps" && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
         await decrementPenaltycards({
@@ -116,7 +118,7 @@ export function RoundOverDialogMultiplayer({
         });
       }
     }
-    if (lostWithoutCallingTrumps) {
+    if (status === "lostWithoutCallingTrumps") {
       if (playersInRoom) {
         if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
           console.log("Decrementing lostwithout calling", violations);
@@ -129,7 +131,7 @@ export function RoundOverDialogMultiplayer({
       }
     }
 
-    if (wonCallingTrumps && playersInRoom) {
+    if (status === "wonCallingTrumps" && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("wonCallingTrumps", violations);
         await decrementPenaltycardsFromOponent({
@@ -139,7 +141,7 @@ export function RoundOverDialogMultiplayer({
         });
       }
     }
-    if (wonWithoutCallingTrumps) {
+    if (status === "wonWithoutCallingTrumps") {
       if (playersInRoom) {
         console.log("Decrementing lostwithout calling");
         await decrementPenaltycardsFromOponent({
@@ -174,7 +176,7 @@ export function RoundOverDialogMultiplayer({
     setAllFalse(false);
     await removeTrump();
     setTrumpSuit(null);
-    if (userName === roomdataFromDB?.playerUserNames[0]) {
+    if (userName === roomdataFromDB?.playerUserNames[0] && status) {
       await decrementValues();
       await updateTrumpSetter({
         roomName: roomName,

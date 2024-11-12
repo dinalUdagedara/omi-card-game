@@ -52,7 +52,7 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
 
   const [myTeamPoints, setmyTeamPoints] = useState<number>(0);
   const [opponentTeamPoints, setopponentTeamPoints] = useState<number>(0);
-
+  const [status, setStatus] = useState<string | null>(null);
   const team1Points = useStore((state) => state.team1Points);
   const team2Points = useStore((state) => state.team2Points);
   const { playRoundWon } = useRoundWonSound();
@@ -80,11 +80,13 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
 
       if (trumpSetter?.teamNumber === myTeam) {
         setwonCallingTrumps(true);
+        setStatus("wonCallingTrumps");
         if (trumpSetter?.playerId === userID) {
           setTrumpSetterWon(true);
         }
       } else {
         setwonWithoutCallingTrumps(true);
+        setStatus("wonWithoutCallingTrumps");
       }
     } else if (opponentsPoint > myPoints) {
       // round lose music
@@ -92,11 +94,13 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
 
       if (trumpSetter?.teamNumber === myTeam) {
         setlostCallingTrumps(true);
+        setStatus("lostCallingTrumps");
         if (trumpSetter?.playerId === userID) {
           setTrumpSetterLose(true);
         }
       } else {
         setlostWithoutCallingTrumps(true);
+        setStatus("lostWithoutCallingTrumps");
       }
     } else {
       setgameTied(true);
@@ -121,7 +125,13 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
 
   return (
     <div>
-      <RoundOverDialogMultiplayer roomName={roomName} userID={userID} />
+      {status && (
+        <RoundOverDialogMultiplayer
+          roomName={roomName}
+          userID={userID}
+          status={status}
+        />
+      )}
     </div>
   );
 };

@@ -158,6 +158,17 @@ export function RoundOverDialogMultiplayer({
     });
   };
 
+  // Automatically close dialog after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isDialogOpen) {
+        handleClose();
+      }
+    }, 10000);
+
+    return () => clearTimeout(timer); // Clear the timer when component unmounts or if dialog is closed manually
+  }, [isDialogOpen]);
+
   const handleClose = async () => {
     playClickButton(muted);
     setAllFalse(false);

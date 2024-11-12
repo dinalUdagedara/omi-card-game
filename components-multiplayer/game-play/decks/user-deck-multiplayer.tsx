@@ -43,6 +43,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   );
   const [isViolation, setIsViolation] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const myCardSet = useQuery(api.gameStates.getMyCardSet, {
     playerId: userID,
@@ -69,15 +70,50 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   });
 
   useEffect(() => {
+    console.log("userTurn ", isUserTurn);
+    console.log("time out ", timeoutId);
+  }, [timeoutId, isUserTurn, trumpSuit]);
+
+  useEffect(() => {
     if (turnPlayerID) {
       const num = noOfPlayingcards ?? 0;
       if (turnPlayerID === userID && num < 4) {
+        console.log("Setting User , timeoutID:", timeoutId);
         setUserTurn(true);
+
+        // Start 10-second timer to auto-play card
+        if (trumpSuit) {
+          const id = setTimeout(() => {
+            autoPlayCard();
+          }, 10000);
+          setTimeoutId(id);
+        }
       } else {
+        // Clear timeout if it's not the user's turn
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          setTimeoutId(null);
+        }
         setUserTurn(false);
       }
     }
-  }, [turnPlayerID, noOfPlayingcards]);
+  }, [turnPlayerID, noOfPlayingcards, trumpSuit]);
+
+  // Automatically play a valid card after 10 seconds
+  async function autoPlayCard() {
+    if (myCardSet && myCardSet.length > 0) {
+      // Try to find a valid card that doesn't violate the rules
+      const validCard = myCardSet.find((card) => {
+        if (turnsuit) {
+          return !checkIfViolationOccured(card, myCardSet, turnsuit);
+        }
+      });
+      // If no valid card is found, just play the first one
+      const cardToPlay = validCard || myCardSet[0];
+
+      await handleCardSelect(cardToPlay);
+    }
+  }
 
   useEffect(() => {
     if (myCardSet) setMyCardDeck(myCardSet);
@@ -85,6 +121,12 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
+    // Clear timeout when user selects a card manually
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+
     const userId = userID;
     // update this player status to "playing"
     updatePlayerStatus({
@@ -262,14 +304,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
           );
         })}
       </div>
-
-      {/* <div className="bg-white z-20">
-        Violation Occured Do you Want to continue
-        <div>
-          <Button onClick={handleConfirmSelection}>Yes</Button>
-          <Button onClick={handleConfirmSelection}>No</Button>
-        </div>
-      </div> */}
     </div>
   );
 }

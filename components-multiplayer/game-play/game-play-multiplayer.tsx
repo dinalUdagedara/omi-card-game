@@ -24,7 +24,6 @@ import NoticeCardTemplate from "./game-board/game-board-template";
 import NameCardTemplate from "./name-card/name-card-template";
 import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
 import Image from "next/image";
-import UserAvatarBg from "@/public/assets/images/user-avatars/person8.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 
 const GamePlayMultiplayer = () => {
@@ -118,6 +117,10 @@ const GamePlayMultiplayer = () => {
     userid: userID || null,
   });
 
+  const updatePlayerHeartbeat = useMutation(
+    api.autoPlayingBot.updatePlayersHeartBeat
+  );
+
   const createGameInstanceDB = async () => {
     console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
     console.log("dewalhands", dealtHands);
@@ -199,6 +202,7 @@ const GamePlayMultiplayer = () => {
     }
   }, [playersInRoom]);
   setTrumpSelected(false);
+
   useEffect(() => {
     if (roomStatus) {
       console.log("roomStatus", roomStatus);
@@ -259,6 +263,22 @@ const GamePlayMultiplayer = () => {
       });
     }
   }
+    // Function to send the ping every 10 seconds
+    function startHeartbeat() {
+      const intervalId = setInterval(async () => {
+        try {
+          const roomName = roomId;
+          if (userID && roomName)
+            // updating the heartbeat
+            await updatePlayerHeartbeat({ userID, roomName });
+        } catch (error) {
+          console.error("Failed to update heartbeat:", error);
+        }
+      }, 10000); // Every 10 seconds
+  
+      return intervalId;
+    }
+  
 
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
@@ -358,6 +378,20 @@ const GamePlayMultiplayer = () => {
   useEffect(() => {
     if (isRoomCreator) createGameInstanceDB();
   }, [roomdataFromDB]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+    if (userID && roomId) {
+      // Start the heartbeat when the userID and roomId are available
+      intervalId = startHeartbeat();
+    }
+    return () => {
+      // Cleanup function to clear the interval when the component unmounts
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [userID, roomId]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">

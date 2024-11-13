@@ -6,6 +6,7 @@ export default defineSchema({
     isCreator: v.boolean(),
     roomId: v.id("rooms"),
     userName: v.string(),
+    lastActive: v.number(),
     status: v.string(),
   }),
   rooms: defineTable({

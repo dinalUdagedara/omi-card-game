@@ -209,11 +209,13 @@ export const joinRoom = mutation({
 
       return existingPlayer._id;
     } else {
+      const currentTime = Date.now();
       const playerID = await ctx.db.insert("players", {
         userName: args.userName,
         roomId: room._id, // Reference the room by ID
         isCreator: false,
         status: "waiting",
+        lastActive:currentTime
       });
 
       // Update the room's players array by adding the new player's ID
@@ -324,10 +326,13 @@ export const addPlayer = mutation({
     isCreator: v.boolean(),
   },
   handler: async (ctx, args) => {
+    // Get the current timestamp
+    const currentTime = Date.now();
     const playerID = await ctx.db.insert("players", {
       userName: args.userName,
       roomId: args.roomId,
       isCreator: args.isCreator,
+      lastActive: currentTime,
       status: "waiting",
     });
     return playerID;

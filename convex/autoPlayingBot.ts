@@ -1,6 +1,7 @@
-import { internalMutation } from "./_generated/server";
+import { internalMutation, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import { useMutation } from "convex/react";
 
 //Automatically playing disconncted players card
 export const updatePlayingCardsBot = internalMutation({
@@ -94,5 +95,27 @@ export const updatePlayingCardsBot = internalMutation({
         playerTurn: nextPlayerId.playerId,
       });
     }
+  },
+});
+
+//setting the last active time of each user
+export const updatePlayersHeartBeat = mutation({
+  args: {
+    userID: v.id("players"),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const currentTime = Date.now();
+    const player = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("_id"), args.userID))
+      .first();
+
+    if (!player) {
+      return null;
+    }
+    await ctx.db.patch(player._id, {
+      lastActive: currentTime,
+    });
   },
 });

@@ -164,7 +164,6 @@ export const updatePlayingCards = mutation({
 });
 
 //getting whose turn it is
-
 export const getPlayerTurn = query({
   args: {
     roomName: v.string(),
@@ -202,7 +201,7 @@ export const getPlayerTurn = query({
   },
 });
 
-export const getPlayerTurnName = query({
+export const getPlayerTurnName = query({ 
   args: {
     roomName: v.string(),
   },
@@ -1109,6 +1108,7 @@ export const updatePlayerTurn = mutation({
   },
 });
 
+//updating the turn after selecting a suit 
 export const replacePlayerTurn = mutation({
   args: {
     roomName: v.string(),

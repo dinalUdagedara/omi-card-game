@@ -1,0 +1,128 @@
+import { internalMutation } from "./_generated/server";
+import { v } from "convex/values";
+
+//Fetch Room ID by RoomName
+export const returnRoom = internalMutation({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+    return room;
+  },
+});
+
+//Fetch GameState by Room ID
+export const returnGameState = internalMutation({
+  args: {
+    roomID: v.id("rooms"),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), args.roomID))
+      .first();
+
+    if (!gameState) {
+      return null;
+    }
+    return gameState;
+  },
+});
+
+export const returnGameStateByRoomName = internalMutation({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+
+    // Fetch the gameState for the room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room._id))
+      .first();
+
+    if (!gameState) {
+      return null;
+    }
+
+    return gameState;
+  },
+});
+
+//fetch a card from a given user
+export const returnCard = internalMutation({
+  args: {
+    userId: v.id("players"),
+    gameStateId: v.id("gameStates"),
+  },
+  handler: async (ctx, args) => {
+    // Fetch the room by roomName
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("_id"), args.gameStateId))
+      .first();
+
+    if (!gameState) {
+      return null;
+    }
+
+    // Get the player's deck from the gameState
+    const playerDeck = gameState.playersDecks.find(
+      (deck) => deck.playerId === args.userId
+    )?.deck;
+
+    if (!playerDeck || playerDeck.length === 0) {
+      return null;
+    }
+
+    let selectedCard;
+    // Check if there is a turnSuit
+    if (gameState.turnSuit) {
+      // Try to find a card with the same suit as the turnSuit
+      const cardsWithSameSuit = playerDeck.filter(
+        (card) => card.suit === gameState.turnSuit
+      );
+
+      // If there are cards with the same suit, select one randomly
+      if (cardsWithSameSuit.length > 0) {
+        selectedCard =
+          cardsWithSameSuit[
+            Math.floor(Math.random() * cardsWithSameSuit.length)
+          ];
+      } else {
+        // If no cards match the turnSuit, select a random card from the deck
+        selectedCard =
+          playerDeck[Math.floor(Math.random() * playerDeck.length)];
+      }
+    } else {
+      // If no turnSuit, select a random card from the deck
+      selectedCard = playerDeck[Math.floor(Math.random() * playerDeck.length)];
+    }
+
+    //update the player's status to playing
+    await ctx.db.patch(args.userId, {
+      status: "playing",
+    });
+
+    return selectedCard;
+  },
+});

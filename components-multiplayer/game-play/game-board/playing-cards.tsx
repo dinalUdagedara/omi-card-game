@@ -81,7 +81,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
 
   // playing select card when a card is selected
   useEffect(() => {
-    console.log("playing cards lenght ", playingCards.length);
+    // console.log("playing cards lenght ", playingCards.length);
     if (playingCards.length !== 0) {
       playCardSelect(muted);
     }
@@ -115,7 +115,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   useEffect(() => {
     if (cardSet && cardSet.length > 3) {
       const winningCard = getWinner();
-      console.log("Winning Card", winningCard);
+      // console.log("Winning Card", winningCard);
       if (winningCard === myCard) {
         incrementPoints({
           roomName: roomName,
@@ -196,7 +196,7 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   ]);
 
   return (
-    <div className="flex bg- w-full px-4 lg:py-12 lg:px-28">
+    <div className="flex w-full px-4 lg:py-12 lg:px-28">
       {winningCard ? (
         <>
           <div className="md:w-full md:h-full h-[125px]">

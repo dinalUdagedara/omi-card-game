@@ -15,8 +15,10 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as autoPlayingBot from "../autoPlayingBot.js";
 import type * as gameLogic from "../gameLogic.js";
 import type * as gameStates from "../gameStates.js";
+import type * as internalFunctions from "../internalFunctions.js";
 import type * as rooms from "../rooms.js";
 
 /**
@@ -28,8 +30,10 @@ import type * as rooms from "../rooms.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  autoPlayingBot: typeof autoPlayingBot;
   gameLogic: typeof gameLogic;
   gameStates: typeof gameStates;
+  internalFunctions: typeof internalFunctions;
   rooms: typeof rooms;
 }>;
 export declare const api: FilterApi<

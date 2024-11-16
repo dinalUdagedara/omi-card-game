@@ -71,7 +71,7 @@ const CreateRoomContainer = () => {
   };
 
   const createPrivateRoomLink = () => {
-    const prvURL = `http://localhost:3000/multiplayer/start/private/${roomName}`;
+    const prvURL = `https://omi-card-game.vercel.app/multiplayer/start/private/${roomName}`;
     setPrivateLinkUrl(prvURL);
   };
 

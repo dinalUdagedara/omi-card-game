@@ -1,4 +1,4 @@
-import { internalMutation, mutation } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { useMutation } from "convex/react";
@@ -117,5 +117,153 @@ export const updatePlayersHeartBeat = mutation({
     await ctx.db.patch(player._id, {
       lastActive: currentTime,
     });
+  },
+});
+
+// Handle Disconnected Players and Rejoined Players
+export const handleDisconnectedPlayers = mutation({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const currentTime = Date.now();
+    const offlineThreshold = 15000; //  15 seconds timeout
+
+    // Fetch the disconnected players
+    const offlinePlayers = await ctx.runMutation(
+      internal.internalFunctions.checkOfflinePlayers,
+      {
+        roomName: args.roomName,
+      }
+    );
+
+    console.log("Offline players: ", offlinePlayers);
+
+    // If there are offline players
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      const offlinePlayerIDs = offlinePlayers.map((player) => player._id);
+
+      // Fetch the gameState for the given room
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), offlinePlayers[0].roomId))
+        .first();
+
+      if (!gameState) {
+        return null;
+      }
+
+      // Update the status of the offline players in both `players` and `gameStates`
+      const updatedPlayers = gameState.players.map((player) => {
+        if (offlinePlayerIDs.includes(player.playerId)) {
+          return {
+            ...player,
+            status: "offline" as "online" | "offline",
+          };
+        } else {
+          // For rejoined players: check if they have reconnected (lastActive within threshold)
+          const rejoinedPlayer = offlinePlayers.find(
+            (p) =>
+              p._id === player.playerId &&
+              p.lastActive >= currentTime - offlineThreshold
+          );
+          if (rejoinedPlayer) {
+            return {
+              ...player,
+              status: "online" as "online" | "offline",
+            };
+          }
+        }
+        return player;
+      });
+
+      // Update the gameState in the database
+      await ctx.db.patch(gameState._id, {
+        players: updatedPlayers,
+      });
+
+      console.log(
+        "Updated players' status (online/offline) for room:",
+        args.roomName
+      );
+
+      // Update the `players` table to reflect rejoined players as "online"
+      for (const player of offlinePlayers) {
+        if (player.lastActive >= currentTime - offlineThreshold) {
+          await ctx.db.patch(player._id, { status: "online" });
+        }
+      }
+    } else {
+      const room = await ctx.runMutation(
+        internal.internalFunctions.returnRoom,
+        {
+          roomName: args.roomName,
+        }
+      );
+
+      if (!room) {
+        return null;
+      }
+
+      // If no offline players, set all players in the gameState to "online"
+
+      // Fetch the gameState for the given room
+      const gameState = await ctx.db
+        .query("gameStates")
+        .filter((q) => q.eq(q.field("roomId"), room?._id))
+        .first();
+
+      if (!gameState) {
+        console.log("Game state not found");
+        return null;
+      }
+
+      // Update all players' status to "online" in the gameState
+      const updatedPlayers = gameState.players.map((player) => ({
+        ...player,
+        status: "online" as "online" | "offline",
+      }));
+
+      // Update the gameState in the database
+      await ctx.db.patch(gameState._id, {
+        players: updatedPlayers,
+      });
+
+      //   console.log("All players set to 'online' for room:", args.roomName);
+      console.log("No offline players detected.");
+    }
+  },
+});
+
+export const offlinePlayers = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const currentTime = Date.now();
+    const offlineThreshold = 15000; //  15 seconds timeout
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+
+    const roomID = room._id;
+
+    const offlinePlayers = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("roomId"), roomID))
+      .filter((q) =>
+        q.lt(q.field("lastActive"), currentTime - offlineThreshold)
+      )
+      .collect();
+
+    if (!offlinePlayers) {
+      return null;
+    }
+    return offlinePlayers;
   },
 });

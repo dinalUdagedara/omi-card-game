@@ -1,4 +1,5 @@
-import { internalMutation } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 //Fetch Room ID by RoomName
@@ -126,3 +127,39 @@ export const returnCard = internalMutation({
     return selectedCard;
   },
 });
+
+//Check Offline Users
+export const checkOfflinePlayers = internalMutation({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const currentTime = Date.now();
+    const offlineThreshold = 15000; // 15 seconds timeout
+    // Fetch the room by roomName
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      return null;
+    }
+
+    const roomID = room._id;
+
+    const offlinePlayers = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("roomId"), roomID))
+      .filter((q) =>
+        q.lt(q.field("lastActive"), currentTime - offlineThreshold)
+      )
+      .collect();
+
+    if (!offlinePlayers) {
+      return null;
+    }
+    return offlinePlayers;
+  },
+});
+

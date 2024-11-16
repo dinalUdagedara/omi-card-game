@@ -121,6 +121,14 @@ const GamePlayMultiplayer = () => {
     api.autoPlayingBot.updatePlayersHeartBeat
   );
 
+  const handleDisconnectedPlayers = useMutation(
+    api.autoPlayingBot.handleDisconnectedPlayers
+  );
+
+  const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
+    roomName: roomId || "",
+  });
+
   const createGameInstanceDB = async () => {
     console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
     console.log("dewalhands", dealtHands);
@@ -263,22 +271,34 @@ const GamePlayMultiplayer = () => {
       });
     }
   }
-    // Function to send the ping every 10 seconds
-    function startHeartbeat() {
-      const intervalId = setInterval(async () => {
-        try {
-          const roomName = roomId;
-          if (userID && roomName)
-            // updating the heartbeat
-            await updatePlayerHeartbeat({ userID, roomName });
-        } catch (error) {
-          console.error("Failed to update heartbeat:", error);
+  // Function to send the ping every 10 seconds
+  function startHeartbeat() {
+    const intervalId = setInterval(async () => {
+      try {
+        const roomName = roomId;
+        if (userID && roomName) {
+          // updating the heartbeat
+          await updatePlayerHeartbeat({ userID, roomName });
+          // console.log("upadting heart beat");
         }
-      }, 10000); // Every 10 seconds
-  
-      return intervalId;
+      } catch (error) {
+        console.error("Failed to update heartbeat:", error);
+      }
+    }, 10000); // Every 10 seconds
+
+    return intervalId;
+  }
+
+  async function SetOfflinePlayers() {
+    const roomName = roomId;
+    if (roomName) {
+      //handling disconnected Players
+      await handleDisconnectedPlayers({ roomName: roomName });
     }
-  
+  }
+
+  //handling disconnetced players
+  useEffect(() => {}, []);
 
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
@@ -392,6 +412,12 @@ const GamePlayMultiplayer = () => {
       }
     };
   }, [userID, roomId]);
+
+  useEffect(() => {
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      SetOfflinePlayers();
+    }
+  }, [offlinePlayers]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">

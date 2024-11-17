@@ -78,6 +78,10 @@ export function RoundOverDialogMultiplayer({
     teamNumber: myTeam || 0,
   });
 
+  const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
+    roomName: roomName || "",
+  });
+
   const updateTrumpSetter = useMutation(api.rooms.updateCreator);
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
@@ -191,6 +195,16 @@ export function RoundOverDialogMultiplayer({
       userId: userID,
     });
 
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      console.log("Offline players detected");
+      //update the offline players status to "waiting"
+      offlinePlayers.map((player) => {
+        updatePlayerStatus({
+          status: "waiting",
+          userId: player._id,
+        });
+      });
+    }
     // this triggers a new round
     setNewRound(true);
   };

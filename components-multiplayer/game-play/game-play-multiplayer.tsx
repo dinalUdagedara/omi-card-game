@@ -297,9 +297,6 @@ const GamePlayMultiplayer = () => {
     }
   }
 
-  //handling disconnetced players
-  useEffect(() => {}, []);
-
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
     if (isRoomCreator && playersInRoom) {
@@ -337,8 +334,6 @@ const GamePlayMultiplayer = () => {
 
   useEffect(() => {
     //run if this is a  new Round and all the players are "waiting" only
-    console.log("isallwaiting", isAllWaiting);
-    console.log("isAllPlaying", isAllPlaying);
     if (newRound && isAllWaiting) {
       resetAfterRound();
       console.log("New Round");

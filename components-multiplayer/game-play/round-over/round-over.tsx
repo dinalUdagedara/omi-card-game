@@ -104,6 +104,7 @@ const RoundOverMultiplayer: React.FC<RoundOverMultiplayerProps> = ({
       }
     } else {
       setgameTied(true);
+      setStatus("game tied");
     }
   }
 

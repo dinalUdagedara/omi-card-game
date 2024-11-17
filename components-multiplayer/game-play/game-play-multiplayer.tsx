@@ -124,6 +124,7 @@ const GamePlayMultiplayer = () => {
   const handleDisconnectedPlayers = useMutation(
     api.autoPlayingBot.handleDisconnectedPlayers
   );
+  const rejoinPlayers = useMutation(api.autoPlayingBot.rejoinPlayers);
 
   const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
     roomName: roomId || "",
@@ -279,12 +280,13 @@ const GamePlayMultiplayer = () => {
         if (userID && roomName) {
           // updating the heartbeat
           await updatePlayerHeartbeat({ userID, roomName });
+          await rejoinPlayers({ roomName });
           // console.log("upadting heart beat");
         }
       } catch (error) {
         console.error("Failed to update heartbeat:", error);
       }
-    }, 10000); // Every 10 seconds
+    }, 5000); // Every 5 seconds
 
     return intervalId;
   }
@@ -409,6 +411,7 @@ const GamePlayMultiplayer = () => {
   }, [userID, roomId]);
 
   useEffect(() => {
+    // console.log("OfflinePlayers", offlinePlayers);
     if (offlinePlayers && offlinePlayers.length > 0) {
       SetOfflinePlayers();
     }

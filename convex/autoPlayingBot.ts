@@ -137,8 +137,6 @@ export const handleDisconnectedPlayers = mutation({
       }
     );
 
-    console.log("Offline players: ", offlinePlayers);
-
     // If there are offline players
     if (offlinePlayers && offlinePlayers.length > 0) {
       const offlinePlayerIDs = offlinePlayers.map((player) => player._id);
@@ -235,6 +233,7 @@ export const handleDisconnectedPlayers = mutation({
   },
 });
 
+//Query for front-end to Detect Users that have been inactive for more than 15 seconds
 export const offlinePlayers = query({
   args: {
     roomName: v.string(),
@@ -265,5 +264,66 @@ export const offlinePlayers = query({
       return null;
     }
     return offlinePlayers;
+  },
+});
+
+//separate function to constalty check if a player is rejoined and if yes update the player status in game state
+export const rejoinPlayers = mutation({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const currentTime = Date.now();
+    const offlineThreshold = 15000; // 15 seconds of inactivity is considered offline
+
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    if (!room) {
+      console.log("Room not found.");
+      return;
+    }
+    const roomID = room._id;
+    // Fetch the gameState for the given room
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), roomID))
+      .first();
+
+    if (!gameState) {
+      console.log("Game state not found.");
+      return;
+    }
+
+    // Fetch all players in the room
+    const players = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("roomId"), roomID))
+      .collect();
+
+    const updatedGameStatePlayers = gameState.players.map((gameStatePlayer) => {
+      const player = players.find((p) => p._id === gameStatePlayer.playerId);
+
+      if (player) {
+        // If the player has reconnected (active within the last 15 seconds)
+        const isOnline = player.lastActive >= currentTime - offlineThreshold;
+        const status: "online" | "offline" = isOnline ? "online" : "offline";
+
+        // Update the player's status in the game state
+        return {
+          ...gameStatePlayer,
+          status: status,
+        };
+      }
+
+      return gameStatePlayer;
+    });
+
+    // Update the gameState with the new player statuses
+    await ctx.db.patch(gameState._id, {
+      players: updatedGameStatePlayers,
+    });
   },
 });

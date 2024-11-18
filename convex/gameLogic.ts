@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 export const updateTrumpSuit = mutation({
   args: {
     roomName: v.string(),
@@ -159,12 +160,21 @@ export const updatePlayingCards = mutation({
       await ctx.db.patch(id, {
         playerTurn: nextPlayerId.playerId,
       });
+
+      if (
+        nextPlayerId.status === "offline" &&
+        gameState.playersCards.length < 4
+      ) {
+        await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
+          roomName: args.roomName,
+          userId: nextPlayerId.playerId,
+        });
+      }
     }
   },
 });
 
 //getting whose turn it is
-
 export const getPlayerTurn = query({
   args: {
     roomName: v.string(),
@@ -1109,6 +1119,7 @@ export const updatePlayerTurn = mutation({
   },
 });
 
+//updating the turn after selecting a suit
 export const replacePlayerTurn = mutation({
   args: {
     roomName: v.string(),

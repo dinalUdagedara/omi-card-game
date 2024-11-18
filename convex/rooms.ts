@@ -1,6 +1,7 @@
 import { argv } from "process";
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 
 // Query to get room data by room name
 export const getRoomData = query({
@@ -209,11 +210,13 @@ export const joinRoom = mutation({
 
       return existingPlayer._id;
     } else {
+      const currentTime = Date.now();
       const playerID = await ctx.db.insert("players", {
         userName: args.userName,
         roomId: room._id, // Reference the room by ID
         isCreator: false,
         status: "waiting",
+        lastActive: currentTime,
       });
 
       // Update the room's players array by adding the new player's ID
@@ -248,7 +251,7 @@ export const updateRoomStatustoJoined = mutation({
 
 export const removeCreator = mutation({
   args: {
-    roomName: v.string(), // Referencing the room by ID
+    roomName: v.string(),
   },
   handler: async (ctx, args) => {
     const room = await ctx.db
@@ -258,14 +261,14 @@ export const removeCreator = mutation({
     if (room)
       // Update the trumpSetter with the other player's username
       await ctx.db.patch(room._id, {
-        creator: "", // Update with username
+        creator: "",
       });
   },
 });
 
 export const updateCreator = mutation({
   args: {
-    roomName: v.string(), // Referencing the room by ID
+    roomName: v.string(),
   },
   handler: async (ctx, args) => {
     const room = await ctx.db
@@ -282,22 +285,24 @@ export const updateCreator = mutation({
       return null;
     }
 
-    const players = room.playerUserNames; // Array of all player usernames
-    const currentCreatorIndex = players.findIndex(
-      (username) => username === room.creator
+    const gameState = await ctx.runMutation(
+      internal.internalFunctions.returnGameState,
+      { roomID: room._id }
     );
-
-    if (currentCreatorIndex === -1) {
+    const roundNumber = gameState?.currentRound;
+    if (roundNumber === undefined || roundNumber === null) {
       return null;
     }
 
-    // Calculate the index of the next player, cycling back to 0 after the last player
-    const nextCreatorIndex = (currentCreatorIndex + 1) % players.length;
+    const players = room.playerUserNames;
+
+    // Calculate the index of the next creator based on the round number
+    const nextCreatorIndex = roundNumber % players.length;
     const nextCreator = players[nextCreatorIndex];
 
-    // Update the creator with the next player in the sequence
+    // Update the creator with the player based on the round number
     await ctx.db.patch(room._id, {
-      creator: nextCreator, // Update with the next player's username
+      creator: nextCreator, // Set the creator based on the round number
     });
   },
 });
@@ -320,14 +325,17 @@ export const isPlayersJoined = query({
 export const addPlayer = mutation({
   args: {
     userName: v.string(),
-    roomId: v.id("rooms"), // Referencing the room by ID
+    roomId: v.id("rooms"),
     isCreator: v.boolean(),
   },
   handler: async (ctx, args) => {
+    // Get the current timestamp
+    const currentTime = Date.now();
     const playerID = await ctx.db.insert("players", {
       userName: args.userName,
       roomId: args.roomId,
       isCreator: args.isCreator,
+      lastActive: currentTime,
       status: "waiting",
     });
     return playerID;
@@ -362,7 +370,7 @@ export const getPlayerStatus = mutation({
 
 export const allPlayersWaiting = query({
   args: {
-    roomId: v.string(), // Expect roomId as an argument
+    roomId: v.string(),
   },
   handler: async (ctx, args) => {
     try {
@@ -462,7 +470,7 @@ export const getPlayerIdByUserName = query({
     }
 
     // Return the player's ID
-    return playerInfo._id; // Assuming _id is the field for the player's ID
+    return playerInfo._id;
   },
 });
 

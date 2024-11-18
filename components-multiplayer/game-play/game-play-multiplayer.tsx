@@ -24,7 +24,6 @@ import NoticeCardTemplate from "./game-board/game-board-template";
 import NameCardTemplate from "./name-card/name-card-template";
 import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
 import Image from "next/image";
-import UserAvatarBg from "@/public/assets/images/user-avatars/person8.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 
 const GamePlayMultiplayer = () => {
@@ -118,6 +117,28 @@ const GamePlayMultiplayer = () => {
     userid: userID || null,
   });
 
+  const updatePlayerHeartbeat = useMutation(
+    api.autoPlayingBot.updatePlayersHeartBeat
+  );
+
+  const handleDisconnectedPlayers = useMutation(
+    api.autoPlayingBot.handleDisconnectedPlayers
+  );
+  const rejoinPlayers = useMutation(api.autoPlayingBot.rejoinPlayers);
+
+  const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
+    roomName: roomId || "",
+  });
+  const isRoomCreatorOffline = useQuery(
+    api.internalFunctions.isRoomCreatorOffline,
+    {
+      roomName: roomId || "",
+    }
+  );
+  const resettingAfterRoundBot = useMutation(
+    api.autoPlayingBot.resettingAfterRoundBot
+  );
+
   const createGameInstanceDB = async () => {
     console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
     console.log("dewalhands", dealtHands);
@@ -199,6 +220,7 @@ const GamePlayMultiplayer = () => {
     }
   }, [playersInRoom]);
   setTrumpSelected(false);
+
   useEffect(() => {
     if (roomStatus) {
       console.log("roomStatus", roomStatus);
@@ -259,9 +281,42 @@ const GamePlayMultiplayer = () => {
       });
     }
   }
+  // Function to send the ping every 10 seconds
+  function startHeartbeat() {
+    const intervalId = setInterval(async () => {
+      try {
+        const roomName = roomId;
+        if (userID && roomName) {
+          // updating the heartbeat
+          await updatePlayerHeartbeat({ userID, roomName });
+          await rejoinPlayers({ roomName });
+          // console.log("upadting heart beat");
+        }
+      } catch (error) {
+        console.error("Failed to update heartbeat:", error);
+      }
+    }, 5000); // Every 5 seconds
+
+    return intervalId;
+  }
+
+  async function SetOfflinePlayers() {
+    const roomName = roomId;
+    if (roomName) {
+      //handling disconnected Players
+      await handleDisconnectedPlayers({ roomName: roomName });
+    }
+  }
 
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
+    //if room creator is offline run resetafterRoundBot
+    if (isRoomCreatorOffline === true) {
+      if (roomId && userID) {
+        resettingAfterRoundBot({ roomName: roomId, userID: userID });
+      }
+    }
+
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -279,26 +334,17 @@ const GamePlayMultiplayer = () => {
             });
           }
 
-          changeTrumptoNull();
+          // changeTrumptoNull();
         }
-
-        setNewRound(false);
       } catch (error) {
         console.log("error", error);
       }
     }
-    // if (userID)
-    //   // update players status to "playing" in here
-    //   updatePlayerStatus({
-    //     status: "playing",
-    //     userId: userID,
-    //   });
+    setNewRound(false);
   };
 
   useEffect(() => {
     //run if this is a  new Round and all the players are "waiting" only
-    console.log("isallwaiting", isAllWaiting);
-    console.log("isAllPlaying", isAllPlaying);
     if (newRound && isAllWaiting) {
       resetAfterRound();
       console.log("New Round");
@@ -358,6 +404,27 @@ const GamePlayMultiplayer = () => {
   useEffect(() => {
     if (isRoomCreator) createGameInstanceDB();
   }, [roomdataFromDB]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+    if (userID && roomId) {
+      // Start the heartbeat when the userID and roomId are available
+      intervalId = startHeartbeat();
+    }
+    return () => {
+      // Cleanup function to clear the interval when the component unmounts
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [userID, roomId]);
+
+  useEffect(() => {
+    // console.log("OfflinePlayers", offlinePlayers);
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      SetOfflinePlayers();
+    }
+  }, [offlinePlayers]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">

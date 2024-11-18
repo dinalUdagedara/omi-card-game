@@ -25,7 +25,7 @@ const ModeSelector = () => {
   };
 
   return (
-    <div className="flex flex-col  justify-start gap-[4vh] pt-10">
+    <div className="flex flex-col  justify-start gap-[4vh] pt-5">
       <div className="flex flex-col items-center justify-center z-20 gap-2 w-full">
         <div className={`h-full font ${spicy_rice.className} text-7xl t-10 `}>
           Omi
@@ -54,7 +54,7 @@ const ModeSelector = () => {
       <div className="flex flex-row h-full items-center sm:mt-5">
         <div
           onMouseEnter={handleHover}
-          className="flex flex-col sm:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0 bg- "
+          className="flex flex-col sm:flex-row justify-center md:justify-start md:ml-20 w-full gap-5 sm:gap-0"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}

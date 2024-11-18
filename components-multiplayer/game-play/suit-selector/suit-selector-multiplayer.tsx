@@ -7,7 +7,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { isValidSuit, Suit, suits, suitsWithLogos } from "@/utils/practise/types";
+import {
+  isValidSuit,
+  Suit,
+  suits,
+  suitsWithLogos,
+} from "@/utils/practise/types";
 import { useStore } from "@/store/state";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -21,7 +26,6 @@ import {
   useCardSelectSound,
   useSuitSelectSound,
 } from "@/utils/play-sounds";
-
 
 interface SuitSelectorProps {
   roomName: string;
@@ -40,6 +44,14 @@ export function SuitSelectorMobileMultiplayer({
   const muted = useStore((state) => state.muted);
   const { playSuitSelected } = useSuitSelectSound();
 
+  // Automatically close dialog after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleSuitSelected(suitsWithLogos[0].suit);
+    }, 10000);
+
+    return () => clearTimeout(timer); // Clear the timer when component unmounts
+  }, []);
 
   function handleSuitSelected(suit: Suit) {
     console.log("Suit selcted");

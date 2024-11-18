@@ -97,7 +97,6 @@ const GameBoardMobileMultiplayer: React.FC<GameBoardProps> = ({
         <>
           {isRoundOver ? (
             <>
-              {isRoundOver}
               <RoundOverMultiplayer userID={userID} roomName={roomName} />
             </>
           ) : (

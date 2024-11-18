@@ -44,6 +44,7 @@ export const createGameState = mutation({
     const playersWithTeams = args.players.map((playerId, index) => ({
       playerId,
       teamNumber: index % 2 === 0 ? 1 : 2, // Team 1 for indices 0 and 2, Team 2 for 1 and 3
+      status: "online" as const, // Explicitly tell TypeScript this is "online"
     }));
 
     // Initialize penalty cards for each team with default value
@@ -208,12 +209,12 @@ export const updateGameStateAfterRound = mutation({
           (p) => p.playerId === currentPlayerID
         );
 
-        // Calculate the next player's index (wrap around if necessary)
+        // Calculate the next player's index
         const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
 
         // Update the playerTurn and trumpSetter to the next player
         const nextPlayerTurn = players[nextPlayerIndex];
-        const nextTrumpSetter = players[nextPlayerIndex]; // Update logic as needed
+        const nextTrumpSetter = players[nextPlayerIndex]; 
 
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {

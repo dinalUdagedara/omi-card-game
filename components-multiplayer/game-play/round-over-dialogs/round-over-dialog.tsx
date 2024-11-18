@@ -23,11 +23,13 @@ import { useHoverSound, useClickSound } from "@/utils/play-sounds";
 interface RoundOverDialogMobileProps {
   userID: Id<"players">;
   roomName: string;
+  status: string | null;
 }
 
 export function RoundOverDialogMultiplayer({
   userID,
   roomName,
+  status,
 }: RoundOverDialogMobileProps) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -76,6 +78,10 @@ export function RoundOverDialogMultiplayer({
     teamNumber: myTeam || 0,
   });
 
+  const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
+    roomName: roomName || "",
+  });
+
   const updateTrumpSetter = useMutation(api.rooms.updateCreator);
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
@@ -106,7 +112,7 @@ export function RoundOverDialogMultiplayer({
 
   async function decrementValues() {
     deductPenaltyForViolation();
-    if (lostCallingTrumps && playersInRoom) {
+    if (status === "lostCallingTrumps" && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("Decrementing lost calling");
         await decrementPenaltycards({
@@ -116,7 +122,7 @@ export function RoundOverDialogMultiplayer({
         });
       }
     }
-    if (lostWithoutCallingTrumps) {
+    if (status === "lostWithoutCallingTrumps") {
       if (playersInRoom) {
         if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
           console.log("Decrementing lostwithout calling", violations);
@@ -129,7 +135,7 @@ export function RoundOverDialogMultiplayer({
       }
     }
 
-    if (wonCallingTrumps && playersInRoom) {
+    if (status === "wonCallingTrumps" && playersInRoom) {
       if (userID === playersInRoom[0] || userID === playersInRoom[1]) {
         console.log("wonCallingTrumps", violations);
         await decrementPenaltycardsFromOponent({
@@ -139,7 +145,7 @@ export function RoundOverDialogMultiplayer({
         });
       }
     }
-    if (wonWithoutCallingTrumps) {
+    if (status === "wonWithoutCallingTrumps") {
       if (playersInRoom) {
         console.log("Decrementing lostwithout calling");
         await decrementPenaltycardsFromOponent({
@@ -158,12 +164,23 @@ export function RoundOverDialogMultiplayer({
     });
   };
 
+  // Automatically close dialog after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isDialogOpen) {
+        handleClose();
+      }
+    }, 10000);
+
+    return () => clearTimeout(timer); // Clear the timer when component unmounts or if dialog is closed manually
+  }, [isDialogOpen]);
+
   const handleClose = async () => {
     playClickButton(muted);
     setAllFalse(false);
     await removeTrump();
     setTrumpSuit(null);
-    if (userName === roomdataFromDB?.playerUserNames[0]) {
+    if (userName === roomdataFromDB?.playerUserNames[0] && status) {
       await decrementValues();
       await updateTrumpSetter({
         roomName: roomName,
@@ -178,6 +195,16 @@ export function RoundOverDialogMultiplayer({
       userId: userID,
     });
 
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      console.log("Offline players detected");
+      //update the offline players status to "waiting"
+      offlinePlayers.map((player) => {
+        updatePlayerStatus({
+          status: "waiting",
+          userId: player._id,
+        });
+      });
+    }
     // this triggers a new round
     setNewRound(true);
   };

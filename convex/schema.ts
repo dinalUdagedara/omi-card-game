@@ -6,6 +6,7 @@ export default defineSchema({
     isCreator: v.boolean(),
     roomId: v.id("rooms"),
     userName: v.string(),
+    lastActive: v.number(),
     status: v.string(),
   }),
   rooms: defineTable({
@@ -23,6 +24,7 @@ export default defineSchema({
       v.object({
         playerId: v.id("players"), // Reference to the player
         teamNumber: v.number(),
+        status: v.union(v.literal("online"), v.literal("offline")), // Limit to "online" or "offline"
       })
     ),
     penaltyCards: v.array(

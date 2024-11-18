@@ -13,7 +13,7 @@ import notificaitonBackGround from "@/public/assets/images/cover-notification.pn
 import Image from "next/image";
 import ParticlesComponentWinner from "@/components-multiplayer/particles/winner-particles";
 import ParticlesComponentLoser from "@/components-multiplayer/particles/loser-particles";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
@@ -38,9 +38,17 @@ export const GameOverDialogMultiplayer: React.FC<
   const removeUserFromGameStateAndRoom = useMutation(
     api.gameStates.removeUserFromGameStateAndRoom
   );
+  const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
+    roomName: roomName || "",
+  });
   const router = useRouter();
   const handlePlayAgain = async () => {
     setIsLoading(true);
+
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      await handleDisconnectedPlayers();
+    }
+
     await removeUserFromGameState({
       roomName: roomName,
       userid: userID,
@@ -49,6 +57,9 @@ export const GameOverDialogMultiplayer: React.FC<
   };
 
   const handleQuitGame = async () => {
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      await handleDisconnectedPlayers();
+    }
     setisLoadingQuit(true);
     await removeUserFromGameStateAndRoom({
       roomName: roomName,
@@ -57,6 +68,17 @@ export const GameOverDialogMultiplayer: React.FC<
     router.push(`/multiplayer`);
   };
 
+  const handleDisconnectedPlayers = async () => {
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      console.log("Offline players detected");
+      offlinePlayers.map(async (player) => {
+        await removeUserFromGameStateAndRoom({
+          roomName: roomName,
+          userid: player._id,
+        });
+      });
+    }
+  };
   return (
     <>
       {gameWon === true ? (

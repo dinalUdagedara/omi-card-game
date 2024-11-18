@@ -129,6 +129,15 @@ const GamePlayMultiplayer = () => {
   const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
     roomName: roomId || "",
   });
+  const isRoomCreatorOffline = useQuery(
+    api.internalFunctions.isRoomCreatorOffline,
+    {
+      roomName: roomId || "",
+    }
+  );
+  const resettingAfterRoundBot = useMutation(
+    api.autoPlayingBot.resettingAfterRoundBot
+  );
 
   const createGameInstanceDB = async () => {
     console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
@@ -301,6 +310,13 @@ const GamePlayMultiplayer = () => {
 
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
+    //if room creator is offline run resetafterRoundBot
+    if (isRoomCreatorOffline === true) {
+      if (roomId && userID) {
+        resettingAfterRoundBot({ roomName: roomId, userID: userID });
+      }
+    }
+
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -318,20 +334,13 @@ const GamePlayMultiplayer = () => {
             });
           }
 
-          changeTrumptoNull();
+          // changeTrumptoNull();
         }
-
-        setNewRound(false);
       } catch (error) {
         console.log("error", error);
       }
     }
-    // if (userID)
-    //   // update players status to "playing" in here
-    //   updatePlayerStatus({
-    //     status: "playing",
-    //     userId: userID,
-    //   });
+    setNewRound(false);
   };
 
   useEffect(() => {

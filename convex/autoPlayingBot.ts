@@ -1,7 +1,11 @@
 import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { useMutation } from "convex/react";
+import {
+  createDeck,
+  dealCards,
+  shuffleDeck,
+} from "../utils/multiplayer/game-logic-multiplayer";
 
 //Automatically playing disconncted players card
 export const updatePlayingCardsBot = internalMutation({
@@ -10,7 +14,7 @@ export const updatePlayingCardsBot = internalMutation({
     userId: v.id("players"),
   },
   handler: async (ctx, args) => {
-    const gameState = await ctx.runMutation(
+    const gameState = await ctx.runQuery(
       internal.internalFunctions.returnGameStateByRoomName,
       {
         roomName: args.roomName,
@@ -95,6 +99,63 @@ export const updatePlayingCardsBot = internalMutation({
         playerTurn: nextPlayerId.playerId,
       });
     }
+  },
+});
+
+export const resettingAfterRoundBot = mutation({
+  args: {
+    roomName: v.string(),
+    userID: v.id("players"),
+  },
+  handler: async (ctx, args) => {
+    const deck = createDeck();
+    const shuffledDeck = shuffleDeck(deck);
+    //Dividing Deck among 4 players
+    const hands = dealCards(shuffledDeck, 4);
+
+    const room = await ctx.db
+      .query("rooms")
+      .filter((q) => q.eq(q.field("roomName"), args.roomName))
+      .first();
+
+    const gameState = await ctx.db
+      .query("gameStates")
+      .filter((q) => q.eq(q.field("roomId"), room?._id))
+      .first();
+
+    const players = room?.players;
+    // Map playersInRoom and dealtHands to match player IDs with their decks
+    const playersDecks = players?.map((playerId, index) => ({
+      playerId,
+      deck: hands[index].hand,
+    }));
+
+    if (!playersDecks || !room?.roomName || !gameState) {
+      return null;
+    }
+
+    //updating gamestate with the new cards for the users
+    await ctx.runMutation(
+      internal.internalFunctions.updateGameStateAfterRoundBot,
+      {
+        playersDecks: playersDecks,
+        roomName: room?.roomName,
+      }
+    );
+
+    //set new trump
+    await ctx.runMutation(internal.internalFunctions.updateTrumpSuitBot, {
+      roomID: room._id,
+      userID: args.userID,
+    });
+
+    // // play a card automatically
+    // await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
+    //   roomName: room.roomName,
+    //   userId: args.userID,
+    // });
+
+    console.log("players Decks", playersDecks);
   },
 });
 
@@ -192,7 +253,7 @@ export const handleDisconnectedPlayers = mutation({
         }
       }
     } else {
-      const room = await ctx.runMutation(
+      const room = await ctx.runQuery(
         internal.internalFunctions.returnRoom,
         {
           roomName: args.roomName,

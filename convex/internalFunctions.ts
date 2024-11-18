@@ -135,7 +135,7 @@ export const checkOfflinePlayers = internalMutation({
   },
   handler: async (ctx, args) => {
     const currentTime = Date.now();
-    const offlineThreshold = 15000; // 15 seconds timeout
+    const offlineThreshold = 10000; // 10 seconds timeout
     // Fetch the room by roomName
     const room = await ctx.db
       .query("rooms")

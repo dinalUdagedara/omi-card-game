@@ -127,7 +127,7 @@ export const handleDisconnectedPlayers = mutation({
   },
   handler: async (ctx, args) => {
     const currentTime = Date.now();
-    const offlineThreshold = 15000; //  15 seconds timeout
+    const offlineThreshold = 10000; //  10 seconds timeout
 
     // Fetch the disconnected players
     const offlinePlayers = await ctx.runMutation(
@@ -240,7 +240,7 @@ export const offlinePlayers = query({
   },
   handler: async (ctx, args) => {
     const currentTime = Date.now();
-    const offlineThreshold = 15000; //  15 seconds timeout
+    const offlineThreshold = 10000; //  10 seconds timeout
     const room = await ctx.db
       .query("rooms")
       .filter((q) => q.eq(q.field("roomName"), args.roomName))
@@ -274,7 +274,7 @@ export const rejoinPlayers = mutation({
   },
   handler: async (ctx, args) => {
     const currentTime = Date.now();
-    const offlineThreshold = 15000; // 15 seconds of inactivity is considered offline
+    const offlineThreshold = 10000; // 10 seconds of inactivity is considered offline
 
     const room = await ctx.db
       .query("rooms")

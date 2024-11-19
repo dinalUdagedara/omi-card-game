@@ -439,3 +439,40 @@ export const rejoinPlayers = mutation({
     });
   },
 });
+
+export const checkPlayerStatus = mutation({
+  args: {
+    userName: v.string(),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const playerDetails = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), args.userName))
+      .first();
+
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      {
+        roomName: args.roomName,
+      }
+    );
+
+    if (!gameState || !playerDetails) {
+      return null;
+    }
+
+    const offlinePlayers: PlayerData[] = gameState.players.filter((player) => {
+      return player.status === "offline";
+    });
+
+    if (offlinePlayers.length === 0) {
+      return null;
+    }
+
+    // Check if the userID is in the list of offline players
+    return offlinePlayers.some(
+      (player) => player.playerId === playerDetails?._id
+    );
+  },
+});

@@ -1,5 +1,10 @@
 import { internal } from "./_generated/api";
-import { internalMutation, internalQuery, query } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from "./_generated/server";
 import { v } from "convex/values";
 
 //Fetch Room ID by RoomName
@@ -180,33 +185,7 @@ export const getPlayerInfo = internalMutation({
   },
 });
 
-export const checkPlayerStatus = internalMutation({
-  args: {
-    userID: v.id("players"),
-    roomID: v.id("rooms"),
-  },
-  handler: async (ctx, args) => {
-    const gameState = await ctx.db
-      .query("gameStates")
-      .filter((q) => q.eq(q.field("roomId"), args.roomID))
-      .first();
 
-    if (!gameState) {
-      return null;
-    }
-
-    const offlinePlayers = gameState.players.filter((player) => {
-      return player.status === "offline";
-    });
-
-    if (offlinePlayers.length === 0) {
-      return null;
-    }
-
-    // Check if the userID is in the list of offline players
-    return offlinePlayers.some((player) => player.playerId === args.userID);
-  },
-});
 
 export const isRoomCreatorOffline = query({
   args: {

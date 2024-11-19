@@ -150,6 +150,7 @@ const GamePlayMultiplayer = () => {
   const resettingAfterRoundBot = useMutation(
     api.autoPlayingBot.resettingAfterRoundBot
   );
+  const checkPlayerStatus = useMutation(api.autoPlayingBot.checkPlayerStatus);
 
   const createGameInstanceDB = async () => {
     if (isRoomCreator && playersInRoom) {
@@ -221,24 +222,82 @@ const GamePlayMultiplayer = () => {
     setTrumpSelected(true);
   }
 
-  function playDisconnectedPlayersCard() {
+  async function playDisconnectedPlayersCard() {
     console.log("disconnected players ", disconnectedPlayers);
+
+    // Check if it's the turn of a disconnected player
     const disconnectedPlayerTurn = disconnectedPlayers?.some((player) => {
       return player.playerId === turnPlayerID;
     });
+
     if (disconnectedPlayerTurn) {
       console.log(
         `Player with ID ${turnPlayerID} is disconnected. Automating their card play.`
       );
-      if (
-        roomId &&
-        turnPlayerID &&
-        userName === roomdataFromDB?.playerUserNames[0]
-      )
-        handleCardSelectForDisconnectedPlayer({
+
+      if (roomId && turnPlayerID) {
+        const players = roomdataFromDB?.playerUserNames || [];
+
+        const isPlayer1Offline = await checkPlayerStatus({
           roomName: roomId,
-          userId: turnPlayerID,
+          userName: players[0],
         });
+        const isPlayer2Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[1],
+        });
+        const isPlayer3Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[2],
+        });
+        const isPlayer4Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[3],
+        });
+
+        // console.log("isPlayer1Offline", isPlayer1Offline);
+        // console.log("isPlayer2Offline", isPlayer2Offline);
+        // console.log("isPlayer3Offline", isPlayer3Offline);
+        // console.log("isPlayer4Offline", isPlayer4Offline);
+
+        if (!isPlayer1Offline) {
+          if (players[0] === userName) {
+            console.log(`Player ${players[0]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        } else if (!isPlayer2Offline) {
+          if (players[1] === userName) {
+            console.log(`Player ${players[1]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        } else if (!isPlayer3Offline) {
+          if (players[2] === userName) {
+            console.log(`Player ${players[2]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        } else if (!isPlayer4Offline) {
+          if (players[3] === userName) {
+            console.log(`Player ${players[3]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        }
+      }
     } else {
       console.log(
         `Player with ID ${turnPlayerID} is connected. Waiting for their action.`

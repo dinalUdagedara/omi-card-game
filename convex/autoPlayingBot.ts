@@ -102,6 +102,29 @@ export const updatePlayingCardsBot = internalMutation({
   },
 });
 
+export const handleCardSelectForDisconnectedPlayer = mutation({
+  args: {
+    roomName: v.string(),
+    userId: v.id("players"),
+  },
+  handler: async (ctx, args) => {
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      { roomName: args.roomName }
+    );
+    if (!gameState) {
+      return null;
+    }
+
+    if (gameState.playersCards.length < 4) {
+      await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
+        roomName: args.roomName,
+        userId: args.userId,
+      });
+    }
+  },
+});
+
 export const resettingAfterRoundBot = mutation({
   args: {
     roomName: v.string(),
@@ -253,12 +276,9 @@ export const handleDisconnectedPlayers = mutation({
         }
       }
     } else {
-      const room = await ctx.runQuery(
-        internal.internalFunctions.returnRoom,
-        {
-          roomName: args.roomName,
-        }
-      );
+      const room = await ctx.runQuery(internal.internalFunctions.returnRoom, {
+        roomName: args.roomName,
+      });
 
       if (!room) {
         return null;

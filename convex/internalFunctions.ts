@@ -1,8 +1,6 @@
 import { internal } from "./_generated/api";
 import { internalMutation, internalQuery, query } from "./_generated/server";
 import { v } from "convex/values";
-import { offlinePlayers } from "./autoPlayingBot";
-import { off } from "process";
 
 //Fetch Room ID by RoomName
 export const returnRoom = internalQuery({

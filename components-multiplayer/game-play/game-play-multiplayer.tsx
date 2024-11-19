@@ -117,6 +117,10 @@ const GamePlayMultiplayer = () => {
     userid: userID || null,
   });
 
+  const turnPlayerID = useQuery(api.gameLogic.getPlayerTurn, {
+    roomName: roomId || "",
+  });
+
   const updatePlayerHeartbeat = useMutation(
     api.autoPlayingBot.updatePlayersHeartBeat
   );
@@ -125,6 +129,9 @@ const GamePlayMultiplayer = () => {
     api.autoPlayingBot.handleDisconnectedPlayers
   );
   const rejoinPlayers = useMutation(api.autoPlayingBot.rejoinPlayers);
+  const handleCardSelectForDisconnectedPlayer = useMutation(
+    api.autoPlayingBot.handleCardSelectForDisconnectedPlayer
+  );
 
   const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
     roomName: roomId || "",
@@ -210,6 +217,37 @@ const GamePlayMultiplayer = () => {
     if (roomId) handleSuitChange(trumpSuit);
     setTrumpSelected(true);
   }
+
+  function playDisconnectedPlayersCard() {
+    const disconnectedPlayerTurn = offlinePlayers?.some((player) => {
+      return player._id === turnPlayerID;
+    });
+    if (disconnectedPlayerTurn) {
+      console.log(
+        `Player with ID ${turnPlayerID} is disconnected. Automating their card play.`
+      );
+      if (
+        roomId &&
+        turnPlayerID &&
+        userName === roomdataFromDB?.playerUserNames[0]
+      )
+        handleCardSelectForDisconnectedPlayer({
+          roomName: roomId,
+          userId: turnPlayerID,
+        });
+    } else {
+      console.log(
+        `Player with ID ${turnPlayerID} is connected. Waiting for their action.`
+      );
+    }
+  }
+
+  //checking if the player with the turn is disconnected
+  useEffect(() => {
+    if (turnPlayerID && offlinePlayers) {
+      playDisconnectedPlayersCard();
+    }
+  }, [turnPlayerID, offlinePlayers]);
 
   useEffect(() => {
     if (playersInRoom) {

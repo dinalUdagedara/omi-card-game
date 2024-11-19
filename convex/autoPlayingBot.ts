@@ -6,6 +6,8 @@ import {
   dealCards,
   shuffleDeck,
 } from "../utils/multiplayer/game-logic-multiplayer";
+import { Player } from "../utils/practise/types";
+import { PlayerData } from "../utils/multiplayer/types-multiplayer";
 
 //Automatically playing disconncted players card
 export const updatePlayingCardsBot = internalMutation({
@@ -345,6 +347,35 @@ export const offlinePlayers = query({
       return null;
     }
     return offlinePlayers;
+  },
+});
+
+//Query for return players  disconnected and updated on the db
+export const disconnectedPlayers = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      {
+        roomName: args.roomName,
+      }
+    );
+
+    if (!gameState) {
+      return null;
+    }
+
+    const disconnctedPlayers: PlayerData[] = gameState.players.filter(
+      (player) => player.status === "offline"
+    );
+    if (!disconnctedPlayers) {
+      return null;
+    }
+
+    return disconnctedPlayers;
+    // console.log("disconnected players ", disconnctedPlayers);
   },
 });
 

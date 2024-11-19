@@ -85,7 +85,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
         if (trumpSuit) {
           const id = setTimeout(() => {
             autoPlayCard();
-          }, 10000);
+          }, 15000);
           setTimeoutId(id);
         }
       } else {

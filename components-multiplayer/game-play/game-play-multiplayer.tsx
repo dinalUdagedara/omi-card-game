@@ -136,6 +136,11 @@ const GamePlayMultiplayer = () => {
   const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
     roomName: roomId || "",
   });
+
+  const disconnectedPlayers = useQuery(api.autoPlayingBot.disconnectedPlayers, {
+    roomName: roomId || "",
+  });
+
   const isRoomCreatorOffline = useQuery(
     api.internalFunctions.isRoomCreatorOffline,
     {
@@ -147,8 +152,6 @@ const GamePlayMultiplayer = () => {
   );
 
   const createGameInstanceDB = async () => {
-    console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
-    console.log("dewalhands", dealtHands);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -219,8 +222,9 @@ const GamePlayMultiplayer = () => {
   }
 
   function playDisconnectedPlayersCard() {
-    const disconnectedPlayerTurn = offlinePlayers?.some((player) => {
-      return player._id === turnPlayerID;
+    console.log("disconnected players ", disconnectedPlayers);
+    const disconnectedPlayerTurn = disconnectedPlayers?.some((player) => {
+      return player.playerId === turnPlayerID;
     });
     if (disconnectedPlayerTurn) {
       console.log(
@@ -244,10 +248,14 @@ const GamePlayMultiplayer = () => {
 
   //checking if the player with the turn is disconnected
   useEffect(() => {
-    if (turnPlayerID && offlinePlayers) {
+    if (
+      turnPlayerID &&
+      disconnectedPlayers &&
+      disconnectedPlayers?.length > 0
+    ) {
       playDisconnectedPlayersCard();
     }
-  }, [turnPlayerID, offlinePlayers]);
+  }, [turnPlayerID, disconnectedPlayers]);
 
   useEffect(() => {
     if (playersInRoom) {
@@ -327,8 +335,7 @@ const GamePlayMultiplayer = () => {
         if (userID && roomName) {
           // updating the heartbeat
           await updatePlayerHeartbeat({ userID, roomName });
-          await rejoinPlayers({ roomName });
-          // console.log("upadting heart beat");
+          // await rejoinPlayers({ roomName });
         }
       } catch (error) {
         console.error("Failed to update heartbeat:", error);
@@ -458,9 +465,20 @@ const GamePlayMultiplayer = () => {
   }, [userID, roomId]);
 
   useEffect(() => {
-    // console.log("OfflinePlayers", offlinePlayers);
-    if (offlinePlayers && offlinePlayers.length > 0) {
+    if (offlinePlayers && offlinePlayers.length > 0 && isAllPlaying) {
       SetOfflinePlayers();
+    }
+  }, [offlinePlayers]);
+
+  async function rejoiningPlayers() {
+    if (roomId) {
+      await rejoinPlayers({ roomName: roomId });
+    }
+  }
+
+  useEffect(() => {
+    if (isAllPlaying) {
+      rejoiningPlayers();
     }
   }, [offlinePlayers]);
 

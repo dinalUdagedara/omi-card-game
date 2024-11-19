@@ -70,12 +70,10 @@ const StartGamePoolPrivateNew = (props: Props) => {
 
   const handleJoinRoom = async () => {
     await getUsername();
-    console.log("handleJoin Room: username", userName);
-    console.log("handleJoin Room: roomid", roomId);
     if (roomId && userName) {
       const roomName = roomId;
       // Only update the database if the player hasn't joined before
-      console.log("roomdataFromDB", roomdataFromDB);
+
       if (roomdataFromDB) {
         const alreadyJoined = roomdataFromDB.playerUserNames.some(
           (player: string) => player === userName
@@ -86,7 +84,6 @@ const StartGamePoolPrivateNew = (props: Props) => {
             userName,
             roomName,
           });
-          console.log("PlayerID", playerID);
         }
         hasJoinedRoom.current = true;
       }
@@ -95,16 +92,14 @@ const StartGamePoolPrivateNew = (props: Props) => {
 
   const handleStartGame = () => {
     playClickButton(muted);
-    console.log("start");
+
     const roomName = roomId;
     updateRoomStatustoJoined({
       roomName,
     });
-    console.log("players joined", PlayersJoined);
   };
 
   useEffect(() => {
-    console.log("Room Data", roomdataFromDB && !hasJoinedRoom.current);
     // Ensure roomdataFromDB is available and the user hasn't already joined the room
     if (roomdataFromDB && !hasJoinedRoom.current && userName) {
       handleJoinRoom();

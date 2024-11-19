@@ -145,7 +145,7 @@ export const getAllActivePublicRooms = query({
       )
       .collect();
 
-    console.log("activePublicRooms", activePublicRooms);
+    // console.log("activePublicRooms", activePublicRooms);
 
     // Filter for rooms with 0 or 1 player
     const waitingJoinableRooms = activePublicRooms.filter((room) => {
@@ -386,7 +386,7 @@ export const allPlayersWaiting = query({
 
       // Return false if no players are found
       if (players.length === 0) {
-        console.log("No players found in the room.");
+        // console.log("No players found in the room.");
         return false;
       }
 
@@ -418,7 +418,7 @@ export const allPlayersPlaying = query({
 
       // Return false if no players are found
       if (players.length === 0) {
-        console.log("No players found in the room.");
+        // console.log("No players found in the room.");
         return false;
       }
 

@@ -15,7 +15,6 @@ export const createGameState = mutation({
     trumpSetter: v.id("players"),
   },
   handler: async (ctx, args) => {
-    console.log("Creating state");
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")
@@ -35,8 +34,8 @@ export const createGameState = mutation({
 
     // If a game state already exists
     if (existingGameState) {
-      console.log("Existing game state found");
-      console.log("gamestate.status", existingGameState.status);
+      // console.log("Existing game state found");
+      // console.log("gamestate.status", existingGameState.status);
       return null;
     }
 
@@ -214,7 +213,7 @@ export const updateGameStateAfterRound = mutation({
 
         // Update the playerTurn and trumpSetter to the next player
         const nextPlayerTurn = players[nextPlayerIndex];
-        const nextTrumpSetter = players[nextPlayerIndex]; 
+        const nextTrumpSetter = players[nextPlayerIndex];
 
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {
@@ -393,8 +392,6 @@ export const updateGameStateStatus = mutation({
           status: "game-over",
         });
       }
-
-      console.log(gameState);
     }
   },
 });

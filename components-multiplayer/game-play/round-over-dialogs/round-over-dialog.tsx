@@ -185,6 +185,17 @@ export function RoundOverDialogMultiplayer({
       await updateTrumpSetter({
         roomName: roomName,
       });
+
+      if (offlinePlayers && offlinePlayers.length > 0) {
+        console.log("Offline players detected", offlinePlayers);
+        //update the offline players status to "waiting"
+        offlinePlayers.map((player) => {
+          updatePlayerStatus({
+            status: "waiting",
+            userId: player._id,
+          });
+        });
+      }
     }
     setDialogOpen(false);
     setRoundOver(false);
@@ -195,16 +206,6 @@ export function RoundOverDialogMultiplayer({
       userId: userID,
     });
 
-    if (offlinePlayers && offlinePlayers.length > 0) {
-      console.log("Offline players detected");
-      //update the offline players status to "waiting"
-      offlinePlayers.map((player) => {
-        updatePlayerStatus({
-          status: "waiting",
-          userId: player._id,
-        });
-      });
-    }
     // this triggers a new round
     setNewRound(true);
   };

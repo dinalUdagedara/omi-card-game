@@ -185,8 +185,6 @@ export const getPlayerInfo = internalMutation({
   },
 });
 
-
-
 export const isRoomCreatorOffline = query({
   args: {
     roomName: v.string(),
@@ -277,15 +275,11 @@ export const updateGameStateAfterRoundBot = internalMutation({
 
         // Calculate the next player's index
         const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
-
-        // Update the playerTurn and trumpSetter to the next player
-        const nextPlayerTurn = players[nextPlayerIndex];
         const nextTrumpSetter = players[nextPlayerIndex];
 
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {
           currentRound: nextRound,
-          playerTurn: nextPlayerTurn.playerId,
           trumpSetter: nextTrumpSetter.playerId, // Rotate trump setter as well
           trump: null,
           playersDecks: args.playersDecks,

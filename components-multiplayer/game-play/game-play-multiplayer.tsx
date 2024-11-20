@@ -416,7 +416,11 @@ const GamePlayMultiplayer = () => {
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
     //if room creator is offline run resetafterRoundBot
-    if (isRoomCreatorOffline === true) {
+    if (
+      isRoomCreatorOffline === true &&
+      playersInRoom &&
+      userID === playersInRoom[0]
+    ) {
       if (roomId && userID) {
         resettingAfterRoundBot({ roomName: roomId, userID: userID });
       }

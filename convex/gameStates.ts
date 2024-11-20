@@ -218,7 +218,7 @@ export const updateGameStateAfterRound = mutation({
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {
           currentRound: nextRound,
-          playerTurn: nextPlayerTurn.playerId,
+          // playerTurn: nextPlayerTurn.playerId,
           trumpSetter: nextTrumpSetter.playerId, // Rotate trump setter as well
           trump: null,
           playersDecks: args.playersDecks,

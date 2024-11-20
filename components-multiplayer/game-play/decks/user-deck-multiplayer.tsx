@@ -69,10 +69,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     roomName: roomName,
   });
 
-  useEffect(() => {
-    // console.log("userTurn ", isUserTurn);
-    // console.log("time out ", timeoutId);
-  }, [timeoutId, isUserTurn, trumpSuit]);
 
   useEffect(() => {
     if (turnPlayerID) {

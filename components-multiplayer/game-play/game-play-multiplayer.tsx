@@ -235,6 +235,7 @@ const GamePlayMultiplayer = () => {
         `Player with ID ${turnPlayerID} is disconnected. Automating their card play.`
       );
 
+      //Playing the disconnected player's card only by a signle player to avoid multiple card selection
       if (roomId && turnPlayerID) {
         const players = roomdataFromDB?.playerUserNames || [];
 

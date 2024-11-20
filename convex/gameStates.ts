@@ -1,3 +1,5 @@
+import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 import { mutation, MutationCtx, query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -575,5 +577,37 @@ export const removeUserFromGameStateAndRoom = mutation({
       message:
         "User removed from both game state and room. Player status updated to 'waiting'.",
     };
+  },
+});
+
+export const getWinnerID = mutation({
+  args: {
+    winningCard: v.object({ suit: v.string(), value: v.string() }),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      { roomName: args.roomName }
+    );
+    if (!gameState) {
+      return null;
+    }
+
+    const playersCards = gameState.playersCards;
+
+    // Find the winner
+    const winner = playersCards.find(
+      (playerCard) =>
+        playerCard.card.suit === args.winningCard.suit &&
+        playerCard.card.value === args.winningCard.value
+    );
+    if (!winner) {
+      console.log("No Winner found");
+    }
+    if (winner?.playerId) {
+      const winnerID: Id<"players"> = winner?.playerId;
+      return winnerID;
+    }
   },
 });

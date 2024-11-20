@@ -256,11 +256,6 @@ const GamePlayMultiplayer = () => {
           userName: players[3],
         });
 
-        // console.log("isPlayer1Offline", isPlayer1Offline);
-        // console.log("isPlayer2Offline", isPlayer2Offline);
-        // console.log("isPlayer3Offline", isPlayer3Offline);
-        // console.log("isPlayer4Offline", isPlayer4Offline);
-
         if (!isPlayer1Offline) {
           if (players[0] === userName) {
             console.log(`Player ${players[0]} is Triggering.`);
@@ -416,6 +411,9 @@ const GamePlayMultiplayer = () => {
   const updateGameInstanceDB = async () => {
     console.log("updateGameInstanceDB");
     //if room creator is offline run resetafterRoundBot
+
+    
+    //Need a same logic for this to call by only a one player
     if (
       isRoomCreatorOffline === true &&
       playersInRoom &&

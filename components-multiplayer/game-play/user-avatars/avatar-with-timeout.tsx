@@ -8,6 +8,7 @@ import { api } from "@/convex/_generated/api";
 import { usePathname } from "next/navigation";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import 'react-circular-progressbar/dist/styles.css';
 
 const UserAvatarContainerWithTimeOut = () => {
   const pathname = usePathname();
@@ -34,7 +35,7 @@ const UserAvatarContainerWithTimeOut = () => {
   return (
     <div>
       <CircularProgressbarWithChildren
-        className="relative w-20 h-20 lg:w-40 lg:h-40 "
+        className="relative w-16 h-16 lg:w-32 lg:h-32 z-20"
         value={seconds * 6}
       >
         <motion.div
@@ -51,7 +52,7 @@ const UserAvatarContainerWithTimeOut = () => {
             duration: 0.8,
           }}
         >
-          <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
+          <Avatar className="relative w-14 h-14 lg:w-28 lg:h-28 shadow-md ">
             <Image
               alt="Mountains"
               src={notificaitonBackGround}

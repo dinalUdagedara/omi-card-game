@@ -303,6 +303,90 @@ const GamePlayMultiplayer = () => {
       );
     }
   }
+  async function resetAfterRound() {
+    console.log("reset afer Round");
+    //update the trumpsetter in here
+    if (roomId) {
+      //make score board zero for teams
+      resetTeamPoints({
+        roomName: roomId,
+      });
+
+      if (roomdataFromDB) {
+        initialSetup();
+        updateGameInstanceDB();
+      }
+    }
+  }
+  // Function to send the ping every 10 seconds
+  function startHeartbeat() {
+    const intervalId = setInterval(async () => {
+      try {
+        const roomName = roomId;
+        if (userID && roomName) {
+          // updating the heartbeat
+          await updatePlayerHeartbeat({ userID, roomName });
+          // await rejoinPlayers({ roomName });
+        }
+      } catch (error) {
+        console.error("Failed to update heartbeat:", error);
+      }
+    }, 5000); // Every 5 seconds
+
+    return intervalId;
+  }
+
+  async function SetOfflinePlayers() {
+    const roomName = roomId;
+    if (roomName) {
+      //handling disconnected Players
+      await handleDisconnectedPlayers({ roomName: roomName });
+    }
+  }
+
+  const updateGameInstanceDB = async () => {
+    //if room creator is offline run resetafterRoundBot
+    if (
+      isRoomCreatorOffline === true &&
+      playersInRoom &&
+      userID === playersInRoom[0]
+    ) {
+      if (roomId && userID) {
+        resettingAfterRoundBot({ roomName: roomId, userID: userID });
+      }
+    }
+
+    if (isRoomCreator && playersInRoom) {
+      const players = playersInRoom;
+      try {
+        if (dealtHands && userID) {
+          // Map playersInRoom and dealtHands to match player IDs with their decks
+          const playersDecks = players.map((playerId, index) => ({
+            playerId,
+            deck: dealtHands[index].hand,
+          }));
+          const roomName = roomId;
+          if (roomName) {
+            await updateGameStateAfterRound({
+              roomName,
+              playersDecks,
+            });
+          }
+
+          // changeTrumptoNull();
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
+    setNewRound(false);
+  };
+
+  async function rejoiningPlayers() {
+    if (roomId) {
+      await rejoinPlayers({ roomName: roomId });
+    }
+  }
 
   //checking if the player with the turn is disconnected
   useEffect(() => {
@@ -315,7 +399,7 @@ const GamePlayMultiplayer = () => {
         playDisconnectedPlayersCard();
       }
     }
-  }, [turnPlayerID, disconnectedPlayers,playingCards]);
+  }, [turnPlayerID, disconnectedPlayers, playingCards]);
 
   useEffect(() => {
     if (playersInRoom) {
@@ -359,100 +443,6 @@ const GamePlayMultiplayer = () => {
   useEffect(() => {
     handleJoinRoom();
   }, [roomId, userName]);
-
-  async function resetAfterRound() {
-    console.log("reset afer Round");
-    //update the trumpsetter in here
-    if (roomId) {
-      //make score board zero for teams
-      resetTeamPoints({
-        roomName: roomId,
-      });
-
-      if (roomdataFromDB) {
-        initialSetup();
-        updateGameInstanceDB();
-      }
-    }
-  }
-
-  function changeTrumptoNull() {
-    setTrumpSuit(null);
-    const trumpSuit = null;
-    const roomName = roomId;
-    if (trumpSuit && roomName) {
-      updateTrump({
-        roomName,
-        trumpSuit,
-      });
-    }
-  }
-  // Function to send the ping every 10 seconds
-  function startHeartbeat() {
-    const intervalId = setInterval(async () => {
-      try {
-        const roomName = roomId;
-        if (userID && roomName) {
-          // updating the heartbeat
-          await updatePlayerHeartbeat({ userID, roomName });
-          // await rejoinPlayers({ roomName });
-        }
-      } catch (error) {
-        console.error("Failed to update heartbeat:", error);
-      }
-    }, 5000); // Every 5 seconds
-
-    return intervalId;
-  }
-
-  async function SetOfflinePlayers() {
-    const roomName = roomId;
-    if (roomName) {
-      //handling disconnected Players
-      await handleDisconnectedPlayers({ roomName: roomName });
-    }
-  }
-
-  const updateGameInstanceDB = async () => {
-    console.log("updateGameInstanceDB");
-    //if room creator is offline run resetafterRoundBot
-
-    //Need a same logic for this to call by only a one player
-    if (
-      isRoomCreatorOffline === true &&
-      playersInRoom &&
-      userID === playersInRoom[0]
-    ) {
-      if (roomId && userID) {
-        resettingAfterRoundBot({ roomName: roomId, userID: userID });
-      }
-    }
-
-    if (isRoomCreator && playersInRoom) {
-      const players = playersInRoom;
-      try {
-        if (dealtHands && userID) {
-          // Map playersInRoom and dealtHands to match player IDs with their decks
-          const playersDecks = players.map((playerId, index) => ({
-            playerId,
-            deck: dealtHands[index].hand,
-          }));
-          const roomName = roomId;
-          if (roomName) {
-            await updateGameStateAfterRound({
-              roomName,
-              playersDecks,
-            });
-          }
-
-          // changeTrumptoNull();
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    }
-    setNewRound(false);
-  };
 
   useEffect(() => {
     //run if this is a  new Round and all the players are "waiting" only
@@ -535,12 +525,6 @@ const GamePlayMultiplayer = () => {
       SetOfflinePlayers();
     }
   }, [offlinePlayers]);
-
-  async function rejoiningPlayers() {
-    if (roomId) {
-      await rejoinPlayers({ roomName: roomId });
-    }
-  }
 
   useEffect(() => {
     if (isAllPlaying) {

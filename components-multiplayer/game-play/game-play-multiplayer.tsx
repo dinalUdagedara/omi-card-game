@@ -23,8 +23,8 @@ import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
 import NoticeCardTemplate from "./game-board/game-board-template";
 import NameCardTemplate from "./name-card/name-card-template";
 import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
-import Image from "next/image";
-import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import UserAvatarContainerWithTimeOut from "./user-avatars/avatar-with-timeout";
+import UserAvatarContainer from "./user-avatars/avatar-container";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -521,6 +521,7 @@ const GamePlayMultiplayer = () => {
   }, [userID, roomId]);
 
   useEffect(() => {
+    console.log("offline players", offlinePlayers);
     if (offlinePlayers && offlinePlayers.length > 0 && isAllPlaying) {
       SetOfflinePlayers();
     }
@@ -568,37 +569,12 @@ const GamePlayMultiplayer = () => {
             <div className="">
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
-
-            <motion.div
-              className=" rounded-full"
-              initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  playerTurnUserName === teamMember
-                    ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                    : "none", // No shadow when it's not players's turn
-              }}
-              transition={{
-                duration: 0.8,
-              }}
-            >
-              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md z-20 ">
-                <Image
-                  alt="Mountains"
-                  src={notificaitonBackGround}
-                  fill
-                  sizes="(min-width: 808px) 50vw, 100vw"
-                  style={{
-                    objectFit: "cover", // cover, contain, none
-                  }}
-                />
-                <AvatarImage
-                  className="z-20"
-                  src={`/assets/images/user-avatars/person8.png`}
-                />
-              </Avatar>
-            </motion.div>
-
+            {playerTurnUserName === teamMember ? (
+              <UserAvatarContainerWithTimeOut />
+            ) : (
+              <UserAvatarContainer />
+            )}
+            ;
             <div className="text-center ">
               <NameCardTemplate>{teamMember || "Waiting.."}</NameCardTemplate>
             </div>
@@ -609,40 +585,15 @@ const GamePlayMultiplayer = () => {
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
               <div className="text-center py-2">
                 <NameCardTemplate>{opponent_2 || "Waiting.."}</NameCardTemplate>
-              </div>{" "}
-              <motion.div
-                className=" rounded-full"
-                initial={{ boxShadow: "none" }}
-                animate={{
-                  boxShadow:
-                    playerTurnUserName === opponent_2
-                      ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                      : "none", // No shadow when it's not players's turn
-                }}
-                transition={{
-                  duration: 0.8,
-                }}
-              >
-                <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
-                  <Image
-                    alt="Mountains"
-                    src={notificaitonBackGround}
-                    fill
-                    sizes="(min-width: 808px) 50vw, 100vw"
-                    style={{
-                      objectFit: "cover",
-                    }}
-                  />
-                  <AvatarImage
-                    className="z-20"
-                    src={`/assets/images/user-avatars/person8.png`}
-                  />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
-              </motion.div>
+              </div>
+              {playerTurnUserName === opponent_2 ? (
+                <UserAvatarContainerWithTimeOut />
+              ) : (
+                <UserAvatarContainer />
+              )}
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
-          </div>{" "}
+          </div>
           <div className=" flex justify-center items-center  ">
             <NoticeCardTemplate>
               <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
@@ -662,36 +613,13 @@ const GamePlayMultiplayer = () => {
                 <OtherDecksMultiplayer
                   userHand={myCardDeck ?? exampleCardSet}
                 />
-                <motion.div
-                  className=" rounded-full"
-                  initial={{ boxShadow: "none" }}
-                  animate={{
-                    boxShadow:
-                      playerTurnUserName === opponent_1
-                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                        : "none", // No shadow when it's not players's turn
-                  }}
-                  transition={{
-                    duration: 0.8,
-                  }}
-                >
-                  <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
-                    <Image
-                      alt="Mountains"
-                      src={notificaitonBackGround}
-                      fill
-                      sizes="(min-width: 808px) 50vw, 100vw"
-                      style={{
-                        objectFit: "cover", // cover, contain, none
-                      }}
-                    />
-                    <AvatarImage
-                      className="z-20"
-                      src={`/assets/images/user-avatars/person8.png`}
-                    />
-                    <AvatarFallback>Dp</AvatarFallback>
-                  </Avatar>
-                </motion.div>{" "}
+
+                {playerTurnUserName === opponent_1 ? (
+                  <UserAvatarContainerWithTimeOut />
+                ) : (
+                  <UserAvatarContainer />
+                )}
+
                 <div className="text-center py-2">
                   <NameCardTemplate>
                     {opponent_1 || "Waiting.."}

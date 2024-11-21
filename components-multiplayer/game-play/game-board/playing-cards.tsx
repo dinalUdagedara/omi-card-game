@@ -171,11 +171,15 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
         }
       }
 
-      if (winningCard)
-        setTimeout(() => {
-          setWinningCard(winningCard);
-          playCollectCards(muted);
-        }, 2000);
+      if (winningCard) {
+        setWinningCard(winningCard);
+        playCollectCards(muted);
+      }
+
+      // setTimeout(() => {
+      //   setWinningCard(winningCard);
+      //   playCollectCards(muted);
+      // }, 1000);
     }
   }
 

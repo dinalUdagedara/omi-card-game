@@ -536,7 +536,6 @@ const GamePlayMultiplayer = () => {
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
       {
-        // !isTrumpSelected &&
         !isGameOver &&
           !trumpSuit &&
           isRoomCreator &&
@@ -635,7 +634,6 @@ const GamePlayMultiplayer = () => {
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive && (
-              // {roomId && userID && (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer
@@ -652,12 +650,6 @@ const GamePlayMultiplayer = () => {
           <motion.div
             className=" rounded-full"
             initial={{ boxShadow: "none" }}
-            // animate={{
-            //   boxShadow:
-            //     playerTurnUserName === userName
-            //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-            //       : "none", // No shadow when it's not user's turn
-            // }}
             transition={{
               duration: 0.8,
             }}

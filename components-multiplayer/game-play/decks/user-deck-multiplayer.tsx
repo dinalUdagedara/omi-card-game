@@ -17,7 +17,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
@@ -33,10 +32,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setUserTurn = useStore((state) => state.setIsUserTurn);
   const userName = MultiplayerStateStore((state) => state.userName);
-  const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
   const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
   const muted = useStore((state) => state.muted);
-  const { playHoverSound } = useHoverSound();
 
   const [selectedCard, setSelectedCard] = useState<cardMultiplayer | null>(
     null
@@ -57,10 +54,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const noOfPlayingcards = useQuery(api.gameLogic.noOfPlayingCards, {
     roomName: roomName,
   });
-
-  const selectCard = useMutation(api.gameLogic.updatePlayingCards);
-  const updateViolation = useMutation(api.gameStates.updateViolationOccured);
-  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
   const turnsuit = useQuery(api.gameLogic.getTurnSuit, {
     roomName: roomName,
   });
@@ -68,36 +61,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     userId: userID,
     roomName: roomName,
   });
+  const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+  const updateViolation = useMutation(api.gameStates.updateViolationOccured);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
-  useEffect(() => {
-    // console.log("userTurn ", isUserTurn);
-    // console.log("time out ", timeoutId);
-  }, [timeoutId, isUserTurn, trumpSuit]);
-
-  useEffect(() => {
-    if (turnPlayerID) {
-      const num = noOfPlayingcards ?? 0;
-      if (turnPlayerID === userID && num < 4) {
-        console.log("Setting User , timeoutID:", timeoutId);
-        setUserTurn(true);
-
-        // Start 10-second timer to auto-play card
-        if (trumpSuit) {
-          const id = setTimeout(() => {
-            autoPlayCard();
-          }, 10000);
-          setTimeoutId(id);
-        }
-      } else {
-        // Clear timeout if it's not the user's turn
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-          setTimeoutId(null);
-        }
-        setUserTurn(false);
-      }
-    }
-  }, [turnPlayerID, noOfPlayingcards, trumpSuit]);
+  const { playHoverSound } = useHoverSound();
 
   // Automatically play a valid card after 10 seconds
   async function autoPlayCard() {
@@ -114,11 +82,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
       await handleCardSelect(cardToPlay);
     }
   }
-
-  useEffect(() => {
-    if (myCardSet) setMyCardDeck(myCardSet);
-    console.log("");
-  }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
     // Clear timeout when user selects a card manually
@@ -161,7 +124,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     }
   }
 
-  // Function to handle when the user confirms they want to proceed
+  // Function to handle when the user confirms they want to proceed even after commiting a violation
   async function handleConfirmSelection() {
     if (selectedCard && userName && myTeam) {
       // Update the violation before proceeding
@@ -190,6 +153,36 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     setSelectedCard(null); // Reset the selected card
     setIsViolation(false); // Reset violation flag
   }
+  
+  //fetching my card set from the database and saving it to the states
+  useEffect(() => {
+    if (myCardSet) setMyCardDeck(myCardSet);
+  }, [myCardSet]);
+
+  useEffect(() => {
+    if (turnPlayerID) {
+      const num = noOfPlayingcards ?? 0;
+      if (turnPlayerID === userID && num < 4) {
+        console.log("Setting User , timeoutID:", timeoutId);
+        setUserTurn(true);
+
+        // Start 10-second timer to auto-play card
+        if (trumpSuit) {
+          const id = setTimeout(() => {
+            autoPlayCard();
+          }, 15000);
+          setTimeoutId(id);
+        }
+      } else {
+        // Clear timeout if it's not the user's turn
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          setTimeoutId(null);
+        }
+        setUserTurn(false);
+      }
+    }
+  }, [turnPlayerID, noOfPlayingcards, trumpSuit]);
 
   return (
     <div className="h-2 w-96 flex justify-center mr-5 ">

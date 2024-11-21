@@ -145,7 +145,7 @@ export const getAllActivePublicRooms = query({
       )
       .collect();
 
-    console.log("activePublicRooms", activePublicRooms);
+    // console.log("activePublicRooms", activePublicRooms);
 
     // Filter for rooms with 0 or 1 player
     const waitingJoinableRooms = activePublicRooms.filter((room) => {
@@ -300,9 +300,23 @@ export const updateCreator = mutation({
     const nextCreatorIndex = roundNumber % players.length;
     const nextCreator = players[nextCreatorIndex];
 
+    const nextCreatorInfo = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), nextCreator))
+      .first();
+
+    if (!nextCreatorInfo || !gameState) {
+      return null;
+    }
+
     // Update the creator with the player based on the round number
     await ctx.db.patch(room._id, {
       creator: nextCreator, // Set the creator based on the round number
+    });
+
+    // Update the userTurn in the gameState
+    await ctx.db.patch(gameState?._id, {
+      playerTurn: nextCreatorInfo._id,
     });
   },
 });
@@ -386,7 +400,7 @@ export const allPlayersWaiting = query({
 
       // Return false if no players are found
       if (players.length === 0) {
-        console.log("No players found in the room.");
+        // console.log("No players found in the room.");
         return false;
       }
 
@@ -418,7 +432,7 @@ export const allPlayersPlaying = query({
 
       // Return false if no players are found
       if (players.length === 0) {
-        console.log("No players found in the room.");
+        // console.log("No players found in the room.");
         return false;
       }
 

@@ -161,15 +161,16 @@ export const updatePlayingCards = mutation({
         playerTurn: nextPlayerId.playerId,
       });
 
-      if (
-        nextPlayerId.status === "offline" &&
-        gameState.playersCards.length < 4
-      ) {
-        await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
-          roomName: args.roomName,
-          userId: nextPlayerId.playerId,
-        });
-      }
+// Replaced this function with handleCardSelectForDisconnectedPlayer in autoplayingbot.ts
+      // if (
+      //   nextPlayerId.status === "offline" &&
+      //   gameState.playersCards.length < 4
+      // ) {
+      //   await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
+      //     roomName: args.roomName,
+      //     userId: nextPlayerId.playerId,
+      //   });
+      // }
     }
   },
 });

@@ -23,8 +23,8 @@ import { SuitDrawerMultiplayer } from "./suit-selector/suit-drawer-multiplayer";
 import NoticeCardTemplate from "./game-board/game-board-template";
 import NameCardTemplate from "./name-card/name-card-template";
 import { OtherDecksMultiplayer } from "../cards/other-card-deck-multiplayer";
-import Image from "next/image";
-import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
+import UserAvatarContainerWithTimeOut from "./user-avatars/avatar-with-timeout";
+import UserAvatarContainer from "./user-avatars/avatar-container";
 
 const GamePlayMultiplayer = () => {
   const pathname = usePathname();
@@ -117,6 +117,10 @@ const GamePlayMultiplayer = () => {
     userid: userID || null,
   });
 
+  const turnPlayerID = useQuery(api.gameLogic.getPlayerTurn, {
+    roomName: roomId || "",
+  });
+
   const updatePlayerHeartbeat = useMutation(
     api.autoPlayingBot.updatePlayersHeartBeat
   );
@@ -125,23 +129,33 @@ const GamePlayMultiplayer = () => {
     api.autoPlayingBot.handleDisconnectedPlayers
   );
   const rejoinPlayers = useMutation(api.autoPlayingBot.rejoinPlayers);
+  const handleCardSelectForDisconnectedPlayer = useMutation(
+    api.autoPlayingBot.handleCardSelectForDisconnectedPlayer
+  );
 
   const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
     roomName: roomId || "",
   });
+
+  const disconnectedPlayers = useQuery(api.autoPlayingBot.disconnectedPlayers, {
+    roomName: roomId || "",
+  });
+
   const isRoomCreatorOffline = useQuery(
     api.internalFunctions.isRoomCreatorOffline,
     {
       roomName: roomId || "",
     }
   );
+  const playingCards = useQuery(api.gameLogic.getPlayingCards, {
+    roomName: roomId || "",
+  });
   const resettingAfterRoundBot = useMutation(
     api.autoPlayingBot.resettingAfterRoundBot
   );
+  const checkPlayerStatus = useMutation(api.autoPlayingBot.checkPlayerStatus);
 
   const createGameInstanceDB = async () => {
-    console.log("isRoom Creator in gameinsdtanceDB ", isRoomCreator);
-    console.log("dewalhands", dealtHands);
     if (isRoomCreator && playersInRoom) {
       const players = playersInRoom;
       try {
@@ -211,6 +225,182 @@ const GamePlayMultiplayer = () => {
     setTrumpSelected(true);
   }
 
+  async function playDisconnectedPlayersCard() {
+    console.log("disconnected players ", disconnectedPlayers);
+
+    // Check if it's the turn of a disconnected player
+    const disconnectedPlayerTurn = disconnectedPlayers?.some((player) => {
+      return player.playerId === turnPlayerID;
+    });
+
+    if (disconnectedPlayerTurn) {
+      console.log(
+        `Player with ID ${turnPlayerID} is disconnected. Automating their card play.`
+      );
+
+      //Playing the disconnected player's card only by a signle player to avoid multiple card selection
+      if (roomId && turnPlayerID) {
+        const players = roomdataFromDB?.playerUserNames || [];
+
+        const isPlayer1Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[0],
+        });
+        const isPlayer2Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[1],
+        });
+        const isPlayer3Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[2],
+        });
+        const isPlayer4Offline = await checkPlayerStatus({
+          roomName: roomId,
+          userName: players[3],
+        });
+
+        if (!isPlayer1Offline) {
+          if (players[0] === userName) {
+            console.log(`Player ${players[0]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        } else if (!isPlayer2Offline) {
+          if (players[1] === userName) {
+            console.log(`Player ${players[1]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        } else if (!isPlayer3Offline) {
+          if (players[2] === userName) {
+            console.log(`Player ${players[2]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        } else if (!isPlayer4Offline) {
+          if (players[3] === userName) {
+            console.log(`Player ${players[3]} is Triggering.`);
+            // Trigger the card select function for the player whose turn it is
+            handleCardSelectForDisconnectedPlayer({
+              roomName: roomId,
+              userId: turnPlayerID,
+            });
+          }
+        }
+      }
+    } else {
+      console.log(
+        `Player with ID ${turnPlayerID} is connected. Waiting for their action.`
+      );
+    }
+  }
+  async function resetAfterRound() {
+    console.log("reset afer Round");
+    //update the trumpsetter in here
+    if (roomId) {
+      //make score board zero for teams
+      resetTeamPoints({
+        roomName: roomId,
+      });
+
+      if (roomdataFromDB) {
+        initialSetup();
+        updateGameInstanceDB();
+      }
+    }
+  }
+  // Function to send the ping every 10 seconds
+  function startHeartbeat() {
+    const intervalId = setInterval(async () => {
+      try {
+        const roomName = roomId;
+        if (userID && roomName) {
+          // updating the heartbeat
+          await updatePlayerHeartbeat({ userID, roomName });
+          // await rejoinPlayers({ roomName });
+        }
+      } catch (error) {
+        console.error("Failed to update heartbeat:", error);
+      }
+    }, 5000); // Every 5 seconds
+
+    return intervalId;
+  }
+
+  async function SetOfflinePlayers() {
+    const roomName = roomId;
+    if (roomName) {
+      //handling disconnected Players
+      await handleDisconnectedPlayers({ roomName: roomName });
+    }
+  }
+
+  const updateGameInstanceDB = async () => {
+    //if room creator is offline run resetafterRoundBot
+    if (
+      isRoomCreatorOffline === true &&
+      playersInRoom &&
+      userID === playersInRoom[0]
+    ) {
+      if (roomId && userID) {
+        resettingAfterRoundBot({ roomName: roomId, userID: userID });
+      }
+    }
+
+    if (isRoomCreator && playersInRoom) {
+      const players = playersInRoom;
+      try {
+        if (dealtHands && userID) {
+          // Map playersInRoom and dealtHands to match player IDs with their decks
+          const playersDecks = players.map((playerId, index) => ({
+            playerId,
+            deck: dealtHands[index].hand,
+          }));
+          const roomName = roomId;
+          if (roomName) {
+            await updateGameStateAfterRound({
+              roomName,
+              playersDecks,
+            });
+          }
+
+          // changeTrumptoNull();
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
+    setNewRound(false);
+  };
+
+  async function rejoiningPlayers() {
+    if (roomId) {
+      await rejoinPlayers({ roomName: roomId });
+    }
+  }
+
+  //checking if the player with the turn is disconnected
+  useEffect(() => {
+    if (
+      turnPlayerID &&
+      disconnectedPlayers &&
+      disconnectedPlayers?.length > 0
+    ) {
+      if (playingCards && playingCards?.length < 4 && isAllPlaying) {
+        playDisconnectedPlayersCard();
+      }
+    }
+  }, [turnPlayerID, disconnectedPlayers, playingCards]);
+
   useEffect(() => {
     if (playersInRoom) {
       setPlayersIDs(playersInRoom);
@@ -253,95 +443,6 @@ const GamePlayMultiplayer = () => {
   useEffect(() => {
     handleJoinRoom();
   }, [roomId, userName]);
-
-  async function resetAfterRound() {
-    console.log("reset afer Round");
-    //update the trumpsetter in here
-    if (roomId) {
-      //make score board zero for teams
-      resetTeamPoints({
-        roomName: roomId,
-      });
-
-      if (roomdataFromDB) {
-        initialSetup();
-        updateGameInstanceDB();
-      }
-    }
-  }
-
-  function changeTrumptoNull() {
-    setTrumpSuit(null);
-    const trumpSuit = null;
-    const roomName = roomId;
-    if (trumpSuit && roomName) {
-      updateTrump({
-        roomName,
-        trumpSuit,
-      });
-    }
-  }
-  // Function to send the ping every 10 seconds
-  function startHeartbeat() {
-    const intervalId = setInterval(async () => {
-      try {
-        const roomName = roomId;
-        if (userID && roomName) {
-          // updating the heartbeat
-          await updatePlayerHeartbeat({ userID, roomName });
-          await rejoinPlayers({ roomName });
-          // console.log("upadting heart beat");
-        }
-      } catch (error) {
-        console.error("Failed to update heartbeat:", error);
-      }
-    }, 5000); // Every 5 seconds
-
-    return intervalId;
-  }
-
-  async function SetOfflinePlayers() {
-    const roomName = roomId;
-    if (roomName) {
-      //handling disconnected Players
-      await handleDisconnectedPlayers({ roomName: roomName });
-    }
-  }
-
-  const updateGameInstanceDB = async () => {
-    console.log("updateGameInstanceDB");
-    //if room creator is offline run resetafterRoundBot
-    if (isRoomCreatorOffline === true) {
-      if (roomId && userID) {
-        resettingAfterRoundBot({ roomName: roomId, userID: userID });
-      }
-    }
-
-    if (isRoomCreator && playersInRoom) {
-      const players = playersInRoom;
-      try {
-        if (dealtHands && userID) {
-          // Map playersInRoom and dealtHands to match player IDs with their decks
-          const playersDecks = players.map((playerId, index) => ({
-            playerId,
-            deck: dealtHands[index].hand,
-          }));
-          const roomName = roomId;
-          if (roomName) {
-            await updateGameStateAfterRound({
-              roomName,
-              playersDecks,
-            });
-          }
-
-          // changeTrumptoNull();
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    }
-    setNewRound(false);
-  };
 
   useEffect(() => {
     //run if this is a  new Round and all the players are "waiting" only
@@ -420,16 +521,21 @@ const GamePlayMultiplayer = () => {
   }, [userID, roomId]);
 
   useEffect(() => {
-    // console.log("OfflinePlayers", offlinePlayers);
-    if (offlinePlayers && offlinePlayers.length > 0) {
+    console.log("offline players", offlinePlayers);
+    if (offlinePlayers && offlinePlayers.length > 0 && isAllPlaying) {
       SetOfflinePlayers();
+    }
+  }, [offlinePlayers]);
+
+  useEffect(() => {
+    if (isAllPlaying) {
+      rejoiningPlayers();
     }
   }, [offlinePlayers]);
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
       {
-        // !isTrumpSelected &&
         !isGameOver &&
           !trumpSuit &&
           isRoomCreator &&
@@ -462,37 +568,12 @@ const GamePlayMultiplayer = () => {
             <div className="">
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
-
-            <motion.div
-              className=" rounded-full"
-              initial={{ boxShadow: "none" }}
-              animate={{
-                boxShadow:
-                  playerTurnUserName === teamMember
-                    ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                    : "none", // No shadow when it's not players's turn
-              }}
-              transition={{
-                duration: 0.8,
-              }}
-            >
-              <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md z-20 ">
-                <Image
-                  alt="Mountains"
-                  src={notificaitonBackGround}
-                  fill
-                  sizes="(min-width: 808px) 50vw, 100vw"
-                  style={{
-                    objectFit: "cover", // cover, contain, none
-                  }}
-                />
-                <AvatarImage
-                  className="z-20"
-                  src={`/assets/images/user-avatars/person8.png`}
-                />
-              </Avatar>
-            </motion.div>
-
+            {playerTurnUserName === teamMember ? (
+              <UserAvatarContainerWithTimeOut />
+            ) : (
+              <UserAvatarContainer />
+            )}
+            ;
             <div className="text-center ">
               <NameCardTemplate>{teamMember || "Waiting.."}</NameCardTemplate>
             </div>
@@ -503,40 +584,15 @@ const GamePlayMultiplayer = () => {
             <div className="flex flex-col justify-center items-center  min-w-[70px]">
               <div className="text-center py-2">
                 <NameCardTemplate>{opponent_2 || "Waiting.."}</NameCardTemplate>
-              </div>{" "}
-              <motion.div
-                className=" rounded-full"
-                initial={{ boxShadow: "none" }}
-                animate={{
-                  boxShadow:
-                    playerTurnUserName === opponent_2
-                      ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                      : "none", // No shadow when it's not players's turn
-                }}
-                transition={{
-                  duration: 0.8,
-                }}
-              >
-                <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
-                  <Image
-                    alt="Mountains"
-                    src={notificaitonBackGround}
-                    fill
-                    sizes="(min-width: 808px) 50vw, 100vw"
-                    style={{
-                      objectFit: "cover",
-                    }}
-                  />
-                  <AvatarImage
-                    className="z-20"
-                    src={`/assets/images/user-avatars/person8.png`}
-                  />
-                  <AvatarFallback>Dp</AvatarFallback>
-                </Avatar>
-              </motion.div>
+              </div>
+              {playerTurnUserName === opponent_2 ? (
+                <UserAvatarContainerWithTimeOut />
+              ) : (
+                <UserAvatarContainer />
+              )}
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
-          </div>{" "}
+          </div>
           <div className=" flex justify-center items-center  ">
             <NoticeCardTemplate>
               <div className="w-full h-full justify-center  items-center z-20 min-w-[175px]  lg:w-[550px] lg:min-h-[350px]  md:h-full ">
@@ -556,36 +612,13 @@ const GamePlayMultiplayer = () => {
                 <OtherDecksMultiplayer
                   userHand={myCardDeck ?? exampleCardSet}
                 />
-                <motion.div
-                  className=" rounded-full"
-                  initial={{ boxShadow: "none" }}
-                  animate={{
-                    boxShadow:
-                      playerTurnUserName === opponent_1
-                        ? "0 0 16px rgba(0, 255, 0, 0.8)" // Green glowing effect
-                        : "none", // No shadow when it's not players's turn
-                  }}
-                  transition={{
-                    duration: 0.8,
-                  }}
-                >
-                  <Avatar className="relative w-16 h-16 lg:w-32 lg:h-32 shadow-md ">
-                    <Image
-                      alt="Mountains"
-                      src={notificaitonBackGround}
-                      fill
-                      sizes="(min-width: 808px) 50vw, 100vw"
-                      style={{
-                        objectFit: "cover", // cover, contain, none
-                      }}
-                    />
-                    <AvatarImage
-                      className="z-20"
-                      src={`/assets/images/user-avatars/person8.png`}
-                    />
-                    <AvatarFallback>Dp</AvatarFallback>
-                  </Avatar>
-                </motion.div>{" "}
+
+                {playerTurnUserName === opponent_1 ? (
+                  <UserAvatarContainerWithTimeOut />
+                ) : (
+                  <UserAvatarContainer />
+                )}
+
                 <div className="text-center py-2">
                   <NameCardTemplate>
                     {opponent_1 || "Waiting.."}
@@ -601,7 +634,6 @@ const GamePlayMultiplayer = () => {
         <div className="flex w-full justify-center items-center">
           <div className="">
             {roomId && userID && isRoomActive && (
-              // {roomId && userID && (
               <div className="relative w-full ">
                 <div className="">
                   <UserDeckMobileMultiplayer
@@ -618,12 +650,6 @@ const GamePlayMultiplayer = () => {
           <motion.div
             className=" rounded-full"
             initial={{ boxShadow: "none" }}
-            // animate={{
-            //   boxShadow:
-            //     playerTurnUserName === userName
-            //       ? "0 0 30px rgba(0, 255, 0, 1)" // Green glowing effect
-            //       : "none", // No shadow when it's not user's turn
-            // }}
             transition={{
               duration: 0.8,
             }}

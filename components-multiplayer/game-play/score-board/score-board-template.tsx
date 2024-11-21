@@ -30,7 +30,7 @@ const ScoreBoardTemplate = ({ userID, roomName }: ScoreBoardTemplateProps) => {
   });
 
   function setPoints() {
-    console.log("myteam", myTeam);
+    // console.log("myteam", myTeam);
     if (myTeam === 1) {
       const myTeamPoints = teamPoints?.team1;
       const opponentTeamPoints = teamPoints?.team2;
@@ -46,7 +46,7 @@ const ScoreBoardTemplate = ({ userID, roomName }: ScoreBoardTemplateProps) => {
   }
 
   useEffect(() => {
-    console.log("teamPoints", teamPoints);
+    // console.log("teamPoints", teamPoints);
     if (teamPoints) {
       setPoints();
     }

@@ -6,6 +6,8 @@ import {
   dealCards,
   shuffleDeck,
 } from "../utils/multiplayer/game-logic-multiplayer";
+import { Player } from "../utils/practise/types";
+import { PlayerData } from "../utils/multiplayer/types-multiplayer";
 
 //Automatically playing disconncted players card
 export const updatePlayingCardsBot = internalMutation({
@@ -97,6 +99,29 @@ export const updatePlayingCardsBot = internalMutation({
       // Update the player turn in the gameState
       await ctx.db.patch(id, {
         playerTurn: nextPlayerId.playerId,
+      });
+    }
+  },
+});
+
+export const handleCardSelectForDisconnectedPlayer = mutation({
+  args: {
+    roomName: v.string(),
+    userId: v.id("players"),
+  },
+  handler: async (ctx, args) => {
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      { roomName: args.roomName }
+    );
+    if (!gameState) {
+      return null;
+    }
+
+    if (gameState.playersCards.length < 4) {
+      await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
+        roomName: args.roomName,
+        userId: args.userId,
       });
     }
   },
@@ -253,12 +278,9 @@ export const handleDisconnectedPlayers = mutation({
         }
       }
     } else {
-      const room = await ctx.runQuery(
-        internal.internalFunctions.returnRoom,
-        {
-          roomName: args.roomName,
-        }
-      );
+      const room = await ctx.runQuery(internal.internalFunctions.returnRoom, {
+        roomName: args.roomName,
+      });
 
       if (!room) {
         return null;
@@ -328,6 +350,35 @@ export const offlinePlayers = query({
   },
 });
 
+//Query for return players  disconnected and updated on the db
+export const disconnectedPlayers = query({
+  args: {
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      {
+        roomName: args.roomName,
+      }
+    );
+
+    if (!gameState) {
+      return null;
+    }
+
+    const disconnctedPlayers: PlayerData[] = gameState.players.filter(
+      (player) => player.status === "offline"
+    );
+    if (!disconnctedPlayers) {
+      return null;
+    }
+
+    return disconnctedPlayers;
+    // console.log("disconnected players ", disconnctedPlayers);
+  },
+});
+
 //separate function to constalty check if a player is rejoined and if yes update the player status in game state
 export const rejoinPlayers = mutation({
   args: {
@@ -386,5 +437,42 @@ export const rejoinPlayers = mutation({
     await ctx.db.patch(gameState._id, {
       players: updatedGameStatePlayers,
     });
+  },
+});
+
+export const checkPlayerStatus = mutation({
+  args: {
+    userName: v.string(),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const playerDetails = await ctx.db
+      .query("players")
+      .filter((q) => q.eq(q.field("userName"), args.userName))
+      .first();
+
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      {
+        roomName: args.roomName,
+      }
+    );
+
+    if (!gameState || !playerDetails) {
+      return null;
+    }
+
+    const offlinePlayers: PlayerData[] = gameState.players.filter((player) => {
+      return player.status === "offline";
+    });
+
+    if (offlinePlayers.length === 0) {
+      return null;
+    }
+
+    // Check if the userID is in the list of offline players
+    return offlinePlayers.some(
+      (player) => player.playerId === playerDetails?._id
+    );
   },
 });

@@ -1,3 +1,5 @@
+import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 import { mutation, MutationCtx, query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -15,7 +17,6 @@ export const createGameState = mutation({
     trumpSetter: v.id("players"),
   },
   handler: async (ctx, args) => {
-    console.log("Creating state");
     // Fetch room data using the room name
     const roomInfo = await ctx.db
       .query("rooms")
@@ -35,8 +36,8 @@ export const createGameState = mutation({
 
     // If a game state already exists
     if (existingGameState) {
-      console.log("Existing game state found");
-      console.log("gamestate.status", existingGameState.status);
+      // console.log("Existing game state found");
+      // console.log("gamestate.status", existingGameState.status);
       return null;
     }
 
@@ -214,12 +215,12 @@ export const updateGameStateAfterRound = mutation({
 
         // Update the playerTurn and trumpSetter to the next player
         const nextPlayerTurn = players[nextPlayerIndex];
-        const nextTrumpSetter = players[nextPlayerIndex]; 
+        const nextTrumpSetter = players[nextPlayerIndex];
 
         // Update the game state with the new round and other data
         await ctx.db.patch(gameState._id, {
           currentRound: nextRound,
-          playerTurn: nextPlayerTurn.playerId,
+          // playerTurn: nextPlayerTurn.playerId,
           trumpSetter: nextTrumpSetter.playerId, // Rotate trump setter as well
           trump: null,
           playersDecks: args.playersDecks,
@@ -393,8 +394,6 @@ export const updateGameStateStatus = mutation({
           status: "game-over",
         });
       }
-
-      console.log(gameState);
     }
   },
 });
@@ -578,5 +577,37 @@ export const removeUserFromGameStateAndRoom = mutation({
       message:
         "User removed from both game state and room. Player status updated to 'waiting'.",
     };
+  },
+});
+
+export const getWinnerID = mutation({
+  args: {
+    winningCard: v.object({ suit: v.string(), value: v.string() }),
+    roomName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const gameState = await ctx.runQuery(
+      internal.internalFunctions.returnGameStateByRoomName,
+      { roomName: args.roomName }
+    );
+    if (!gameState) {
+      return null;
+    }
+
+    const playersCards = gameState.playersCards;
+
+    // Find the winner
+    const winner = playersCards.find(
+      (playerCard) =>
+        playerCard.card.suit === args.winningCard.suit &&
+        playerCard.card.value === args.winningCard.value
+    );
+    if (!winner) {
+      console.log("No Winner found");
+    }
+    if (winner?.playerId) {
+      const winnerID: Id<"players"> = winner?.playerId;
+      return winnerID;
+    }
   },
 });

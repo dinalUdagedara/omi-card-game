@@ -43,7 +43,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   trumps,
 }) => {
   const [cardSet, setCardSet] = useState<cardMultiplayer[] | null>(null);
-
   const setMyCard = MultiplayerStateStore((state) => state.setMyCard);
   const setOpponentCard = MultiplayerStateStore(
     (state) => state.setOpponentCard
@@ -54,9 +53,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   const opponent_1_ID = MultiplayerStateStore((state) => state.opponent_1_ID);
   const opponent_2_ID = MultiplayerStateStore((state) => state.opponent_2_ID);
   const setWinningCard = MultiplayerStateStore((state) => state.setWinningCard);
-  const incrementPoints = useMutation(api.gameLogic.incrementPlayerPoints);
-  const updateTurnWinner = useMutation(api.gameLogic.updateTurnWinner);
-  const updatePlayerTurn = useMutation(api.gameLogic.updatePlayerTurn);
   const teammateCard = MultiplayerStateStore((state) => state.teamMateCard);
   const opponent1Card = MultiplayerStateStore((state) => state.opponent1Card);
   const opponent2Card = MultiplayerStateStore((state) => state.opponent2Card);
@@ -69,24 +65,35 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
   const setOpponent2Card = MultiplayerStateStore(
     (state) => state.setOpponent2Card
   );
-
+  const userName = MultiplayerStateStore((state) => state.userName);
+  const muted = useStore((state) => state.muted);
   // Query to fetch all players' IDs in the room
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
     roomName: roomName || "",
   });
+  const turnsuit = useQuery(api.gameLogic.getTurnSuit, {
+    roomName: roomName,
+  });
+  const getWinnerID = useMutation(api.gameStates.getWinnerID);
+  const checkPlayerStatus = useMutation(api.autoPlayingBot.checkPlayerStatus);
+  const incrementPoints = useMutation(api.gameLogic.incrementPlayerPoints);
+  const updateTurnWinner = useMutation(api.gameLogic.updateTurnWinner);
+  const updatePlayerTurn = useMutation(api.gameLogic.updatePlayerTurn);
+  const roomdataFromDB = useQuery(api.rooms.getRoomData, {
+    roomName: roomName || "",
+  });
 
-  const muted = useStore((state) => state.muted);
   const { playCollectCards } = useCollectingCardSound();
   const { playCardSelect } = useCardSelectSound();
 
-  // playing select card when a card is selected
+  // playing select card sound when a card is selected
   useEffect(() => {
-    // console.log("playing cards lenght ", playingCards.length);
     if (playingCards.length !== 0) {
       playCardSelect(muted);
     }
   }, [playingCards]);
 
+  //Setting fetched playing cards
   useEffect(() => {
     if (playingCards) {
       playingCards.map((cardSet) => {
@@ -101,10 +108,6 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
     }
   }, [playingCards]);
 
-  const turnsuit = useQuery(api.gameLogic.getTurnSuit, {
-    roomName: roomName,
-  });
-
   function getWinner() {
     if (cardSet && trumps && turnsuit) {
       const winningCard = getWinnerMultiplayer(cardSet, trumps, turnsuit);
@@ -112,32 +115,97 @@ const PlayingCards: React.FC<PlayingCardsProps> = ({
     }
   }
 
-  useEffect(() => {
+  //Saving the winning card to the database
+  async function handleWinningCard() {
     if (cardSet && cardSet.length > 3) {
       const winningCard = getWinner();
-      // console.log("Winning Card", winningCard);
-      if (winningCard === myCard) {
-        incrementPoints({
+
+      if (winningCard) {
+        //finding the winner using the winning card
+        const winnerID = await getWinnerID({
           roomName: roomName,
-          userId: userID,
+          winningCard: winningCard,
         });
-        updateTurnWinner({
-          roomName: roomName,
-          userId: userID,
-        });
-        updatePlayerTurn({
-          roomName: roomName,
-          userId: userID,
-        });
+        if (winnerID) {
+          //Logic to settingWinner only from a one connected player
+
+          const players = roomdataFromDB?.playerUserNames || [];
+          const isPlayer1Offline = await checkPlayerStatus({
+            roomName: roomName,
+            userName: players[0],
+          });
+          const isPlayer2Offline = await checkPlayerStatus({
+            roomName: roomName,
+            userName: players[1],
+          });
+          const isPlayer3Offline = await checkPlayerStatus({
+            roomName: roomName,
+            userName: players[2],
+          });
+          const isPlayer4Offline = await checkPlayerStatus({
+            roomName: roomName,
+            userName: players[3],
+          });
+
+          if (!isPlayer1Offline) {
+            if (players[0] === userName) {
+              console.log(`Player ${players[0]} is Setting Winner.`);
+              settingWinner(winnerID);
+            }
+          } else if (!isPlayer2Offline) {
+            if (players[1] === userName) {
+              console.log(`Player ${players[1]} is Setting Winner.`);
+              settingWinner(winnerID);
+            }
+          } else if (!isPlayer3Offline) {
+            if (players[2] === userName) {
+              console.log(`Player ${players[2]} is Setting Winner.`);
+              settingWinner(winnerID);
+            }
+          } else if (!isPlayer4Offline) {
+            if (players[3] === userName) {
+              console.log(`Player ${players[3]} is Setting Winner.`);
+              settingWinner(winnerID);
+            }
+          }
+        }
       }
-      if (winningCard)
-        setTimeout(() => {
-          setWinningCard(winningCard);
-          playCollectCards(muted);
-        }, 2000);
+
+      if (winningCard) {
+        setWinningCard(winningCard);
+        playCollectCards(muted);
+      }
+
+      // setTimeout(() => {
+      //   setWinningCard(winningCard);
+      //   playCollectCards(muted);
+      // }, 1000);
     }
+  }
+
+  //updating the winner in the database
+  function settingWinner(winnerID: Id<"players">) {
+    console.log("setting winner", winnerID);
+
+    incrementPoints({
+      roomName: roomName,
+      userId: winnerID,
+    });
+    updateTurnWinner({
+      roomName: roomName,
+      userId: winnerID,
+    });
+    updatePlayerTurn({
+      roomName: roomName,
+      userId: winnerID,
+    });
+  }
+
+  useEffect(() => {
+    handleWinningCard();
   }, [cardSet]);
 
+  //finding cards related to each player and saving them to states
   useEffect(() => {
     if (playingCards?.length && playersInRoom?.length) {
       const currentPlayerIndex = playersInRoom.findIndex(

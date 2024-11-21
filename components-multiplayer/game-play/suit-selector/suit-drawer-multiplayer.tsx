@@ -58,7 +58,7 @@ export function SuitDrawerMultiplayer({
     }
   }, [myCardSet]);
 
-  console.log("myCard Set", myCardSet);
+  // console.log("myCard Set", myCardSet);
 
   function handleDeselectSuit() {
     setTrumpSuit(null);

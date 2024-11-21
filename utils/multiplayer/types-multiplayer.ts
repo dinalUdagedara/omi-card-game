@@ -1,3 +1,4 @@
+import { Id } from "../../convex/_generated/dataModel";
 export const suits: string[] = ["hearts", "diamonds", "clubs", "spades"];
 export const values: string[] = ["7", "8", "9", "10", "J", "Q", "K", "A"];
 
@@ -18,6 +19,12 @@ export type StartGamePoolPrivateProps = {
 export type cardMultiplayer = {
   suit: string;
   value: string;
+};
+
+export type PlayerData = {
+  status: "online" | "offline";
+  playerId: Id<"players">;
+  teamNumber: number;
 };
 
 function getValueRank(value: string): number {

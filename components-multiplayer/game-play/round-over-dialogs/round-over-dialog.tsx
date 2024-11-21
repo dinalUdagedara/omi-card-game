@@ -31,39 +31,30 @@ export function RoundOverDialogMultiplayer({
   roomName,
   status,
 }: RoundOverDialogMobileProps) {
-  const [isOpen, setIsOpen] = useState(true);
-
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const wonWithoutCallingTrumps = FinishStateStore(
     (state) => state.wonWithoutCallingTrumps
   );
   const wonCallingTrumps = FinishStateStore((state) => state.wonCallingTrumps);
-
-  const userName = MultiplayerStateStore((state) => state.userName);
-
   const lostCallingTrumps = FinishStateStore(
     (state) => state.lostCallingTrumps
   );
   const lostWithoutCallingTrumps = FinishStateStore(
     (state) => state.lostWithoutCallingTrumps
   );
+  const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const gameTied = FinishStateStore((state) => state.gameTied);
   const isDialogOpen = FinishStateStore((state) => state.isDialogOpen);
   const setDialogOpen = FinishStateStore((state) => state.setDialogOpen);
   const setRoundOver = MultiplayerStateStore((state) => state.setRoundOver);
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
+  const userName = MultiplayerStateStore((state) => state.userName);
   const setTrumpSuit = useStore((state) => state.setTrumpSuit);
+  const muted = useStore((state) => state.muted);
 
   const roomdataFromDB = useQuery(api.rooms.getRoomData, {
     roomName: roomName || "",
   });
-
-  const decrementPenaltycards = useMutation(
-    api.gameLogic.decrementPenaltyCards
-  );
-
-  const decrementPenaltycardsFromOponent = useMutation(
-    api.gameLogic.decrementFromOpponents
-  );
 
   const playersInRoom = useQuery(api.rooms.getAllPlayersIDInTheRoom, {
     roomName: roomName || "",
@@ -72,12 +63,10 @@ export function RoundOverDialogMultiplayer({
     userId: userID,
     roomName: roomName,
   });
-
   const violations = useQuery(api.gameStates.getViolations, {
     roomName: roomName || "",
     teamNumber: myTeam || 0,
   });
-
   const offlinePlayers = useQuery(api.autoPlayingBot.offlinePlayers, {
     roomName: roomName || "",
   });
@@ -86,14 +75,17 @@ export function RoundOverDialogMultiplayer({
   const removeTrumpSuit = useMutation(api.gameLogic.removeTrumpSuit);
   const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
   const resetViolation = useMutation(api.gameStates.resetViolations);
-  // const setTrumptoNul = useMutation(api.gameStates.resetViolations);
+  const decrementPenaltycards = useMutation(
+    api.gameLogic.decrementPenaltyCards
+  );
+  const decrementPenaltycardsFromOponent = useMutation(
+    api.gameLogic.decrementFromOpponents
+  );
 
-  const setAllFalse = FinishStateStore((state) => state.setAllFalse);
   const { playHoverSound } = useHoverSound();
   const { playClickButton } = useClickSound();
 
-  const muted = useStore((state) => state.muted);
-
+  //reducing penalty cards if violations detetcted
   const deductPenaltyForViolation = async () => {
     console.log("Deductiong for violation");
     // Check If Violation Done and decrement  in here
@@ -110,6 +102,7 @@ export function RoundOverDialogMultiplayer({
     }
   };
 
+  //decrementing penlaty cards from the losed teams
   async function decrementValues() {
     deductPenaltyForViolation();
     if (status === "lostCallingTrumps" && playersInRoom) {
@@ -157,6 +150,7 @@ export function RoundOverDialogMultiplayer({
     }
   }
 
+  //removing trump suit from the database
   const removeTrump = async () => {
     console.log("removing trump");
     await removeTrumpSuit({
@@ -164,17 +158,7 @@ export function RoundOverDialogMultiplayer({
     });
   };
 
-  // Automatically close dialog after 5 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isDialogOpen) {
-        handleClose();
-      }
-    }, 10000);
-
-    return () => clearTimeout(timer); // Clear the timer when component unmounts or if dialog is closed manually
-  }, [isDialogOpen]);
-
+  //handling the round end and setting up a new round
   const handleClose = async () => {
     playClickButton(muted);
     setAllFalse(false);
@@ -187,7 +171,6 @@ export function RoundOverDialogMultiplayer({
       });
 
       if (offlinePlayers && offlinePlayers.length > 0) {
-        console.log("Offline players detected", offlinePlayers);
         //update the offline players status to "waiting"
         offlinePlayers.map((player) => {
           updatePlayerStatus({
@@ -212,6 +195,7 @@ export function RoundOverDialogMultiplayer({
 
   let message = { title: "", message: "" };
 
+  //choosing the message to display in the dialog according to the status of the team after a round
   if (wonWithoutCallingTrumps) {
     message = roundFinishMessages.find((msg) => msg.value === 1) || message;
   } else if (wonCallingTrumps) {
@@ -223,6 +207,17 @@ export function RoundOverDialogMultiplayer({
   } else if (gameTied) {
     message = roundFinishMessages.find((msg) => msg.value === 5) || message;
   }
+
+  // Automatically close dialog after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isDialogOpen) {
+        handleClose();
+      }
+    }, 10000);
+
+    return () => clearTimeout(timer); // Clear the timer when component unmounts or if dialog is closed manually
+  }, [isDialogOpen]);
 
   return (
     <div>

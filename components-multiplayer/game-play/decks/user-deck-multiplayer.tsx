@@ -17,7 +17,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import modeCardBackground from "@/public/assets/images/mode-card-background.png";
 import notificaitonBackGround from "@/public/assets/images/cover-notification.png";
@@ -33,10 +32,8 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const isUserTurn = useStore((state) => state.isUserTurn);
   const setUserTurn = useStore((state) => state.setIsUserTurn);
   const userName = MultiplayerStateStore((state) => state.userName);
-  const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
   const setMyCardDeck = MultiplayerStateStore((state) => state.setMyCardSet);
   const muted = useStore((state) => state.muted);
-  const { playHoverSound } = useHoverSound();
 
   const [selectedCard, setSelectedCard] = useState<cardMultiplayer | null>(
     null
@@ -57,10 +54,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
   const noOfPlayingcards = useQuery(api.gameLogic.noOfPlayingCards, {
     roomName: roomName,
   });
-
-  const selectCard = useMutation(api.gameLogic.updatePlayingCards);
-  const updateViolation = useMutation(api.gameStates.updateViolationOccured);
-  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
   const turnsuit = useQuery(api.gameLogic.getTurnSuit, {
     roomName: roomName,
   });
@@ -68,7 +61,11 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     userId: userID,
     roomName: roomName,
   });
+  const selectCard = useMutation(api.gameLogic.updatePlayingCards);
+  const updateViolation = useMutation(api.gameStates.updateViolationOccured);
+  const updatePlayerStatus = useMutation(api.rooms.updatePlayerStatus);
 
+  const { playHoverSound } = useHoverSound();
 
   useEffect(() => {
     if (turnPlayerID) {
@@ -111,9 +108,9 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     }
   }
 
+  //fetching my card set from the database and saving it to the states
   useEffect(() => {
     if (myCardSet) setMyCardDeck(myCardSet);
-    console.log("");
   }, [myCardSet]);
 
   async function handleCardSelect(card: cardMultiplayer) {
@@ -157,7 +154,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     }
   }
 
-  // Function to handle when the user confirms they want to proceed
+  // Function to handle when the user confirms they want to proceed even after commiting a violation
   async function handleConfirmSelection() {
     if (selectedCard && userName && myTeam) {
       // Update the violation before proceeding

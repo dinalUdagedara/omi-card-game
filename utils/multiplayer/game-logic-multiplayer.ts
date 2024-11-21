@@ -5,6 +5,7 @@ import { cardMultiplayer } from "./types-multiplayer";
 let trumpSuit: TrumpSuit = null;
 let turnSuit: TrumpSuit = null;
 
+//creating the card deck 
 export function createDeck(): Card[] {
   const deck: Card[] = [];
   suits.forEach((suit) => {
@@ -15,6 +16,7 @@ export function createDeck(): Card[] {
   return deck;
 }
 
+//shuffling the deck
 export function shuffleDeck(deck: Card[]): Card[] {
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -36,10 +38,12 @@ export function dealCards(deck: Card[], numberOfPlayers: number): Player[] {
   return hands;
 }
 
+//setting a trump suit
 export function setTrump(suit: Suit | null): void {
   trumpSuit = suit;
 }
 
+//checking if violations occured when selecting a card (choosing a card other than from the current turnsuit)
 export function checkIfViolationOccured(
   playedCard: cardMultiplayer,
   cardDeck: { suit: string; value: string }[],

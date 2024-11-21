@@ -42,6 +42,8 @@ export const GameOverDialogMultiplayer: React.FC<
     roomName: roomName || "",
   });
   const router = useRouter();
+
+  //removing the user from the gamestate only
   const handlePlayAgain = async () => {
     setIsLoading(true);
 
@@ -56,6 +58,7 @@ export const GameOverDialogMultiplayer: React.FC<
     router.push(`/multiplayer/start/public/${roomName}`);
   };
 
+  //removing the user from gamestate and room both
   const handleQuitGame = async () => {
     if (offlinePlayers && offlinePlayers.length > 0) {
       await handleDisconnectedPlayers();
@@ -68,6 +71,7 @@ export const GameOverDialogMultiplayer: React.FC<
     router.push(`/multiplayer`);
   };
 
+  //checking for disconnected players and do their role
   const handleDisconnectedPlayers = async () => {
     if (offlinePlayers && offlinePlayers.length > 0) {
       console.log("Offline players detected");

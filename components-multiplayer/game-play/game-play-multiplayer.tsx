@@ -147,6 +147,9 @@ const GamePlayMultiplayer = () => {
       roomName: roomId || "",
     }
   );
+  const playingCards = useQuery(api.gameLogic.getPlayingCards, {
+    roomName: roomId || "",
+  });
   const resettingAfterRoundBot = useMutation(
     api.autoPlayingBot.resettingAfterRoundBot
   );
@@ -308,9 +311,11 @@ const GamePlayMultiplayer = () => {
       disconnectedPlayers &&
       disconnectedPlayers?.length > 0
     ) {
-      playDisconnectedPlayersCard();
+      if (playingCards && playingCards?.length < 4 && isAllPlaying) {
+        playDisconnectedPlayersCard();
+      }
     }
-  }, [turnPlayerID, disconnectedPlayers]);
+  }, [turnPlayerID, disconnectedPlayers,playingCards]);
 
   useEffect(() => {
     if (playersInRoom) {
@@ -412,7 +417,6 @@ const GamePlayMultiplayer = () => {
     console.log("updateGameInstanceDB");
     //if room creator is offline run resetafterRoundBot
 
-    
     //Need a same logic for this to call by only a one player
     if (
       isRoomCreatorOffline === true &&

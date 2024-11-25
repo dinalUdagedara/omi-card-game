@@ -66,6 +66,7 @@ const GamePlayMultiplayer = () => {
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
   const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
+  const setRoomName = MultiplayerStateStore((state) => state.setRoomName);
 
   const setteamMemberID = MultiplayerStateStore(
     (state) => state.setteamMemberID
@@ -407,6 +408,7 @@ const GamePlayMultiplayer = () => {
       if (isRoomCreator && userID) {
         setRoomCreatorID(userID);
       }
+      if (roomId) setRoomName(roomId);
     }
   }, [playersInRoom]);
   setTrumpSelected(false);
@@ -535,20 +537,18 @@ const GamePlayMultiplayer = () => {
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
-      {
-        !isGameOver &&
-          !trumpSuit &&
-          isRoomCreator &&
-          userID &&
-          roomId &&
-          isRoomActive && (
-            <SuitDrawerMultiplayer
-              userID={userID}
-              roomName={roomId}
-              onClose={handleCloseDrawer}
-            />
-          )
-      }
+      {!isGameOver &&
+        !trumpSuit &&
+        isRoomCreator &&
+        userID &&
+        roomId &&
+        isRoomActive && (
+          <SuitDrawerMultiplayer
+            userID={userID}
+            roomName={roomId}
+            onClose={handleCloseDrawer}
+          />
+        )}
 
       {roomId && isRoomActive && userID ? (
         <div className="flex justify-center items-center flex-col">
@@ -569,9 +569,9 @@ const GamePlayMultiplayer = () => {
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
             {playerTurnUserName === teamMember ? (
-              <UserAvatarContainerWithTimeOut />
+              <UserAvatarContainerWithTimeOut userName={teamMember} />
             ) : (
-              <UserAvatarContainer />
+              <UserAvatarContainer userName={teamMember} />
             )}
             ;
             <div className="text-center ">
@@ -586,9 +586,9 @@ const GamePlayMultiplayer = () => {
                 <NameCardTemplate>{opponent_2 || "Waiting.."}</NameCardTemplate>
               </div>
               {playerTurnUserName === opponent_2 ? (
-                <UserAvatarContainerWithTimeOut />
+                <UserAvatarContainerWithTimeOut userName={opponent_2} />
               ) : (
-                <UserAvatarContainer />
+                <UserAvatarContainer userName={opponent_2} />
               )}
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
@@ -614,9 +614,9 @@ const GamePlayMultiplayer = () => {
                 />
 
                 {playerTurnUserName === opponent_1 ? (
-                  <UserAvatarContainerWithTimeOut />
+                  <UserAvatarContainerWithTimeOut userName={opponent_1} />
                 ) : (
-                  <UserAvatarContainer />
+                  <UserAvatarContainer userName={opponent_1} />
                 )}
 
                 <div className="text-center py-2">

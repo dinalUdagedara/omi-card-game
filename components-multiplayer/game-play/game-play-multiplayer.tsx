@@ -227,8 +227,6 @@ const GamePlayMultiplayer = () => {
   }
 
   async function playDisconnectedPlayersCard() {
-    console.log("disconnected players ", disconnectedPlayers);
-
     // Check if it's the turn of a disconnected player
     const disconnectedPlayerTurn = disconnectedPlayers?.some((player) => {
       return player.playerId === turnPlayerID;
@@ -353,7 +351,7 @@ const GamePlayMultiplayer = () => {
       userID === playersInRoom[0]
     ) {
       if (roomId && userID) {
-        resettingAfterRoundBot({ roomName: roomId, userID: userID });
+        resettingAfterRoundBot({ roomName: roomId, userID: userID }); // you need to pass the disconnected user's userID not the player[0]
       }
     }
 
@@ -396,11 +394,12 @@ const GamePlayMultiplayer = () => {
       disconnectedPlayers &&
       disconnectedPlayers?.length > 0
     ) {
-      if (playingCards && playingCards?.length < 4 && isAllPlaying) {
+      if (playingCards && playingCards?.length < 4) {
+        // change need to be done here when round ends and disconnedted player have the turn he will automatically play a card
         playDisconnectedPlayersCard();
       }
     }
-  }, [turnPlayerID, disconnectedPlayers, playingCards]);
+  }, [turnPlayerID, disconnectedPlayers, playingCards, offlinePlayers]);
 
   useEffect(() => {
     if (playersInRoom) {

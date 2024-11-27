@@ -5,7 +5,7 @@ import { cardMultiplayer } from "./types-multiplayer";
 let trumpSuit: TrumpSuit = null;
 let turnSuit: TrumpSuit = null;
 
-//creating the card deck 
+//creating the card deck
 export function createDeck(): Card[] {
   const deck: Card[] = [];
   suits.forEach((suit) => {
@@ -30,8 +30,8 @@ export function dealCards(deck: Card[], numberOfPlayers: number): Player[] {
   const hands: Player[] = Array(numberOfPlayers)
     .fill({ hand: [] })
     .map(() => ({ hand: [] }));
-  // const deckLength = deck.length / 4;
-  const deckLength = 2;
+  const deckLength = deck.length / 4;
+  // const deckLength = 2;
   for (let i = 0; i < deckLength; i++) {
     hands.forEach((hand) => hand.hand.push(deck.pop() as Card));
   }

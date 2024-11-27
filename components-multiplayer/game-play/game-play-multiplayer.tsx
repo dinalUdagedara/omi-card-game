@@ -343,16 +343,57 @@ const GamePlayMultiplayer = () => {
     }
   }
 
-  const updateGameInstanceDB = async () => {
-    //if room creator is offline run resetafterRoundBot
-    if (
-      isRoomCreatorOffline === true &&
-      playersInRoom &&
-      userID === playersInRoom[0]
-    ) {
-      if (roomId && userID) {
-        resettingAfterRoundBot({ roomName: roomId }); // you need to pass the disconnected user's userID not the player[0]
+  const handleResettingGameStateAuto = async () => {
+    if (roomId) {
+      const players = roomdataFromDB?.playerUserNames || [];
+
+      const isPlayer1Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[0],
+      });
+      const isPlayer2Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[1],
+      });
+      const isPlayer3Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[2],
+      });
+      const isPlayer4Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[3],
+      });
+
+      if (!isPlayer1Offline) {
+        if (players[0] === userName) {
+          console.log(`Player ${players[0]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
+      } else if (!isPlayer2Offline) {
+        if (players[1] === userName) {
+          console.log(`Player ${players[1]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
+      } else if (!isPlayer3Offline) {
+        if (players[2] === userName) {
+          console.log(`Player ${players[2]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
+      } else if (!isPlayer4Offline) {
+        if (players[3] === userName) {
+          console.log(`Player ${players[3]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
       }
+    }
+  };
+
+  const updateGameInstanceDB = async () => {
+    //Need logic to run by any player online
+
+    //if room creator is offline run updatingGamestate automatically
+    if (isRoomCreatorOffline === true) {
+      handleResettingGameStateAuto();
     }
 
     if (isRoomCreator && playersInRoom) {

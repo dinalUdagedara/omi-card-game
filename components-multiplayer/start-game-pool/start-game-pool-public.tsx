@@ -78,6 +78,7 @@ const StartGamePoolPublicNew = (props: Props) => {
         const alreadyJoined = roomdataFromDB.playerUserNames.some(
           (player: string) => player === userName
         );
+        console.log({alreadyJoined})
         if (!alreadyJoined) {
           // Updating the database
           const playerID = await joinRoomDB({

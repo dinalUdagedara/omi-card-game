@@ -372,7 +372,6 @@ const GamePlayMultiplayer = () => {
             });
           }
 
-          // changeTrumptoNull();
         }
       } catch (error) {
         console.log("error", error);

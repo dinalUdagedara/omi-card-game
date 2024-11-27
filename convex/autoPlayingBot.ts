@@ -131,7 +131,6 @@ export const handleCardSelectForDisconnectedPlayer = mutation({
 export const resettingAfterRoundBot = mutation({
   args: {
     roomName: v.string(),
-    userID: v.id("players"),
   },
   handler: async (ctx, args) => {
     const deck = createDeck();
@@ -169,19 +168,18 @@ export const resettingAfterRoundBot = mutation({
       }
     );
 
+    const creatorInfo = await ctx.runMutation(
+      internal.internalFunctions.getPlayerInfo,
+      { userName: room.creator }
+    );
+    if (!creatorInfo?._id) {
+      return null;
+    }
     //set new trump
     await ctx.runMutation(internal.internalFunctions.updateTrumpSuitBot, {
       roomID: room._id,
-      userID: args.userID,
+      userID: creatorInfo?._id,
     });
-
-    // // play a card automatically
-    // await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
-    //   roomName: room.roomName,
-    //   userId: args.userID,
-    // });
-
-    console.log("players Decks", playersDecks);
   },
 });
 

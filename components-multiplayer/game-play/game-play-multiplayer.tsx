@@ -351,7 +351,7 @@ const GamePlayMultiplayer = () => {
       userID === playersInRoom[0]
     ) {
       if (roomId && userID) {
-        resettingAfterRoundBot({ roomName: roomId, userID: userID }); // you need to pass the disconnected user's userID not the player[0]
+        resettingAfterRoundBot({ roomName: roomId }); // you need to pass the disconnected user's userID not the player[0]
       }
     }
 
@@ -371,7 +371,6 @@ const GamePlayMultiplayer = () => {
               playersDecks,
             });
           }
-
         }
       } catch (error) {
         console.log("error", error);
@@ -398,7 +397,13 @@ const GamePlayMultiplayer = () => {
         playDisconnectedPlayersCard();
       }
     }
-  }, [turnPlayerID, disconnectedPlayers, playingCards, offlinePlayers]);
+  }, [
+    turnPlayerID,
+    disconnectedPlayers,
+    playingCards,
+    offlinePlayers,
+    trumpSuit,
+  ]);
 
   useEffect(() => {
     if (playersInRoom) {

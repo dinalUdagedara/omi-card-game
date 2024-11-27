@@ -2,8 +2,6 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Image from "next/image";
-import user2Avatar from "@/public/assets/images/user-avatars/person4.png";
-import user3Avatar from "@/public/assets/images/user-avatars/person7.png";
 import user4Avatar from "@/public/assets/images/user-avatars/person8.png";
 
 type Props = {
@@ -18,7 +16,6 @@ const OpponentsName = (props: Props) => {
     roomName: roomName,
     userName: userName,
   });
-  console.log("other users", otherUsers);
 
   return (
     <>

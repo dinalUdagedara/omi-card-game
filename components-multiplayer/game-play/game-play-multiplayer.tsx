@@ -66,6 +66,7 @@ const GamePlayMultiplayer = () => {
   const setNewRound = MultiplayerStateStore((state) => state.setNewRound);
   const trumpSetter = MultiplayerStateStore((state) => state.trumpSetter);
   const myCardDeck = MultiplayerStateStore((state) => state.myCardSet);
+  const setRoomName = MultiplayerStateStore((state) => state.setRoomName);
 
   const setteamMemberID = MultiplayerStateStore(
     (state) => state.setteamMemberID
@@ -226,8 +227,6 @@ const GamePlayMultiplayer = () => {
   }
 
   async function playDisconnectedPlayersCard() {
-    console.log("disconnected players ", disconnectedPlayers);
-
     // Check if it's the turn of a disconnected player
     const disconnectedPlayerTurn = disconnectedPlayers?.some((player) => {
       return player.playerId === turnPlayerID;
@@ -344,16 +343,57 @@ const GamePlayMultiplayer = () => {
     }
   }
 
-  const updateGameInstanceDB = async () => {
-    //if room creator is offline run resetafterRoundBot
-    if (
-      isRoomCreatorOffline === true &&
-      playersInRoom &&
-      userID === playersInRoom[0]
-    ) {
-      if (roomId && userID) {
-        resettingAfterRoundBot({ roomName: roomId, userID: userID });
+  const handleResettingGameStateAuto = async () => {
+    if (roomId) {
+      const players = roomdataFromDB?.playerUserNames || [];
+
+      const isPlayer1Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[0],
+      });
+      const isPlayer2Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[1],
+      });
+      const isPlayer3Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[2],
+      });
+      const isPlayer4Offline = await checkPlayerStatus({
+        roomName: roomId,
+        userName: players[3],
+      });
+
+      if (!isPlayer1Offline) {
+        if (players[0] === userName) {
+          console.log(`Player ${players[0]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
+      } else if (!isPlayer2Offline) {
+        if (players[1] === userName) {
+          console.log(`Player ${players[1]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
+      } else if (!isPlayer3Offline) {
+        if (players[2] === userName) {
+          console.log(`Player ${players[2]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
+      } else if (!isPlayer4Offline) {
+        if (players[3] === userName) {
+          console.log(`Player ${players[3]} resetting the gamestate`);
+          resettingAfterRoundBot({ roomName: roomId });
+        }
       }
+    }
+  };
+
+  const updateGameInstanceDB = async () => {
+    //Need logic to run by any player online
+
+    //if room creator is offline run updatingGamestate automatically
+    if (isRoomCreatorOffline === true) {
+      handleResettingGameStateAuto();
     }
 
     if (isRoomCreator && playersInRoom) {
@@ -372,8 +412,6 @@ const GamePlayMultiplayer = () => {
               playersDecks,
             });
           }
-
-          // changeTrumptoNull();
         }
       } catch (error) {
         console.log("error", error);
@@ -395,11 +433,18 @@ const GamePlayMultiplayer = () => {
       disconnectedPlayers &&
       disconnectedPlayers?.length > 0
     ) {
-      if (playingCards && playingCards?.length < 4 && isAllPlaying) {
+      if (playingCards && playingCards?.length < 4) {
+        // change need to be done here when round ends and disconnedted player have the turn he will automatically play a card
         playDisconnectedPlayersCard();
       }
     }
-  }, [turnPlayerID, disconnectedPlayers, playingCards]);
+  }, [
+    turnPlayerID,
+    disconnectedPlayers,
+    playingCards,
+    offlinePlayers,
+    trumpSuit,
+  ]);
 
   useEffect(() => {
     if (playersInRoom) {
@@ -407,6 +452,7 @@ const GamePlayMultiplayer = () => {
       if (isRoomCreator && userID) {
         setRoomCreatorID(userID);
       }
+      if (roomId) setRoomName(roomId);
     }
   }, [playersInRoom]);
   setTrumpSelected(false);
@@ -535,20 +581,18 @@ const GamePlayMultiplayer = () => {
 
   return (
     <div className="flex flex-col h-full min-h-screen justify-between w-full">
-      {
-        !isGameOver &&
-          !trumpSuit &&
-          isRoomCreator &&
-          userID &&
-          roomId &&
-          isRoomActive && (
-            <SuitDrawerMultiplayer
-              userID={userID}
-              roomName={roomId}
-              onClose={handleCloseDrawer}
-            />
-          )
-      }
+      {!isGameOver &&
+        !trumpSuit &&
+        isRoomCreator &&
+        userID &&
+        roomId &&
+        isRoomActive && (
+          <SuitDrawerMultiplayer
+            userID={userID}
+            roomName={roomId}
+            onClose={handleCloseDrawer}
+          />
+        )}
 
       {roomId && isRoomActive && userID ? (
         <div className="flex justify-center items-center flex-col">
@@ -569,9 +613,9 @@ const GamePlayMultiplayer = () => {
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
             {playerTurnUserName === teamMember ? (
-              <UserAvatarContainerWithTimeOut />
+              <UserAvatarContainerWithTimeOut userName={teamMember} />
             ) : (
-              <UserAvatarContainer />
+              <UserAvatarContainer userName={teamMember} />
             )}
             ;
             <div className="text-center ">
@@ -586,9 +630,9 @@ const GamePlayMultiplayer = () => {
                 <NameCardTemplate>{opponent_2 || "Waiting.."}</NameCardTemplate>
               </div>
               {playerTurnUserName === opponent_2 ? (
-                <UserAvatarContainerWithTimeOut />
+                <UserAvatarContainerWithTimeOut userName={opponent_2} />
               ) : (
-                <UserAvatarContainer />
+                <UserAvatarContainer userName={opponent_2} />
               )}
               <OtherDecksMultiplayer userHand={myCardDeck ?? exampleCardSet} />
             </div>
@@ -614,9 +658,9 @@ const GamePlayMultiplayer = () => {
                 />
 
                 {playerTurnUserName === opponent_1 ? (
-                  <UserAvatarContainerWithTimeOut />
+                  <UserAvatarContainerWithTimeOut userName={opponent_1} />
                 ) : (
-                  <UserAvatarContainer />
+                  <UserAvatarContainer userName={opponent_1} />
                 )}
 
                 <div className="text-center py-2">

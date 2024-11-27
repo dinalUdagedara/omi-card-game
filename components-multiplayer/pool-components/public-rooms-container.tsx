@@ -38,7 +38,6 @@ const PublicRoomContainer = () => {
   };
 
   useEffect(() => {
-    // Ensure the code only runs in the browser
     if (typeof window !== "undefined") {
       const storedUserName = localStorage.getItem("userName");
       if (storedUserName) {

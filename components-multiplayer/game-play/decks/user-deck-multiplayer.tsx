@@ -153,7 +153,7 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     setSelectedCard(null); // Reset the selected card
     setIsViolation(false); // Reset violation flag
   }
-  
+
   //fetching my card set from the database and saving it to the states
   useEffect(() => {
     if (myCardSet) setMyCardDeck(myCardSet);
@@ -163,7 +163,6 @@ export function UserDeckMobileMultiplayer({ userID, roomName }: UserDeckProps) {
     if (turnPlayerID) {
       const num = noOfPlayingcards ?? 0;
       if (turnPlayerID === userID && num < 4) {
-        console.log("Setting User , timeoutID:", timeoutId);
         setUserTurn(true);
 
         // Start 10-second timer to auto-play card

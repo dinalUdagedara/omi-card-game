@@ -178,7 +178,6 @@ export const createRoom = mutation({
   },
 });
 
-// Joining an existing room
 export const joinRoom = mutation({
   args: {
     roomName: v.string(),
@@ -192,19 +191,42 @@ export const joinRoom = mutation({
 
     if (!room) return null;
 
-    // Check if the player is already in the room
+    // Check if the player is already in the system
     const existingPlayer = await ctx.db
       .query("players")
       .filter((q) => q.eq(q.field("userName"), args.userName))
       .first();
 
     if (existingPlayer) {
-      // Player already exists, return their ID or a message
-      // Update the room's players array by adding the new player's ID
-      await ctx.db.patch(room._id, {
-        players: [...room.players, existingPlayer._id],
+      // Check if the player is in another room
+      if (existingPlayer.roomId && existingPlayer.roomId !== room._id) {
+        // Fetch the previous room
+        const previousRoom = await ctx.db.get(existingPlayer.roomId);
+
+        if (previousRoom) {
+          // Remove the player from the previous room's players list
+          const updatedPlayers = previousRoom.players.filter(
+            (playerId) => playerId !== existingPlayer._id
+          );
+          const updatedPlayerUserNames = previousRoom.playerUserNames.filter(
+            (userName) => userName !== args.userName
+          );
+
+          // Update the previous room's players
+          await ctx.db.patch(previousRoom._id, {
+            players: updatedPlayers,
+            playerUserNames: updatedPlayerUserNames,
+          });
+        }
+      }
+
+      // Update the player's roomId to the new room and add them to the new room
+      await ctx.db.patch(existingPlayer._id, {
+        roomId: room._id,
+        status: "waiting",
       });
       await ctx.db.patch(room._id, {
+        players: [...room.players, existingPlayer._id],
         playerUserNames: [...room.playerUserNames, args.userName],
       });
 

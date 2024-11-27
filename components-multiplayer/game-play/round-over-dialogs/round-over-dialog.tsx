@@ -81,6 +81,7 @@ export function RoundOverDialogMultiplayer({
   const decrementPenaltycardsFromOponent = useMutation(
     api.gameLogic.decrementFromOpponents
   );
+  const checkPlayerStatus = useMutation(api.autoPlayingBot.checkPlayerStatus);
 
   const { playHoverSound } = useHoverSound();
   const { playClickButton } = useClickSound();
@@ -158,28 +159,71 @@ export function RoundOverDialogMultiplayer({
     });
   };
 
+  const handlingRoundOverReset = async () => {
+    await decrementValues();
+    await updateTrumpSetter({
+      roomName: roomName,
+    });
+    if (offlinePlayers && offlinePlayers.length > 0) {
+      //update the offline players status to "waiting"
+      offlinePlayers.map((player) => {
+        updatePlayerStatus({
+          status: "waiting",
+          userId: player._id,
+        });
+      });
+    }
+  };
+
   //handling the round end and setting up a new round
   const handleClose = async () => {
     playClickButton(muted);
     setAllFalse(false);
     await removeTrump();
     setTrumpSuit(null);
-    if (userName === roomdataFromDB?.playerUserNames[0] && status) {
-      await decrementValues();
-      await updateTrumpSetter({
-        roomName: roomName,
-      });
 
-      if (offlinePlayers && offlinePlayers.length > 0) {
-        //update the offline players status to "waiting"
-        offlinePlayers.map((player) => {
-          updatePlayerStatus({
-            status: "waiting",
-            userId: player._id,
-          });
-        });
+    //Logic to handlingRoundOverReset only from a one connected player
+
+    const players = roomdataFromDB?.playerUserNames || [];
+    const isPlayer1Offline = await checkPlayerStatus({
+      roomName: roomName,
+      userName: players[0],
+    });
+    const isPlayer2Offline = await checkPlayerStatus({
+      roomName: roomName,
+      userName: players[1],
+    });
+    const isPlayer3Offline = await checkPlayerStatus({
+      roomName: roomName,
+      userName: players[2],
+    });
+    const isPlayer4Offline = await checkPlayerStatus({
+      roomName: roomName,
+      userName: players[3],
+    });
+
+    if (!isPlayer1Offline) {
+      if (players[0] === userName) {
+        console.log(`Player ${players[0]} is handlingRoundOverReset.`);
+        await handlingRoundOverReset();
+      }
+    } else if (!isPlayer2Offline) {
+      if (players[1] === userName) {
+        console.log(`Player ${players[1]} is handlingRoundOverReset.`);
+        await handlingRoundOverReset();
+      }
+    } else if (!isPlayer3Offline) {
+      if (players[2] === userName) {
+        console.log(`Player ${players[2]} is handlingRoundOverReset.`);
+        await handlingRoundOverReset();
+      }
+    } else if (!isPlayer4Offline) {
+      if (players[3] === userName) {
+        console.log(`Player ${players[3]} is handlingRoundOverReset.`);
+        await handlingRoundOverReset();
       }
     }
+
     setDialogOpen(false);
     setRoundOver(false);
 

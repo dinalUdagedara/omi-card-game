@@ -49,7 +49,7 @@ export const updatePlayingCardsBot = internalMutation({
 
       if (existingPlayerIndex !== -1) {
         // Update the player's card if it exists
-        updatedPlayersCards[existingPlayerIndex].card = selectedCard;
+        // updatedPlayersCards[existingPlayerIndex].card = selectedCard;
       } else {
         // Add a new entry for the player if it doesn't exist
         updatedPlayersCards.push({
@@ -60,46 +60,47 @@ export const updatePlayingCardsBot = internalMutation({
             index: existingPlayerIndex === -1 ? 0 : updatedPlayersCards.length, // Example indexing logic
           },
         });
-      }
 
-      // Update the turnSuit if it's the first card played in the round
-      if (!gameState.turnSuit) {
+        // Update the turnSuit if it's the first card played in the round
+        if (!gameState.turnSuit) {
+          await ctx.db.patch(id, {
+            turnSuit: selectedCard.suit,
+          });
+        }
+
+        // Find the player's deck and remove the selected card
+        const updatedPlayersDecks = gameState.playersDecks.map((deck) => {
+          if (deck.playerId === args.userId) {
+            return {
+              ...deck,
+              deck: deck.deck.filter(
+                (c) =>
+                  c.suit !== selectedCard.suit || c.value !== selectedCard.value
+              ),
+            };
+          }
+          return deck;
+        });
+
+        // Update the players' decks and cards in the database
         await ctx.db.patch(id, {
-          turnSuit: selectedCard.suit,
+          playersCards: updatedPlayersCards,
+          playersDecks: updatedPlayersDecks,
+        });
+
+        // Switch the player turn to the next player
+        const playerTurnIndex = gameState.players.findIndex(
+          (p) => p.playerId === gameState.playerTurn
+        );
+        const nextPlayerIndex =
+          (playerTurnIndex + 1) % gameState.players.length;
+        const nextPlayerId = gameState.players[nextPlayerIndex];
+
+        // Update the player turn in the gameState
+        await ctx.db.patch(id, {
+          playerTurn: nextPlayerId.playerId,
         });
       }
-
-      // Find the player's deck and remove the selected card
-      const updatedPlayersDecks = gameState.playersDecks.map((deck) => {
-        if (deck.playerId === args.userId) {
-          return {
-            ...deck,
-            deck: deck.deck.filter(
-              (c) =>
-                c.suit !== selectedCard.suit || c.value !== selectedCard.value
-            ),
-          };
-        }
-        return deck;
-      });
-
-      // Update the players' decks and cards in the database
-      await ctx.db.patch(id, {
-        playersCards: updatedPlayersCards,
-        playersDecks: updatedPlayersDecks,
-      });
-
-      // Switch the player turn to the next player
-      const playerTurnIndex = gameState.players.findIndex(
-        (p) => p.playerId === gameState.playerTurn
-      );
-      const nextPlayerIndex = (playerTurnIndex + 1) % gameState.players.length;
-      const nextPlayerId = gameState.players[nextPlayerIndex];
-
-      // Update the player turn in the gameState
-      await ctx.db.patch(id, {
-        playerTurn: nextPlayerId.playerId,
-      });
     }
   },
 });
@@ -130,7 +131,6 @@ export const handleCardSelectForDisconnectedPlayer = mutation({
 export const resettingAfterRoundBot = mutation({
   args: {
     roomName: v.string(),
-    userID: v.id("players"),
   },
   handler: async (ctx, args) => {
     const deck = createDeck();
@@ -168,19 +168,18 @@ export const resettingAfterRoundBot = mutation({
       }
     );
 
+    const creatorInfo = await ctx.runMutation(
+      internal.internalFunctions.getPlayerInfo,
+      { userName: room.creator }
+    );
+    if (!creatorInfo?._id) {
+      return null;
+    }
     //set new trump
     await ctx.runMutation(internal.internalFunctions.updateTrumpSuitBot, {
       roomID: room._id,
-      userID: args.userID,
+      userID: creatorInfo?._id,
     });
-
-    // // play a card automatically
-    // await ctx.runMutation(internal.autoPlayingBot.updatePlayingCardsBot, {
-    //   roomName: room.roomName,
-    //   userId: args.userID,
-    // });
-
-    console.log("players Decks", playersDecks);
   },
 });
 

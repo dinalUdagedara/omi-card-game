@@ -5,7 +5,7 @@ import { cardMultiplayer } from "./types-multiplayer";
 let trumpSuit: TrumpSuit = null;
 let turnSuit: TrumpSuit = null;
 
-//creating the card deck 
+//creating the card deck
 export function createDeck(): Card[] {
   const deck: Card[] = [];
   suits.forEach((suit) => {

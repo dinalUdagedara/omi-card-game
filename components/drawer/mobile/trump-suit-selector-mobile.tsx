@@ -45,7 +45,7 @@ export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
 
   return (
     <Drawer open={true} onClose={onClose}>
-      <DrawerContent className="bg-[#1a2e1a] border-t border-[#2d4a2d]">
+      <DrawerContent className="bg-zinc-950 border-t border-zinc-800">
         <div className="mx-auto w-full max-w-md">
           <DrawerHeader className="pb-2">
             <DrawerTitle className="flex items-center justify-center gap-2 text-amber-300 text-lg font-bold tracking-wide">
@@ -53,7 +53,7 @@ export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
               <span>Select Trumps</span>
               <span>♛</span>
             </DrawerTitle>
-            <p className="text-center text-xs text-green-300/70 mt-1">
+            <p className="text-center text-xs text-zinc-400 mt-1">
               Choose the trump suit for this round
             </p>
           </DrawerHeader>
@@ -83,7 +83,7 @@ export function SuitDrawerMobile({ userHand, onClose }: SuitDrawerProps) {
               })}
             </div>
 
-            <div className="bg-[#152415] rounded-2xl p-3">
+            <div className="bg-zinc-900 rounded-2xl p-3">
               <SuitSelectorMobile />
             </div>
           </div>

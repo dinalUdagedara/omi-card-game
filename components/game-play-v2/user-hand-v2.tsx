@@ -50,7 +50,6 @@ const UserHandV2 = ({ userHand, onCardSelect }: UserHandV2Props) => {
                 rotateY: { duration: 0.5, delay: index * 0.06 },
               }}
               whileHover={canPlay ? { y: -12, zIndex: 40 } : {}}
-              style={{ marginLeft: index === 0 ? 0 : "-1.75rem", transformStyle: "preserve-3d" }}
             >
               {/* Active-turn pulse ring */}
               {isUserTurn && trumpSuit && (

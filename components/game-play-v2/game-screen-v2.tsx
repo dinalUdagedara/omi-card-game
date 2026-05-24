@@ -1,30 +1,13 @@
 "use client";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import GamePlayV2 from "./game-play-v2";
+import GamePlayMobileV2 from "./game-play-mobile-v2";
 
 const GameScreenV2 = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-    const check = () => setIsMobile(window.innerWidth < 640);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  if (!isMounted) return null;
-
-  // Lazy import to avoid circular dependency — components loaded after mount
-  const GamePlayV2 = isMobile
-    ? require("./game-play-mobile-v2").default
-    : require("./game-play-v2").default;
-
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      {/* Back button */}
+    <div className="relative w-full h-screen overflow-hidden bg-zinc-950">
+      {/* Back button — sits above both variants */}
       <div className="absolute top-4 left-4 z-50">
         <Link href="/">
           <div className="flex items-center gap-1.5 text-amber-300 hover:text-amber-100 transition-colors text-sm font-medium">
@@ -34,6 +17,10 @@ const GameScreenV2 = () => {
         </Link>
       </div>
 
+      {/* Mobile (sm:hidden) */}
+      <GamePlayMobileV2 />
+
+      {/* Desktop (hidden sm:flex) */}
       <GamePlayV2 />
     </div>
   );

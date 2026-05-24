@@ -35,12 +35,26 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
     setTrumpSuit(null);
   }
 
+  const suitColor: Record<string, string> = {
+    hearts: "bg-red-500 hover:bg-red-600",
+    diamonds: "bg-red-400 hover:bg-red-500",
+    clubs: "bg-gray-800 hover:bg-gray-900",
+    spades: "bg-gray-900 hover:bg-black",
+  };
+
   return (
     <Drawer open={true} onClose={onClose}>
-      <DrawerContent>
+      <DrawerContent className="bg-zinc-950 border-t border-zinc-800">
         <div className="mx-auto w-full max-w-[600px]">
-          <DrawerHeader>
-            <DrawerTitle>Select Trumps</DrawerTitle>
+          <DrawerHeader className="pb-2">
+            <DrawerTitle className="flex items-center justify-center gap-2 text-amber-300 text-xl font-bold tracking-wide">
+              <span>♛</span>
+              <span>Select Trumps</span>
+              <span>♛</span>
+            </DrawerTitle>
+            <p className="text-center text-sm text-zinc-400 mt-1">
+              Choose the trump suit for this round
+            </p>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="relative flex items-center justify-center h-64">
@@ -68,11 +82,11 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
               })}
             </div>
 
-            <div>
+            <div className="bg-zinc-900 rounded-2xl p-3">
               <SuitSelector />
             </div>
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="pt-4">
             <DrawerClose asChild>
               <Button
                 onClick={() => {
@@ -80,17 +94,15 @@ export function SuitDrawer({ userHand, onClose }: SuitDrawerProps) {
                   onClose();
                 }}
                 disabled={!trumpSuit}
+                className={`w-full h-12 rounded-xl text-base font-bold tracking-wide text-white transition-all duration-300 ${
+                  trumpSuit
+                    ? suitColor[trumpSuit] + " shadow-lg scale-100"
+                    : "bg-gray-600 opacity-50 cursor-not-allowed"
+                }`}
               >
-                Select
+                {trumpSuit ? `Set ${trumpSuit.charAt(0).toUpperCase() + trumpSuit.slice(1)} as Trump` : "Select a Suit"}
               </Button>
             </DrawerClose>
-            {/* <DrawerClose asChild>
-              <Button onClick={()=>{
-                handleDeselectSuit
-                }} variant="outline">
-                Cancel
-              </Button>
-            </DrawerClose> */}
           </DrawerFooter>
         </div>
       </DrawerContent>

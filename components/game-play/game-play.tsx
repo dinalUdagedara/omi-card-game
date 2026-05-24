@@ -719,17 +719,9 @@ export default function Board() {
 
           {/* Game Board */}
 
-          <div
-            className="flex w-full justify-center items-center  m-4 p-6 shadow-lg bg-black rounded-2xl bg-opacity-75 min-h-[350px] z-20 border-8 border-black"
-            style={{
-              backgroundImage: `url('/assets/background.png')`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="w-full justify-center items-center z-20">
-              {/* <Button onClick={handleInitialStart}>Start</Button> */}
+          {/* Game Board */}
+          <div className="flex w-full justify-center items-center m-4 min-h-[320px] z-20">
+            <div className="w-full flex items-center justify-center z-20">
               <GameBoard
                 onRestart={restartGame}
                 onStart={handleSelectOtherHands}
